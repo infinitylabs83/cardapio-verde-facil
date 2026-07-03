@@ -33,25 +33,27 @@ const CHECKOUT_URL = "#comprar";
 
 /* -------------------- Marca -------------------- */
 function LogoMark({ className = "w-10 h-10" }: { className?: string }) {
+  // Prato visto de cima com uma folha — símbolo direto de "cardápio + verde"
   return (
-    <svg viewBox="0 0 80 80" className={className} aria-hidden="true">
-      <circle cx="40" cy="40" r="36" fill="#123f2b" />
-      <circle cx="40" cy="40" r="27" fill="#fff8ea" />
+    <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
+      <circle cx="32" cy="32" r="30" fill="#fff8ea" stroke="#123f2b" strokeWidth="3" />
+      <circle cx="32" cy="32" r="22" fill="none" stroke="#123f2b" strokeWidth="1.5" opacity="0.35" />
       <path
-        d="M23 43c12-17 25-18 35-6-8 0-14 5-17 16-3-7-9-10-18-10Z"
+        d="M32 20c8 0 14 6 14 14 0 .7-.05 1.4-.15 2.1-7.6.4-13.85-5.85-13.85-13.45 0-.9.05-1.78.15-2.65Z"
         fill="#1f6d42"
       />
       <path
-        d="M39 54c.6-13 5.8-23 16-30"
+        d="M32 20c-.1.87-.15 1.75-.15 2.65 0 4.6 2.3 8.66 5.8 11.1"
         fill="none"
         stroke="#123f2b"
-        strokeWidth={4}
+        strokeWidth="1.5"
         strokeLinecap="round"
+        opacity="0.5"
       />
-      <path d="M24 58h32" stroke="#e5b64a" strokeWidth={5} strokeLinecap="round" />
     </svg>
   );
 }
+
 
 function Wordmark() {
   return (
