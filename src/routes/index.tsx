@@ -70,12 +70,22 @@ function Wordmark() {
 /* -------------------- Header -------------------- */
 function Header() {
   return (
-    <header className="sticky top-0 z-40 backdrop-blur bg-[color:var(--paper)]/85 border-b border-[color:var(--line)]">
+    <header className="sticky top-0 z-40 backdrop-blur bg-leaf/90 border-b border-[color:var(--leaf-2)]">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-5 py-3">
-        <Wordmark />
+        <div className="flex items-center gap-3">
+          <LogoMark className="w-11 h-11" />
+          <div className="leading-[0.9]">
+            <div className="font-display font-extrabold text-[20px] text-paper-2 tracking-tight">
+              Cardápio
+            </div>
+            <div className="font-display font-extrabold text-[20px] text-receipt tracking-tight">
+              no Verde
+            </div>
+          </div>
+        </div>
         <a
           href={CHECKOUT_URL}
-          className="hidden sm:inline-flex items-center gap-2 rounded-full bg-leaf text-paper-2 px-4 py-2 font-extrabold text-[13px] hover:bg-leaf-2 transition-colors"
+          className="hidden sm:inline-flex items-center gap-2 rounded-full bg-paper-2 text-leaf px-4 py-2 font-extrabold text-[13px] hover:bg-receipt transition-colors"
         >
           Quero acesso por R$ 59
           <span aria-hidden>→</span>
@@ -88,28 +98,28 @@ function Header() {
 /* -------------------- Hero -------------------- */
 function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      {/* fundo com textura de papel amassado */}
+    <section className="relative overflow-hidden bg-leaf">
+      {/* manchas de luz sutis para dar profundidade */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(1200px 500px at 85% -10%, rgba(229,182,74,.35), transparent 60%), radial-gradient(900px 500px at -10% 110%, rgba(18,63,43,.12), transparent 60%)",
+            "radial-gradient(900px 450px at 10% 0%, rgba(125,161,93,.25), transparent 60%), radial-gradient(700px 400px at 90% 100%, rgba(229,182,74,.20), transparent 55%)",
         }}
       />
-      <div className="relative max-w-6xl mx-auto px-5 pt-16 pb-20 md:pt-24 md:pb-28">
+      <div className="relative max-w-6xl mx-auto px-5 pt-12 pb-20 md:pt-20 md:pb-28">
         {/* etiqueta topo */}
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-tomato">
-            <span className="w-2 h-2 rounded-full bg-tomato animate-pulse" />
+          <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-receipt">
+            <span className="w-2 h-2 rounded-full bg-receipt animate-pulse" />
             Alerta pro dono de restaurante
           </span>
-          <span className="h-px flex-1 bg-[color:var(--line)]" />
+          <span className="h-px flex-1 bg-paper-2/20" />
         </div>
 
-        {/* Headline gigante */}
-        <h1 className="font-serif text-[52px] leading-[0.92] mt-6 sm:text-[76px] md:text-[104px] lg:text-[128px] text-ink">
+        {/* Headline gigante em papel claro */}
+        <h1 className="font-serif text-[52px] leading-[0.92] mt-6 sm:text-[76px] md:text-[104px] lg:text-[128px] text-paper-2">
           Tem prato no seu
           <br />
           cardápio dando{" "}
@@ -132,42 +142,43 @@ function Hero() {
           </span>
           .
           <br />
-          <span className="text-leaf-2">Você só não sabe qual.</span>
+          <span className="text-receipt">Você só não sabe qual.</span>
         </h1>
 
         {/* Sub-linha única */}
-        <p className="mt-10 font-display font-semibold text-[19px] md:text-[22px] leading-snug text-ink max-w-[640px]">
+        <p className="mt-10 font-display font-semibold text-[19px] md:text-[22px] leading-snug text-paper-2/90 max-w-[640px]">
           Descubra em uma tarde. No seu celular. Sem planilha, sem contador,
           sem mensalidade.
         </p>
 
         {/* Ação: CTA + preço colados */}
-        <div className="mt-10 inline-flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden shadow-plate border border-[color:var(--leaf)]/25 max-w-full">
+        <div className="mt-10 inline-flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden shadow-plate max-w-full">
           <a
             href="#comprar"
-            className="bg-leaf text-paper-2 px-7 py-5 font-display font-extrabold text-[18px] flex items-center justify-center gap-3 hover:bg-leaf-2 transition-colors"
+            className="bg-paper-2 text-leaf px-7 py-5 font-display font-extrabold text-[18px] flex items-center justify-center gap-3 hover:bg-receipt transition-colors"
           >
             Colocar meu cardápio no verde
             <span aria-hidden>→</span>
           </a>
-          <div className="bg-[#fff8ea] px-6 py-4 flex sm:flex-col items-center sm:items-start justify-between sm:justify-center gap-2 border-t sm:border-t-0 sm:border-l border-[color:var(--leaf)]/20">
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[color:var(--muted-brand)]">
-              <span className="line-through">R$ 169</span> · vitalício
+          <div className="bg-leaf-2 px-6 py-4 flex sm:flex-col items-center sm:items-start justify-between sm:justify-center gap-2 border-t sm:border-t-0 sm:border-l border-paper-2/20">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-paper-2/80">
+              <span className="line-through opacity-70">R$ 169</span> · vitalício
             </span>
-            <span className="font-serif text-leaf text-[34px] leading-none">
+            <span className="font-serif text-receipt text-[34px] leading-none">
               R$ 59
             </span>
           </div>
         </div>
 
         {/* linha de confiança minúscula */}
-        <div className="mt-6 text-[13px] text-[color:var(--muted-brand)] font-semibold">
+        <div className="mt-6 text-[13px] text-paper-2/70 font-semibold">
           Pagamento único · 7 dias de garantia · uso pra sempre
         </div>
       </div>
     </section>
   );
 }
+
 
 
 /* -------------------- Dor: história curta -------------------- */
