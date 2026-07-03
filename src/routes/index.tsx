@@ -116,13 +116,13 @@ function Hero() {
           backgroundRepeat: "no-repeat",
         }}
       />
-      {/* Gradiente verde da esquerda pra direita (desktop) */}
+      {/* Gradiente verde da esquerda pra direita (desktop) — mais suave pra fundir foto no fundo */}
       <div
         aria-hidden
         className="absolute inset-0 hidden md:block pointer-events-none"
         style={{
           background:
-            "linear-gradient(90deg, rgba(6,58,38,0.88) 0%, rgba(6,58,38,0.55) 32%, rgba(6,58,38,0.22) 54%, rgba(6,58,38,0) 75%)",
+            "linear-gradient(90deg, rgba(6,58,38,0.97) 0%, rgba(6,58,38,0.88) 18%, rgba(6,58,38,0.72) 34%, rgba(6,58,38,0.48) 52%, rgba(6,58,38,0.22) 68%, rgba(6,58,38,0.08) 80%, rgba(6,58,38,0) 90%)",
         }}
       />
       {/* Overlay mobile — foto ao fundo mais coberta */}
