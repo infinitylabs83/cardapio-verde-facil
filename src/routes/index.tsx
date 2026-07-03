@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import heroOwner from "@/assets/hero-owner.png.asset.json";
+import heroOwner from "@/assets/hero-owner-v2.png.asset.json";
 
 
 export const Route = createFileRoute("/")({
@@ -103,21 +103,35 @@ function Header() {
 function Hero() {
   return (
     <section
-      className="relative overflow-hidden min-h-[92vh] md:min-h-screen flex items-center"
-      style={{
-        backgroundImage: `linear-gradient(90deg, rgba(6,58,38,0.98) 0%, rgba(6,58,38,0.94) 28%, rgba(6,58,38,0.78) 48%, rgba(6,58,38,0.35) 68%, rgba(6,58,38,0.10) 100%), url("${heroOwner.url}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "72% center",
-        backgroundRepeat: "no-repeat",
-      }}
+      className="relative overflow-hidden min-h-[92vh] md:min-h-[100vh] flex items-center bg-[color:var(--leaf)]"
     >
-      {/* Overlay mobile — mais escuro em cima pro texto respirar */}
+      {/* Foto de fundo — encostada à direita, proporção horizontal */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `url("${heroOwner.url}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "right center",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
+      {/* Gradiente verde da esquerda pra direita (desktop) */}
+      <div
+        aria-hidden
+        className="absolute inset-0 hidden md:block pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(6,58,38,0.98) 0%, rgba(6,58,38,0.95) 30%, rgba(6,58,38,0.75) 50%, rgba(6,58,38,0.30) 72%, rgba(6,58,38,0.05) 100%)",
+        }}
+      />
+      {/* Overlay mobile — foto ao fundo mais coberta */}
       <div
         aria-hidden
         className="absolute inset-0 md:hidden pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, rgba(6,58,38,0.96) 0%, rgba(6,58,38,0.88) 45%, rgba(6,58,38,0.72) 100%)",
+            "linear-gradient(180deg, rgba(6,58,38,0.96) 0%, rgba(6,58,38,0.88) 45%, rgba(6,58,38,0.75) 100%)",
         }}
       />
 
