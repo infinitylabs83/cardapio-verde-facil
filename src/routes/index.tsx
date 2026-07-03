@@ -29,25 +29,42 @@ const CTA_ANCHOR = "#oferta";
 
 /* -------------------- Marca -------------------- */
 function LogoMark({ className = "w-10 h-10" }: { className?: string }) {
+  // Miniatura de cardápio (menu) com um check verde — símbolo de "cardápio aprovado / no verde"
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
-      <circle cx="32" cy="32" r="30" fill="#fff8ea" stroke="#123f2b" strokeWidth="3" />
-      <circle cx="32" cy="32" r="22" fill="none" stroke="#123f2b" strokeWidth="1.5" opacity="0.35" />
-      <path
-        d="M32 20c8 0 14 6 14 14 0 .7-.05 1.4-.15 2.1-7.6.4-13.85-5.85-13.85-13.45 0-.9.05-1.78.15-2.65Z"
-        fill="#1f6d42"
-      />
-      <path
-        d="M32 20c-.1.87-.15 1.75-.15 2.65 0 4.6 2.3 8.66 5.8 11.1"
-        fill="none"
+      {/* sombra sutil do cardápio */}
+      <rect x="15" y="12" width="34" height="42" rx="4" fill="#000" opacity="0.15" />
+      {/* corpo do cardápio (papel creme) */}
+      <rect
+        x="13"
+        y="10"
+        width="34"
+        height="42"
+        rx="4"
+        fill="#fff8ea"
         stroke="#123f2b"
-        strokeWidth="1.5"
+        strokeWidth="2.5"
+      />
+      {/* dobra/lombada esquerda */}
+      <line x1="19" y1="10" x2="19" y2="52" stroke="#123f2b" strokeWidth="1.5" opacity="0.35" />
+      {/* linhas de itens do cardápio */}
+      <line x1="23" y1="19" x2="42" y2="19" stroke="#123f2b" strokeWidth="1.8" strokeLinecap="round" opacity="0.55" />
+      <line x1="23" y1="26" x2="38" y2="26" stroke="#123f2b" strokeWidth="1.8" strokeLinecap="round" opacity="0.4" />
+      <line x1="23" y1="33" x2="40" y2="33" stroke="#123f2b" strokeWidth="1.8" strokeLinecap="round" opacity="0.4" />
+      {/* selo verde do check no canto inferior direito */}
+      <circle cx="46" cy="46" r="12" fill="#1f6d42" stroke="#fff8ea" strokeWidth="2.5" />
+      <path
+        d="M40.5 46.5 L44.5 50.5 L52 42.5"
+        fill="none"
+        stroke="#fff8ea"
+        strokeWidth="3"
         strokeLinecap="round"
-        opacity="0.5"
+        strokeLinejoin="round"
       />
     </svg>
   );
 }
+
 
 /* -------------------- Header -------------------- */
 function Header() {
