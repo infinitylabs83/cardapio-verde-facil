@@ -107,7 +107,7 @@ function Hero() {
         style={{
           backgroundImage: `url("${heroOwner.url}")`,
           backgroundSize: "cover",
-          backgroundPosition: "center center",
+          backgroundPosition: "center 20%",
           backgroundRepeat: "no-repeat",
         }}
       />
