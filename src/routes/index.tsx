@@ -112,7 +112,7 @@ function Hero() {
         style={{
           backgroundImage: `url("${heroOwner.url}")`,
           backgroundSize: "cover",
-          backgroundPosition: "right center",
+          backgroundPosition: "100% center",
           backgroundRepeat: "no-repeat",
         }}
       />
@@ -122,7 +122,7 @@ function Hero() {
         className="absolute inset-0 hidden md:block pointer-events-none"
         style={{
           background:
-            "linear-gradient(90deg, rgba(6,58,38,0.98) 0%, rgba(6,58,38,0.96) 25%, rgba(6,58,38,0.82) 40%, rgba(6,58,38,0.35) 58%, rgba(6,58,38,0) 72%)",
+            "linear-gradient(90deg, rgba(6,58,38,0.97) 0%, rgba(6,58,38,0.94) 30%, rgba(6,58,38,0.72) 50%, rgba(6,58,38,0.28) 68%, rgba(6,58,38,0) 82%)",
         }}
       />
       {/* Overlay mobile — foto ao fundo mais coberta */}
@@ -135,19 +135,19 @@ function Hero() {
         }}
       />
 
-      <div className="relative z-10 w-full max-w-[1240px] mx-auto px-5 md:pl-8 md:pr-5 pt-24 md:pt-28 pb-16 md:pb-20">
-        <div className="w-full md:w-[62%] max-w-[900px]">
+      <div className="relative z-10 w-full max-w-[1320px] mx-auto px-5 md:pl-10 md:pr-5 pt-24 md:pt-28 pb-16 md:pb-20">
+        <div className="w-full md:w-[78%] max-w-[1080px]">
           {/* etiqueta topo */}
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-receipt">
               <span className="w-2 h-2 rounded-full bg-receipt animate-pulse" />
               Alerta pro dono de restaurante
             </span>
-            <span className="h-px flex-1 bg-paper-2/25 max-w-[240px]" />
+            <span className="h-px flex-1 bg-paper-2/25 max-w-[320px]" />
           </div>
 
           {/* Headline */}
-          <h1 className="font-serif mt-6 text-paper-2 text-[46px] leading-[0.95] sm:text-[64px] md:text-[80px] lg:text-[92px] md:leading-[0.92] [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">
+          <h1 className="font-serif mt-6 text-paper-2 text-[46px] leading-[0.95] sm:text-[64px] md:text-[78px] lg:text-[88px] md:leading-[0.95] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
             Tem prato no seu cardápio dando{" "}
             <span className="relative inline-block">
               <span className="relative z-10 text-tomato italic">prejuízo</span>
