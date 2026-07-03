@@ -102,43 +102,38 @@ function Header() {
 /* -------------------- Hero -------------------- */
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-leaf">
-      {/* Foto de fundo — ocupa todo o hero */}
-      <img
-        src={heroOwner.url}
-        alt="Dono de restaurante olhando comandas na cozinha"
-        className="absolute inset-0 w-full h-full object-cover object-right"
-      />
-
-      {/* Overlay verde: forte na esquerda (onde vai o texto), transparente na direita (onde aparece o dono) */}
+    <section
+      className="relative overflow-hidden min-h-[92vh] md:min-h-screen flex items-center"
+      style={{
+        backgroundImage: `linear-gradient(90deg, rgba(6,58,38,0.98) 0%, rgba(6,58,38,0.94) 28%, rgba(6,58,38,0.78) 48%, rgba(6,58,38,0.35) 68%, rgba(6,58,38,0.10) 100%), url("${heroOwner.url}")`,
+        backgroundSize: "cover",
+        backgroundPosition: "72% center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      {/* Overlay mobile — mais escuro em cima pro texto respirar */}
       <div
         aria-hidden
-        className="absolute inset-0"
+        className="absolute inset-0 md:hidden pointer-events-none"
         style={{
           background:
-            "linear-gradient(90deg, rgba(18,63,43,0.94) 0%, rgba(18,63,43,0.88) 35%, rgba(18,63,43,0.55) 60%, rgba(18,63,43,0.15) 85%, rgba(18,63,43,0.05) 100%)",
+            "linear-gradient(180deg, rgba(6,58,38,0.96) 0%, rgba(6,58,38,0.88) 45%, rgba(6,58,38,0.72) 100%)",
         }}
       />
-      {/* Escurecida sutil topo/base pra header e CTA respirarem */}
-      <div
-        aria-hidden
-        className="absolute inset-x-0 top-0 h-32 pointer-events-none"
-        style={{ background: "linear-gradient(to bottom, rgba(18,63,43,0.6), transparent)" }}
-      />
 
-      <div className="relative max-w-6xl mx-auto px-5 pt-14 pb-20 md:pt-20 md:pb-28">
-        <div className="max-w-[720px]">
+      <div className="relative z-10 w-full max-w-[1240px] mx-auto px-5 md:pl-8 md:pr-5 pt-24 md:pt-28 pb-16 md:pb-20">
+        <div className="w-full md:w-[62%] max-w-[900px]">
           {/* etiqueta topo */}
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-receipt">
               <span className="w-2 h-2 rounded-full bg-receipt animate-pulse" />
               Alerta pro dono de restaurante
             </span>
-            <span className="h-px flex-1 bg-paper-2/20 max-w-[280px]" />
+            <span className="h-px flex-1 bg-paper-2/25 max-w-[240px]" />
           </div>
 
           {/* Headline */}
-          <h1 className="font-serif text-[52px] leading-[0.92] mt-6 sm:text-[76px] md:text-[92px] lg:text-[104px] text-paper-2 [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">
+          <h1 className="font-serif mt-6 text-paper-2 text-[46px] leading-[0.95] sm:text-[64px] md:text-[80px] lg:text-[92px] md:leading-[0.92] [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">
             Tem prato no seu cardápio dando{" "}
             <span className="relative inline-block">
               <span className="relative z-10 text-tomato italic">prejuízo</span>
@@ -161,14 +156,14 @@ function Hero() {
             <span className="text-receipt">Você só não sabe qual.</span>
           </h1>
 
-          {/* Sub-linha única */}
-          <p className="mt-10 font-display font-semibold text-[19px] md:text-[22px] leading-snug text-paper-2/95 max-w-[560px] [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]">
+          {/* Sub-linha */}
+          <p className="mt-8 md:mt-10 font-display font-semibold text-[18px] md:text-[21px] leading-snug text-paper-2/95 max-w-[560px] [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]">
             Descubra em uma tarde. No seu celular. Sem planilha, sem contador,
             sem mensalidade.
           </p>
 
-          {/* Ação: CTA + preço colados */}
-          <div className="mt-10 inline-flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden shadow-plate max-w-full">
+          {/* CTA + preço */}
+          <div className="mt-8 md:mt-10 inline-flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden shadow-plate max-w-full">
             <a
               href="#comprar"
               className="bg-paper-2 text-leaf px-7 py-5 font-display font-extrabold text-[18px] flex items-center justify-center gap-3 hover:bg-receipt transition-colors"
@@ -186,7 +181,7 @@ function Hero() {
             </div>
           </div>
 
-          {/* linha de confiança minúscula */}
+          {/* linha de confiança */}
           <div className="mt-6 text-[13px] text-paper-2/80 font-semibold">
             Pagamento único · 7 dias de garantia · uso pra sempre
           </div>
