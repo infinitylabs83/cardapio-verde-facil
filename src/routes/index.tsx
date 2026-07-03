@@ -110,7 +110,7 @@ function Hero() {
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `url("${heroOwner.url}")`,
+          backgroundImage: `url("${heroOwner}")`,
           backgroundSize: "cover",
           backgroundPosition: "55% center",
           backgroundRepeat: "no-repeat",
