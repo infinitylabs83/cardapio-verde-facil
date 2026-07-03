@@ -111,8 +111,8 @@ function Hero() {
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage: `url("${heroOwner.url}")`,
-          backgroundSize: "cover",
-          backgroundPosition: "100% center",
+          backgroundSize: "auto 128%",
+          backgroundPosition: "72% 55%",
           backgroundRepeat: "no-repeat",
         }}
       />
