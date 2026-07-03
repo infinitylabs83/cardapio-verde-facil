@@ -88,171 +88,87 @@ function Header() {
 /* -------------------- Hero -------------------- */
 function Hero() {
   return (
-    <section className="max-w-6xl mx-auto px-5 pt-10 pb-16 md:pt-16 md:pb-24">
-      <div className="grid lg:grid-cols-[1.05fr_.95fr] gap-10 items-stretch">
-        {/* Copy */}
-        <div className="paper-card rounded-[28px] p-7 md:p-10 relative overflow-hidden">
-          <div
-            aria-hidden
-            className="absolute -bottom-32 -right-24 w-[320px] h-[320px] rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(229,182,74,.55), rgba(229,182,74,0) 68%)",
-            }}
-          />
-          <div className="relative">
-            <span className="inline-flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-widest text-leaf border border-[color:var(--leaf)]/25 bg-[#fbf2dc] px-3 py-1.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-tomato" />
-              Acesso vitalício · pagamento único
+    <section className="relative overflow-hidden">
+      {/* fundo com textura de papel amassado */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(1200px 500px at 85% -10%, rgba(229,182,74,.35), transparent 60%), radial-gradient(900px 500px at -10% 110%, rgba(18,63,43,.12), transparent 60%)",
+        }}
+      />
+      <div className="relative max-w-6xl mx-auto px-5 pt-16 pb-20 md:pt-24 md:pb-28">
+        {/* etiqueta topo */}
+        <div className="flex items-center gap-3">
+          <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-tomato">
+            <span className="w-2 h-2 rounded-full bg-tomato animate-pulse" />
+            Alerta pro dono de restaurante
+          </span>
+          <span className="h-px flex-1 bg-[color:var(--line)]" />
+        </div>
+
+        {/* Headline gigante */}
+        <h1 className="font-serif text-[52px] leading-[0.92] mt-6 sm:text-[76px] md:text-[104px] lg:text-[128px] text-ink">
+          Tem prato no seu
+          <br />
+          cardápio dando{" "}
+          <span className="relative inline-block">
+            <span className="relative z-10 text-tomato italic">prejuízo</span>
+            <svg
+              aria-hidden
+              viewBox="0 0 400 30"
+              className="absolute left-0 right-0 -bottom-2 w-full h-4 text-tomato"
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M2 20 C 80 4, 160 28, 240 10 S 380 24, 398 12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+            </svg>
+          </span>
+          .
+          <br />
+          <span className="text-leaf-2">Você só não sabe qual.</span>
+        </h1>
+
+        {/* Sub-linha única */}
+        <p className="mt-10 font-display font-semibold text-[19px] md:text-[22px] leading-snug text-ink max-w-[640px]">
+          Descubra em uma tarde. No seu celular. Sem planilha, sem contador,
+          sem mensalidade.
+        </p>
+
+        {/* Ação: CTA + preço colados */}
+        <div className="mt-10 inline-flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden shadow-plate border border-[color:var(--leaf)]/25 max-w-full">
+          <a
+            href="#comprar"
+            className="bg-leaf text-paper-2 px-7 py-5 font-display font-extrabold text-[18px] flex items-center justify-center gap-3 hover:bg-leaf-2 transition-colors"
+          >
+            Colocar meu cardápio no verde
+            <span aria-hidden>→</span>
+          </a>
+          <div className="bg-[#fff8ea] px-6 py-4 flex sm:flex-col items-center sm:items-start justify-between sm:justify-center gap-2 border-t sm:border-t-0 sm:border-l border-[color:var(--leaf)]/20">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[color:var(--muted-brand)]">
+              <span className="line-through">R$ 169</span> · vitalício
             </span>
-
-            <h1 className="font-serif text-[44px] md:text-[64px] leading-[0.95] mt-6 text-ink">
-              Descubra em uma tarde qual prato do seu{" "}
-              <span className="text-leaf-2">cardápio</span> está te dando{" "}
-              <span className="relative inline-block">
-                <span className="relative z-10">prejuízo</span>
-                <span
-                  aria-hidden
-                  className="absolute left-0 right-0 bottom-1 h-3 bg-[color:var(--receipt)]/60 -z-0"
-                />
-              </span>
-              .
-            </h1>
-
-            <p className="mt-6 text-[18px] md:text-[19px] leading-relaxed text-[color:var(--muted-brand)] max-w-[560px]">
-              O <b className="text-ink">Cardápio no Verde</b> é o app simples,
-              feito pra dono de restaurante que não é gerente financeiro:
-              você digita o prato, ele te devolve o custo real, o preço certo e
-              quanto sobra no seu bolso — sem planilha, sem contador, sem
-              enrolação.
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <a
-                href={CHECKOUT_URL}
-                className="inline-flex items-center gap-2 rounded-2xl bg-leaf text-paper-2 px-6 py-4 font-extrabold text-[16px] shadow-plate hover:bg-leaf-2 transition-colors"
-              >
-                Quero meu cardápio no verde
-                <span aria-hidden>→</span>
-              </a>
-              <div className="flex flex-col">
-                <span className="text-[13px] text-[color:var(--muted-brand)] line-through">
-                  De R$ 169,00
-                </span>
-                <span className="font-display font-extrabold text-leaf text-[22px] leading-none">
-                  Por R$ 59 <span className="text-[13px] text-[color:var(--muted-brand)] font-bold">à vista · uma única vez</span>
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-8 flex flex-wrap gap-2">
-              {[
-                "Funciona no celular",
-                "Sem mensalidade",
-                "Sem cadastro chato",
-                "Feito por quem entende de cozinha",
-              ].map((t) => (
-                <span
-                  key={t}
-                  className="text-[13px] font-bold text-leaf border border-[color:var(--leaf)]/20 bg-[#fffaf0] px-3 py-1.5 rounded-full"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
+            <span className="font-serif text-leaf text-[34px] leading-none">
+              R$ 59
+            </span>
           </div>
         </div>
 
-        {/* Phone mockup */}
-        <PhoneMock />
+        {/* linha de confiança minúscula */}
+        <div className="mt-6 text-[13px] text-[color:var(--muted-brand)] font-semibold">
+          Pagamento único · 7 dias de garantia · uso pra sempre
+        </div>
       </div>
     </section>
   );
 }
 
-function PhoneMock() {
-  return (
-    <div className="relative flex justify-center">
-      <div
-        className="w-full max-w-[400px] rounded-[34px] overflow-hidden text-paper-2 shadow-paper"
-        style={{ background: "#123f2b", minHeight: 620 }}
-      >
-        {/* topbar */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
-          <div className="flex items-center gap-2 font-display font-extrabold text-[16px]">
-            <LogoMark className="w-8 h-8" />
-            Cardápio no Verde
-          </div>
-          <div className="w-9 h-9 rounded-xl bg-white/10 grid place-items-center border border-white/15">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          </div>
-        </div>
-
-        <div className="px-6 pt-6 pb-8">
-          <div className="text-[11px] font-extrabold tracking-widest text-[#cbd9b9] uppercase">
-            Meus pratos
-          </div>
-          <h3 className="font-serif text-[34px] leading-none mt-2">
-            Cardápio no verde.
-          </h3>
-          <p className="text-white/70 mt-3 text-[14px]">
-            Cada prato vira uma etiqueta fácil de bater o olho.
-          </p>
-
-          {/* Prato verde */}
-          <div className="mt-5 rounded-2xl bg-[#fffaf0] text-ink p-4 relative overflow-hidden border border-[color:var(--line)]">
-            <span className="absolute left-0 top-0 bottom-0 w-2 bg-leaf-2" />
-            <div className="pl-3">
-              <div className="font-extrabold text-[18px]">X-salada da casa</div>
-              <div className="text-[13px] text-[color:var(--muted-brand)] font-semibold">
-                vende a R$ 28,00 · sobra 18%
-              </div>
-              <div className="grid grid-cols-2 gap-2 mt-3">
-                <div className="bg-[#f2e5c8] rounded-xl p-3">
-                  <div className="text-[10px] font-extrabold tracking-widest text-[color:var(--muted-brand)] uppercase">
-                    Custo
-                  </div>
-                  <div className="font-serif text-leaf text-[22px] mt-1">R$ 9,40</div>
-                </div>
-                <div className="bg-[#f2e5c8] rounded-xl p-3">
-                  <div className="text-[10px] font-extrabold tracking-widest text-[color:var(--muted-brand)] uppercase">
-                    Lucro
-                  </div>
-                  <div className="font-serif text-leaf text-[22px] mt-1">R$ 5,04</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Prato alerta */}
-          <div className="mt-3 rounded-2xl bg-[#fffaf0] text-ink p-4 relative overflow-hidden border border-[color:var(--line)]">
-            <span className="absolute left-0 top-0 bottom-0 w-2 bg-tomato" />
-            <div className="pl-3">
-              <div className="font-extrabold text-[18px]">Prato feito executivo</div>
-              <div className="text-[13px] text-tomato font-bold">
-                vende a R$ 31,90 · sobra só 7% · atenção
-              </div>
-              <div className="grid grid-cols-2 gap-2 mt-3">
-                <div className="bg-[#f2e5c8] rounded-xl p-3">
-                  <div className="text-[10px] font-extrabold tracking-widest text-[color:var(--muted-brand)] uppercase">
-                    Custo
-                  </div>
-                  <div className="font-serif text-leaf text-[22px] mt-1">R$ 14,20</div>
-                </div>
-                <div className="bg-[#f2e5c8] rounded-xl p-3">
-                  <div className="text-[10px] font-extrabold tracking-widest text-[color:var(--muted-brand)] uppercase">
-                    Lucro
-                  </div>
-                  <div className="font-serif text-tomato text-[22px] mt-1">R$ 2,23</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* -------------------- Dor: história curta -------------------- */
 function DorSection() {
