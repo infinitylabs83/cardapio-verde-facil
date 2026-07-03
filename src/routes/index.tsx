@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import heroOwner from "@/assets/hero-reference.png.asset.json";
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -13,27 +12,23 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "App para dono de restaurante calcular CMV, preço e lucro de cada prato em minutos. Acesso vitalício por R$ 59 (de R$ 169). Sem mensalidade.",
+          "Ferramenta para dono de restaurante calcular o custo real de cada prato em minutos. Semáforo de Margem: veja o que está no vermelho, amarelo e verde. Sem mensalidade.",
       },
-      {
-        property: "og:title",
-        content: "Cardápio no Verde — Seu cardápio no lucro",
-      },
+      { property: "og:title", content: "Cardápio no Verde — Seu cardápio no lucro" },
       {
         property: "og:description",
         content:
-          "Zere o prejuízo escondido no seu cardápio em uma tarde. Acesso vitalício por R$ 59.",
+          "Descubra qual prato do seu cardápio está no vermelho. Semáforo de Margem em minutos.",
       },
     ],
   }),
   component: LandingPage,
 });
 
-const CHECKOUT_URL = "#comprar";
+const CTA_ANCHOR = "#oferta";
 
 /* -------------------- Marca -------------------- */
 function LogoMark({ className = "w-10 h-10" }: { className?: string }) {
-  // Prato visto de cima com uma folha — símbolo direto de "cardápio + verde"
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
       <circle cx="32" cy="32" r="30" fill="#fff8ea" stroke="#123f2b" strokeWidth="3" />
@@ -54,23 +49,6 @@ function LogoMark({ className = "w-10 h-10" }: { className?: string }) {
   );
 }
 
-
-function Wordmark() {
-  return (
-    <div className="flex items-center gap-3">
-      <LogoMark className="w-11 h-11" />
-      <div className="leading-[0.9]">
-        <div className="font-display font-extrabold text-[20px] text-leaf tracking-tight">
-          Cardápio
-        </div>
-        <div className="font-display font-extrabold text-[20px] text-leaf-2 tracking-tight">
-          no Verde
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* -------------------- Header -------------------- */
 function Header() {
   return (
@@ -88,10 +66,10 @@ function Header() {
           </div>
         </div>
         <a
-          href={CHECKOUT_URL}
+          href={CTA_ANCHOR}
           className="hidden sm:inline-flex items-center gap-2 rounded-full bg-paper-2 text-leaf px-4 py-2 font-extrabold text-[13px] hover:bg-receipt transition-colors"
         >
-          Quero acesso por R$ 59
+          Quero ver o custo real do meu cardápio
           <span aria-hidden>→</span>
         </a>
       </div>
@@ -111,32 +89,32 @@ function Hero() {
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage: `url("${heroOwner.url}")`,
-          backgroundSize: "auto 100%",
-          backgroundPosition: "right center",
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
         }}
       />
-      {/* Gradiente verde da esquerda pra direita (desktop) — mais suave pra fundir foto no fundo */}
+      {/* Gradiente da esquerda pra direita (desktop) */}
       <div
         aria-hidden
         className="absolute inset-0 hidden md:block pointer-events-none"
         style={{
           background:
-            "linear-gradient(90deg, rgba(6,58,38,0.97) 0%, rgba(6,58,38,0.88) 18%, rgba(6,58,38,0.72) 34%, rgba(6,58,38,0.48) 52%, rgba(6,58,38,0.22) 68%, rgba(6,58,38,0.08) 80%, rgba(6,58,38,0) 90%)",
+            "linear-gradient(90deg, rgba(6,58,38,0.94) 0%, rgba(6,58,38,0.82) 22%, rgba(6,58,38,0.55) 44%, rgba(6,58,38,0.28) 62%, rgba(6,58,38,0.08) 80%, rgba(6,58,38,0) 92%)",
         }}
       />
-      {/* Overlay mobile — foto ao fundo mais coberta */}
+      {/* Overlay mobile */}
       <div
         aria-hidden
         className="absolute inset-0 md:hidden pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, rgba(6,58,38,0.96) 0%, rgba(6,58,38,0.88) 45%, rgba(6,58,38,0.75) 100%)",
+            "linear-gradient(180deg, rgba(6,58,38,0.94) 0%, rgba(6,58,38,0.86) 45%, rgba(6,58,38,0.75) 100%)",
         }}
       />
 
-      <div className="relative z-10 w-full max-w-[1320px] mx-auto px-5 md:pl-10 md:pr-5 pt-24 md:pt-28 pb-16 md:pb-20">
-        <div className="w-full md:w-[78%] max-w-[1080px]">
+      <div className="relative z-10 w-full max-w-[1320px] mx-auto px-5 md:pl-10 md:pr-5 pt-24 md:pt-24 pb-16 md:pb-20">
+        <div className="w-full md:w-[70%] max-w-[860px]">
           {/* etiqueta topo */}
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-receipt">
@@ -146,9 +124,10 @@ function Hero() {
             <span className="h-px flex-1 bg-paper-2/25 max-w-[320px]" />
           </div>
 
-          {/* Headline */}
-          <h1 className="font-serif mt-6 text-paper-2 text-[46px] leading-[0.95] sm:text-[64px] md:text-[78px] lg:text-[88px] md:leading-[0.95] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
-            Tem prato no seu cardápio dando{" "}
+          {/* Headline em 3 linhas */}
+          <h1 className="font-serif mt-6 text-paper-2 text-[44px] leading-[0.98] sm:text-[58px] md:text-[68px] lg:text-[76px] md:leading-[0.98] [text-shadow:0_2px_24px_rgba(0,0,0,0.5)]">
+            Tem prato no seu cardápio<br />
+            dando{" "}
             <span className="relative inline-block">
               <span className="relative z-10 text-tomato italic">prejuízo</span>
               <svg
@@ -166,38 +145,30 @@ function Hero() {
                 />
               </svg>
             </span>
-            .{" "}
+            .<br />
             <span className="text-receipt">Você só não sabe qual.</span>
           </h1>
 
-          {/* Sub-linha */}
-          <p className="mt-8 md:mt-10 font-display font-semibold text-[18px] md:text-[21px] leading-snug text-paper-2/95 max-w-[560px] [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]">
-            Descubra em uma tarde. No seu celular. Sem planilha, sem contador,
-            sem mensalidade.
+          {/* Subheadline */}
+          <p className="mt-7 md:mt-9 font-display font-semibold text-[17px] md:text-[20px] leading-snug text-paper-2/95 max-w-[620px] [text-shadow:0_1px_12px_rgba(0,0,0,0.4)]">
+            Um erro de R$ 3 no custo de um prato que sai 40 vezes por semana já
+            é R$ 480 evaporando todo mês, sem aparecer em nenhum relatório que
+            você olha hoje.
           </p>
 
-          {/* CTA + preço */}
-          <div className="mt-8 md:mt-10 inline-flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden shadow-plate max-w-full">
+          {/* CTA único, sem preço */}
+          <div className="mt-8">
             <a
-              href="#comprar"
-              className="bg-paper-2 text-leaf px-7 py-5 font-display font-extrabold text-[18px] flex items-center justify-center gap-3 hover:bg-receipt transition-colors"
+              href={CTA_ANCHOR}
+              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-paper-2 text-leaf px-8 py-5 font-display font-extrabold text-[17px] md:text-[18px] shadow-plate hover:bg-receipt transition-colors"
             >
-              Colocar meu cardápio no verde
+              Quero ver o custo real do meu cardápio
               <span aria-hidden>→</span>
             </a>
-            <div className="bg-leaf-2 px-6 py-4 flex sm:flex-col items-center sm:items-start justify-between sm:justify-center gap-2 border-t sm:border-t-0 sm:border-l border-paper-2/20">
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-paper-2/80">
-                <span className="line-through opacity-70">R$ 169</span> · vitalício
-              </span>
-              <span className="font-serif text-receipt text-[34px] leading-none">
-                R$ 59
-              </span>
-            </div>
           </div>
 
-          {/* linha de confiança */}
-          <div className="mt-6 text-[13px] text-paper-2/80 font-semibold">
-            Pagamento único · 7 dias de garantia · uso pra sempre
+          <div className="mt-5 text-[13px] text-paper-2/80 font-semibold">
+            Sem planilha · sem contador · sem mensalidade
           </div>
         </div>
       </div>
@@ -205,66 +176,52 @@ function Hero() {
   );
 }
 
-
-
-
-
-/* -------------------- Dor: história curta -------------------- */
-function DorSection() {
+/* -------------------- Bullets + Vídeo demo -------------------- */
+function BulletsDemo() {
+  const bullets = [
+    "O fornecedor reajustou o insumo há meses e o preço do prato continua o mesmo. Em poucos minutos você descobre qual item já está no vermelho e corrige antes do próximo fechamento.",
+    "Aquela promoção que enche o salão pode estar pagando para o cliente comer. Com o custo real na tela, você decide o desconto sabendo exatamente quanto sobra por prato vendido.",
+    "Reajustar no achismo assusta o cliente, e reajustar de menos come sua margem em silêncio. Com o número certo na mão, você define o preço com segurança e ainda sabe justificar o valor.",
+  ];
   return (
     <section className="bg-[color:var(--paper-2)] border-y border-[color:var(--line)]">
-      <div className="max-w-4xl mx-auto px-5 py-16 md:py-24">
-        <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
-          Se você é dono de restaurante, isso já aconteceu
-        </div>
-        <h2 className="font-serif text-[38px] md:text-[52px] leading-[0.98] mt-4">
-          O mês fecha, o caixa some, e ninguém sabe explicar pra onde foi o dinheiro.
-        </h2>
-        <div className="mt-8 grid md:grid-cols-2 gap-6">
-          <ul className="space-y-4 text-[17px] leading-relaxed">
-            {[
-              "O fornecedor reajustou o preço há 4 meses e você só percebeu agora.",
-              "Você chuta o preço do prato novo olhando o concorrente da esquina.",
-              "A planilha do Excel ficou desatualizada e ninguém mexe mais nela.",
-              "Você trabalha 12 horas por dia e não sabe dizer quanto sobrou por prato vendido.",
-            ].map((t) => (
-              <li key={t} className="flex gap-3">
-                <span className="mt-2 w-2 h-2 rounded-full bg-tomato flex-shrink-0" />
-                <span>{t}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="paper-card rounded-2xl p-6 relative">
-            <div className="text-[11px] font-extrabold tracking-widest text-leaf uppercase">
-              Raio-X de cada R$ 100 que entra
+      <div className="max-w-6xl mx-auto px-5 py-16 md:py-20 grid md:grid-cols-2 gap-10 items-center">
+        <ul className="space-y-6">
+          {bullets.map((b, i) => (
+            <li key={i} className="flex gap-4">
+              <span className="mt-1 w-8 h-8 rounded-full bg-leaf text-paper-2 grid place-items-center flex-shrink-0 font-display font-extrabold text-[14px]">
+                {i + 1}
+              </span>
+              <p className="text-[16px] md:text-[17px] leading-relaxed text-ink">
+                {b}
+              </p>
+            </li>
+          ))}
+          <div className="pt-2">
+            <a
+              href={CTA_ANCHOR}
+              className="inline-flex items-center gap-3 rounded-2xl bg-leaf text-paper-2 px-6 py-4 font-display font-extrabold text-[16px] hover:bg-leaf-2 transition-colors"
+            >
+              Quero ver o custo real do meu cardápio
+              <span aria-hidden>→</span>
+            </a>
+          </div>
+        </ul>
+
+        {/* Placeholder de vídeo demo 30-60s */}
+        <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border-2 border-dashed border-[color:var(--leaf)]/40 bg-[color:var(--paper)] grid place-items-center text-center p-6">
+          <div>
+            <div className="w-16 h-16 rounded-full bg-leaf text-paper-2 grid place-items-center mx-auto shadow-plate">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path d="M8 5v14l11-7z" />
+              </svg>
             </div>
-            <div className="mt-4 flex items-end gap-3">
-              <div className="font-serif text-leaf text-[72px] leading-[0.8]">41%</div>
-              <div className="text-[color:var(--muted-brand)] font-extrabold pb-2">
-                já sai
-              </div>
+            <div className="mt-4 text-[12px] font-extrabold uppercase tracking-widest text-leaf-2">
+              Vídeo demo · 30 a 60 segundos
             </div>
-            <div className="mt-4 space-y-2">
-              {[
-                ["Contas do mês", "R$ 30"],
-                ["Impostos", "R$ 9"],
-                ["Maquininha", "R$ 2"],
-                ["Sobra para ingredientes e bolso", "R$ 59"],
-              ].map(([k, v], i) => (
-                <div
-                  key={k}
-                  className={`flex justify-between py-2 font-bold ${
-                    i === 0 ? "" : "receipt-dashed"
-                  }`}
-                >
-                  <span>{k}</span>
-                  <span className="text-leaf">{v}</span>
-                </div>
-              ))}
-            </div>
-            <p className="mt-4 text-[13px] text-[color:var(--muted-brand)]">
-              Antes dos ingredientes entrarem na conta, essa fatia já tem dono.
-              Se você não sabe disso prato a prato, está no escuro.
+            <p className="mt-2 text-[14px] text-[color:var(--muted-brand)] leading-relaxed max-w-[320px] mx-auto">
+              Gravação de tela da ferramenta em uso: dono digita os ingredientes,
+              semáforo acende vermelho, ajusta o preço, fica verde.
             </p>
           </div>
         </div>
@@ -273,48 +230,161 @@ function DorSection() {
   );
 }
 
-/* -------------------- Solução: 3 passos -------------------- */
-function ComoFunciona() {
+/* -------------------- Bloco 02: Dor (história longa) -------------------- */
+function DorSection() {
+  const paragrafos = [
+    "São 23h de terça-feira. O salão já fechou, a cozinha limpou o último balcão, e você senta com o celular pra somar as vendas do dia no aplicativo do banco. O número parece bom. Mas você não sabe dizer, prato por prato, quanto daquele total virou lucro de verdade.",
+    "Faz três meses que o fornecedor de carne reajustou o quilo do contrafilé. Você lembra vagamente de ter visto o boleto mais alto naquele mês, resmungou, pagou e seguiu em frente. O preço do prato no cardápio continua o mesmo desde então. Ninguém avisou, porque ninguém ia avisar. Fornecedor não liga pra te contar que seu prato ficou mais caro de fazer.",
+    "No fim de semana, o prato mais pedido do cardápio esgota antes das 21h. Você fica feliz com o movimento, tira foto pra postar no Instagram da loja. O que você não vê é que, se aquele prato específico está no vermelho por causa do reajuste que passou despercebido, quanto mais ele vende, mais dinheiro sai do seu bolso, não entra.",
+    "Você já tentou resolver isso com planilha. Abriu uma no Google Sheets, colocou fórmula, preencheu com capricho na primeira semana. Na segunda, o movimento do salão engoliu o tempo. Na terceira, você nem lembrava mais que a planilha existia. Ela não te avisa quando o preço do óleo sobe. Ela só fica lá, parada, mostrando um número que já não é mais verdade.",
+    "O motivo disso não é falta de organização sua. É que ninguém te ensinou a calcular ficha técnica com o preço do insumo mudando toda semana, e nenhuma ferramenta te avisa quando a conta que você fez no lançamento do cardápio deixou de valer. O problema não é você, é que o custo do seu prato é um alvo em movimento e você está mirando parado.",
+  ];
+  return (
+    <section className="bg-[color:var(--paper)] border-b border-[color:var(--line)]">
+      <div className="max-w-3xl mx-auto px-5 py-16 md:py-24">
+        <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
+          Se você é dono de restaurante, isso já aconteceu
+        </div>
+        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4">
+          O mês fecha, o caixa some, e ninguém sabe explicar pra onde foi o dinheiro.
+        </h2>
+        <div className="mt-8 space-y-6 text-[17px] leading-relaxed text-ink">
+          {paragrafos.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------- Bloco 03: Prova social curta -------------------- */
+function ProvaCurta() {
+  const stories = [
+    {
+      nome: "Roberto Alencar",
+      texto:
+        "Vendia o prato executivo há dois anos sem nunca ter revisado o preço desde o lançamento. Ao calcular o custo real, descobriu que perdia R$ 4,50 em cada unidade vendida. Ajustou o cardápio em uma tarde e recuperou R$ 1.200 de margem já no mês seguinte.",
+    },
+    {
+      nome: "Fernanda Costa",
+      texto:
+        "Achava que o problema do restaurante era falta de movimento. Ao revisar os cinco pratos mais vendidos, viu que dois deles saíam abaixo do custo. Corrigiu o preço sem perder cliente e fechou o mês seguinte com R$ 2.100 a mais no caixa.",
+    },
+    {
+      nome: "Diego Martins",
+      texto:
+        "Usava planilha havia um ano e confiava nela. Ao testar o simulador com o prato mais vendido da casa, percebeu que o preço do insumo tinha subido três vezes desde a última atualização. Reajustou o cardápio inteiro em uma hora.",
+    },
+  ];
+  return (
+    <section className="bg-[color:var(--paper-2)] border-b border-[color:var(--line)]">
+      <div className="max-w-6xl mx-auto px-5 py-16 md:py-20">
+        <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
+          Quem já usou
+        </div>
+        <h2 className="font-serif text-[32px] md:text-[42px] leading-[1] mt-3 max-w-3xl">
+          O que mudou pra quem colocou os números na mesa.
+        </h2>
+        <div className="mt-10 grid md:grid-cols-3 gap-5">
+          {stories.map((s) => (
+            <div key={s.nome} className="paper-card rounded-3xl p-6 flex flex-col">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--receipt)" aria-hidden>
+                <path d="M7 7h4v4H7c0 3 1 4 4 4v3c-5 0-8-2-8-7V7Zm10 0h4v4h-4c0 3 1 4 4 4v3c-5 0-8-2-8-7V7Z" />
+              </svg>
+              <p className="mt-4 text-[15px] leading-relaxed text-ink flex-1">
+                {s.texto}
+              </p>
+              <div className="mt-5 pt-4 border-t border-[color:var(--line)]">
+                <div className="font-extrabold text-leaf">{s.nome}</div>
+                <div className="text-[11px] uppercase tracking-widest text-[color:var(--muted-brand)] mt-1">
+                  Depoimento modelo
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------- Bloco 04: CTA intermediário -------------------- */
+function CTAIntermediario() {
+  return (
+    <section className="bg-leaf text-paper-2">
+      <div className="max-w-4xl mx-auto px-5 py-16 md:py-20 text-center">
+        <h2 className="font-serif text-[32px] md:text-[44px] leading-[1.05] text-paper-2">
+          Se você chegou até aqui achando que pode ser o seu caso, dá pra
+          descobrir em menos tempo do que leva pra fritar a primeira batata do
+          turno.
+        </h2>
+        <div className="mt-8">
+          <a
+            href={CTA_ANCHOR}
+            className="inline-flex items-center gap-3 rounded-2xl bg-paper-2 text-leaf px-8 py-5 font-display font-extrabold text-[17px] shadow-plate hover:bg-receipt transition-colors"
+          >
+            Quero descobrir qual prato está no vermelho
+            <span aria-hidden>→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------- Bloco 05: Método -------------------- */
+function Metodo() {
   const steps = [
     {
       n: "01",
-      t: "Cadastre um prato em minutos",
-      d: "Nome do prato, os ingredientes que ele usa e a quantidade. O app calcula o custo real sozinho.",
+      t: "Ficha técnica rápida",
+      d: "Você lista os ingredientes do prato e a quantidade de cada um, do jeito que já usa na cozinha.",
     },
     {
       n: "02",
-      t: "Veja o preço certo — e o preço ideal",
-      d: "O Cardápio no Verde te mostra quanto você deveria cobrar para bater a margem que você define. Nada de chute.",
+      t: "Cálculo automático do CMV",
+      d: "O simulador soma o custo real de cada ingrediente e mostra o percentual que ele representa no preço de venda.",
     },
     {
       n: "03",
-      t: "Bata o olho e saiba quem dá lucro",
-      d: "Cada prato vira uma etiqueta: verde (no lucro), amarela (apertado), vermelha (no prejuízo). Simples assim.",
+      t: "Semáforo de lucratividade",
+      d: "Cada prato recebe vermelho, amarelo ou verde, então você enxerga o cardápio inteiro de uma vez, sem precisar entender fórmula nenhuma.",
+    },
+    {
+      n: "04",
+      t: "Preço sugerido",
+      d: "Pra prato no vermelho ou amarelo, a ferramenta mostra o preço que colocaria aquele item na faixa verde, considerando a margem que você define.",
     },
   ];
   return (
     <section className="max-w-6xl mx-auto px-5 py-16 md:py-24">
-      <div className="max-w-2xl">
+      <div className="max-w-3xl">
         <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
           Como funciona
         </div>
-        <h2 className="font-serif text-[38px] md:text-[52px] leading-[0.98] mt-4">
-          Três passos entre o seu cardápio e o lucro real.
+        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4">
+          Semáforo de Margem: três cores, uma decisão.
         </h2>
+        <p className="mt-5 text-[16px] md:text-[17px] leading-relaxed text-[color:var(--muted-brand)]">
+          Você digita os ingredientes de um prato e a quantidade de cada um.
+          O simulador calcula o CMV — o custo real daquele prato específico —
+          e mostra o resultado em três cores. <strong className="text-tomato">Vermelho</strong> é prato no prejuízo.{" "}
+          <strong className="text-[#c99b1a]">Amarelo</strong> é margem apertada, sobrevivendo sem folga.{" "}
+          <strong className="text-leaf-2">Verde</strong> é prato saudável, com espaço de lucro real.
+          Não é opinião, é o cálculo puro em cima do que você mesmo informou.
+        </p>
       </div>
-      <div className="mt-10 grid md:grid-cols-3 gap-5">
+      <div className="mt-10 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
         {steps.map((s) => (
-          <div
-            key={s.n}
-            className="paper-card rounded-3xl p-6 flex flex-col gap-3 relative overflow-hidden"
-          >
-            <div className="font-serif text-[72px] leading-none text-[color:var(--receipt)]">
+          <div key={s.n} className="paper-card rounded-3xl p-6 flex flex-col gap-3">
+            <div className="font-serif text-[64px] leading-none text-[color:var(--receipt)]">
               {s.n}
             </div>
-            <h3 className="font-display text-[22px] font-extrabold text-leaf">
+            <h3 className="font-display text-[20px] font-extrabold text-leaf">
               {s.t}
             </h3>
-            <p className="text-[15px] text-[color:var(--muted-brand)] leading-relaxed">
+            <p className="text-[14px] text-[color:var(--muted-brand)] leading-relaxed">
               {s.d}
             </p>
           </div>
@@ -324,209 +394,282 @@ function ComoFunciona() {
   );
 }
 
-/* -------------------- Benefícios -------------------- */
-function Beneficios() {
-  const items = [
-    { t: "Zere prato no prejuízo", d: "Descubra em minutos quais itens do cardápio saem no vermelho e corrija o preço na semana." },
-    { t: "Precifique com segurança", d: "Pare de chutar. Ponha custo, margem desejada e receba o preço certo pra cobrar." },
-    { t: "Reaja rápido a reajuste de fornecedor", d: "Mudou o preço do insumo? Você recalcula todos os pratos afetados em minutos, não dias." },
-    { t: "Cardápio novo sem medo", d: "Antes de lançar o prato novo, o app te diz se ele fecha conta ou não." },
-    { t: "Negocie melhor com fornecedor", d: "Você sabe o peso real de cada insumo no custo. Chega de aceitar aumento sem argumento." },
-    { t: "Fim do achismo", d: "Você para de dizer 'acho que dá lucro' e passa a dizer 'sobra R$ 5,04 por prato'." },
+/* -------------------- Bloco 06: Para quem é / não é -------------------- */
+function ParaQuemE() {
+  const paraQuem = [
+    "Dono ou sócio de restaurante, lanchonete, hamburgueria ou self-service pequeno, que monta o preço do cardápio olhando o concorrente ou no instinto",
+    "Quem já reajustou o preço de um insumo no boleto do fornecedor, mas nunca reajustou o preço do prato depois disso",
+    "Quem tentou manter uma planilha de custo e parou de atualizar depois da segunda ou terceira semana",
+    "Sócios que abriram o restaurante há pouco tempo e ainda não organizaram o financeiro entre os dois",
+    "Quem quer lançar um prato novo no cardápio e não sabe que preço colocar sem chutar",
+    "Dono de rede pequena com duas ou três unidades que desconfia que alguma loja vende prato no prejuízo sem ele saber",
+  ];
+  const naoE = [
+    "Redes grandes que já têm sistema de gestão completo com módulo de custo integrado",
+    "Quem procura curso longo de gestão financeira, não uma ferramenta de uso rápido",
+    "Negócios fora do setor de alimentação, que não trabalham com ficha técnica de prato",
+    "Quem não está disposto a informar o custo real dos próprios ingredientes na ferramenta",
   ];
   return (
     <section className="bg-[color:var(--paper-2)] border-y border-[color:var(--line)]">
-      <div className="max-w-6xl mx-auto px-5 py-16 md:py-24">
-        <div className="max-w-2xl">
+      <div className="max-w-6xl mx-auto px-5 py-16 md:py-24 grid md:grid-cols-2 gap-8">
+        <div className="rounded-3xl bg-[color:var(--paper)] border border-[color:var(--line)] p-8">
           <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
-            O que muda no seu restaurante
+            Pra quem é
           </div>
-          <h2 className="font-serif text-[38px] md:text-[52px] leading-[0.98] mt-4">
-            Um aplicativo. Uma tarde. Um cardápio inteiro no verde.
-          </h2>
+          <h3 className="font-serif text-[28px] md:text-[32px] leading-tight mt-3">
+            Se você se reconhece aqui, o Semáforo foi feito pro seu dia a dia.
+          </h3>
+          <ul className="mt-6 space-y-3">
+            {paraQuem.map((t) => (
+              <li key={t} className="flex gap-3 text-[15px] leading-relaxed text-ink">
+                <span className="mt-1 w-5 h-5 rounded-full bg-leaf-2 text-paper-2 grid place-items-center flex-shrink-0">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+                {t}
+              </li>
+            ))}
+          </ul>
         </div>
-        <div className="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {items.map((b) => (
-            <div
-              key={b.t}
-              className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--paper)] p-6"
-            >
-              <div className="flex items-center gap-2 text-leaf-2">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                <span className="text-[11px] font-extrabold tracking-widest uppercase">Benefício</span>
-              </div>
-              <h3 className="font-display text-[20px] font-extrabold text-ink mt-2">
-                {b.t}
-              </h3>
-              <p className="text-[15px] text-[color:var(--muted-brand)] leading-relaxed mt-2">
-                {b.d}
-              </p>
-            </div>
-          ))}
+        <div className="rounded-3xl bg-[color:var(--paper)] border border-[color:var(--line)] p-8">
+          <div className="text-[12px] font-extrabold tracking-widest text-tomato uppercase">
+            Pra quem não é
+          </div>
+          <h3 className="font-serif text-[28px] md:text-[32px] leading-tight mt-3">
+            Se você está nestes casos, provavelmente não vai fazer sentido.
+          </h3>
+          <ul className="mt-6 space-y-3">
+            {naoE.map((t) => (
+              <li key={t} className="flex gap-3 text-[15px] leading-relaxed text-ink">
+                <span className="mt-1 w-5 h-5 rounded-full bg-tomato text-paper-2 grid place-items-center flex-shrink-0">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </span>
+                {t}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
   );
 }
 
-/* -------------------- Prova por persona -------------------- */
-function ProvaSocial() {
-  const stories = [
+/* -------------------- Bloco 07 + 09: Entregáveis / Stack de valor -------------------- */
+function Entregaveis() {
+  const items = [
     {
-      nome: "Marcos, restaurante de bairro",
-      texto:
-        "Usei planilha por 3 anos achando que tava tudo certo. Numa tarde, revisei o cardápio no app e descobri que 3 pratos tavam vendendo abaixo do custo desde o último reajuste do fornecedor. Ajustei o preço e no mês seguinte sobrou R$ 2.400 a mais no caixa.",
-      cargo: "Comida caseira · MG",
+      t: "Acesso ao Semáforo de Margem",
+      d: "Ferramenta web de página única. Calcula o CMV de qualquer prato e mostra o resultado em vermelho, amarelo ou verde na hora.",
+      v: "R$ 97",
     },
     {
-      nome: "Carolina, self-service",
-      texto:
-        "Sou eu, minha mãe e uma ajudante. Não tenho tempo pra curso de gestão. Peguei um domingo de manhã, cadastrei 12 pratos e já saí sabendo quais dois estavam me dando prejuízo. Mudei o preço na segunda.",
-      cargo: "Self-service · SP",
+      t: "Cálculo de preço sugerido por prato",
+      d: "Pra todo item que cair no vermelho ou amarelo, a ferramenta mostra o preço que colocaria o prato na faixa verde, considerando a margem que você define.",
+      v: "R$ 47",
     },
     {
-      nome: "Pedro, hamburgueria",
-      texto:
-        "Ia contratar um sistema de gestão de R$ 220/mês pra resolver isso. O Cardápio no Verde resolveu o meu problema principal — saber o preço certo de cada lanche — por menos que uma diária do sistema.",
-      cargo: "Hamburgueria · RS",
+      t: "Revisão ilimitada de cardápio",
+      d: "Sem limite de pratos, sem limite de vezes que você recalcula. Toda vez que o fornecedor reajustar um insumo, você volta e refaz o cálculo.",
+      v: "R$ 47",
+    },
+    {
+      t: "Acesso único, sem mensalidade",
+      d: "Você paga uma vez e usa o simulador quantas vezes quiser, para sempre.",
+      v: "R$ 37",
     },
   ];
   return (
     <section className="max-w-6xl mx-auto px-5 py-16 md:py-24">
-      <div className="max-w-2xl">
+      <div className="max-w-3xl">
         <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
-          Quem já colocou o cardápio no verde
+          O que você leva
         </div>
-        <h2 className="font-serif text-[38px] md:text-[52px] leading-[0.98] mt-4">
-          Feito por gente de restaurante, pra gente de restaurante.
+        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4">
+          Quatro componentes. Um pagamento único.
         </h2>
       </div>
-      <div className="mt-10 grid md:grid-cols-3 gap-5">
-        {stories.map((s) => (
-          <div
-            key={s.nome}
-            className="paper-card rounded-3xl p-6 flex flex-col"
-          >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--receipt)" aria-hidden>
-              <path d="M7 7h4v4H7c0 3 1 4 4 4v3c-5 0-8-2-8-7V7Zm10 0h4v4h-4c0 3 1 4 4 4v3c-5 0-8-2-8-7V7Z"/>
-            </svg>
-            <p className="mt-4 text-[15px] leading-relaxed text-ink flex-1">
-              “{s.texto}”
-            </p>
-            <div className="mt-5 pt-4 border-t border-[color:var(--line)]">
-              <div className="font-extrabold text-leaf">{s.nome}</div>
-              <div className="text-[13px] text-[color:var(--muted-brand)]">
-                {s.cargo}
-              </div>
+      <div className="mt-10 grid md:grid-cols-2 gap-5">
+        {items.map((i) => (
+          <div key={i.t} className="paper-card rounded-3xl p-6 flex flex-col">
+            <div className="flex items-start justify-between gap-4">
+              <h3 className="font-display text-[20px] font-extrabold text-leaf">
+                {i.t}
+              </h3>
+              <span className="text-[13px] font-extrabold uppercase tracking-widest text-[color:var(--muted-brand)] whitespace-nowrap">
+                Vale {i.v}
+              </span>
             </div>
+            <p className="mt-3 text-[15px] text-[color:var(--muted-brand)] leading-relaxed">
+              {i.d}
+            </p>
           </div>
         ))}
+      </div>
+
+      {/* Stack de valor */}
+      <div className="mt-10 rounded-3xl bg-[#fff8ea] border border-[color:var(--line)] overflow-hidden shadow-plate max-w-2xl mx-auto">
+        <div className="bg-[#f0dfb8] px-5 py-3 flex items-center justify-between text-leaf font-extrabold">
+          <span>Stack de valor</span>
+          <span className="text-[12px] uppercase tracking-widest">recibo</span>
+        </div>
+        <div className="p-6 space-y-2 text-[15px]">
+          {items.map((i) => (
+            <div key={i.t} className="flex justify-between py-2 receipt-dashed font-bold">
+              <span className="text-ink">{i.t}</span>
+              <span className="text-leaf">{i.v}</span>
+            </div>
+          ))}
+          <div className="flex justify-between pt-4 mt-2 border-t-2 border-leaf font-display font-extrabold text-[17px]">
+            <span className="text-ink">Valor total dos componentes</span>
+            <span className="text-leaf">R$ 228</span>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* -------------------- Comparativo -------------------- */
-function Comparativo() {
-  const rows = [
-    ["Calcula o custo real de cada prato", true, "Depende de fórmula manual", false],
-    ["Recalcula o cardápio quando o insumo sobe", true, false, false],
-    ["Etiqueta visual: verde, amarela, vermelha", true, false, false],
-    ["Funciona no celular, sem instalar nada", true, false, false],
-    ["Mostra o preço ideal pra bater a margem", true, "Se você lembrar de mexer", "Só no fim do mês"],
-    ["Precisa de mensalidade", "Não", false, true],
-    ["Precisa de contador ou consultor", "Não", "Não", true],
+/* -------------------- Bloco 10: Depoimentos completos -------------------- */
+function DepoimentosCompletos() {
+  const items = [
+    {
+      antes:
+        "Tocava um restaurante de bairro havia três anos, usava planilha própria e achava que estava tudo sob controle, até o mês fechar com um resultado bem abaixo do esperado apesar do salão cheio.",
+      virada:
+        "Revisou o cardápio inteiro com o Semáforo de Margem numa tarde de segunda-feira, prato por prato.",
+      resultado:
+        "Descobriu que o prato principal, o mais pedido da casa, estava no vermelho havia quatro meses. Ajustou o preço e recuperou R$ 1.200 de margem já no mês seguinte.",
+    },
+    {
+      antes:
+        "Dividia a gestão do restaurante com o sócio, sem padrão definido de precificação, e vivia discussão sobre se o negócio realmente dava lucro.",
+      virada:
+        "Os dois sentaram juntos e rodaram o cardápio inteiro pelo simulador, olhando o mesmo número na tela.",
+      resultado:
+        "Encontraram dois pratos no amarelo e um no vermelho. Reajustaram os três em uma hora e pela primeira vez em oito meses fecharam o mês concordando sobre o resultado.",
+    },
+    {
+      antes:
+        "Administrava duas unidades pequenas e desconfiava que uma delas vendia prato no prejuízo, mas não tinha como provar isso sem abrir planilha separada pra cada loja.",
+      virada:
+        "Usou o simulador pra recalcular o cardápio das duas unidades no mesmo padrão, ainda no fim de semana.",
+      resultado:
+        "A unidade suspeita tinha três pratos vendidos abaixo do custo, um deles havia cinco meses. Corrigiu os preços nas duas lojas no mesmo dia.",
+    },
   ];
   return (
     <section className="bg-[color:var(--paper-2)] border-y border-[color:var(--line)]">
       <div className="max-w-5xl mx-auto px-5 py-16 md:py-24">
-        <div className="max-w-2xl">
-          <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
-            Comparação honesta
-          </div>
-          <h2 className="font-serif text-[38px] md:text-[52px] leading-[0.98] mt-4">
-            Por que não a planilha? Por que não um sistemão?
-          </h2>
+        <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
+          Antes · Virada · Resultado
         </div>
-        <div className="mt-8 overflow-x-auto">
-          <table className="w-full min-w-[640px] border-separate border-spacing-0 text-left">
-            <thead>
-              <tr>
-                <th className="p-4 text-[13px] font-extrabold uppercase tracking-widest text-[color:var(--muted-brand)]"></th>
-                <th className="p-4 bg-leaf text-paper-2 rounded-tl-2xl rounded-tr-2xl font-display font-extrabold">
-                  Cardápio no Verde
-                </th>
-                <th className="p-4 font-display font-extrabold text-ink">Planilha</th>
-                <th className="p-4 font-display font-extrabold text-ink">Sistemão gestão</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, i) => (
-                <tr key={i} className={i % 2 ? "bg-[color:var(--paper)]" : ""}>
-                  <td className="p-4 font-bold text-ink border-t border-[color:var(--line)]">
-                    {row[0] as string}
-                  </td>
-                  {row.slice(1).map((cell, j) => (
-                    <td
-                      key={j}
-                      className={`p-4 text-[14px] border-t border-[color:var(--line)] ${
-                        j === 0 ? "bg-[color:var(--leaf)]/5 font-extrabold text-leaf" : "text-[color:var(--muted-brand)]"
-                      }`}
-                    >
-                      {cell === true ? (
-                        <span className="inline-flex items-center gap-1 text-leaf-2 font-extrabold">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                          Sim
-                        </span>
-                      ) : cell === false ? (
-                        <span className="inline-flex items-center gap-1 text-tomato font-bold">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                          Não
-                        </span>
-                      ) : (
-                        cell
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4 max-w-3xl">
+          Não é sobre a ferramenta. É sobre o número certo aparecendo na tela.
+        </h2>
+        <div className="mt-10 space-y-6">
+          {items.map((it, i) => (
+            <div key={i} className="paper-card rounded-3xl p-6 md:p-8 grid md:grid-cols-3 gap-6">
+              <div>
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-[color:var(--muted-brand)]">
+                  Antes
+                </div>
+                <p className="mt-2 text-[14px] leading-relaxed text-ink">{it.antes}</p>
+              </div>
+              <div>
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-[color:var(--receipt)]">
+                  Virada
+                </div>
+                <p className="mt-2 text-[14px] leading-relaxed text-ink">{it.virada}</p>
+              </div>
+              <div>
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-leaf-2">
+                  Resultado
+                </div>
+                <p className="mt-2 text-[14px] leading-relaxed text-ink font-semibold">
+                  {it.resultado}
+                </p>
+              </div>
+            </div>
+          ))}
+          <p className="text-[12px] text-[color:var(--muted-brand)] italic">
+            Depoimentos modelo. Substituir por depoimentos reais.
+          </p>
         </div>
       </div>
     </section>
   );
 }
 
-/* -------------------- Objeções -------------------- */
-function Objecoes() {
+/* -------------------- Bloco 13: Autoridade -------------------- */
+function Autoridade() {
+  return (
+    <section className="bg-leaf text-paper-2">
+      <div className="max-w-4xl mx-auto px-5 py-16 md:py-24">
+        <div className="text-[12px] font-extrabold tracking-widest text-[color:var(--receipt)] uppercase">
+          Quem criou
+        </div>
+        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4 text-paper-2">
+          Feito por quem também sofre com esse problema na prática.
+        </h2>
+        <div className="mt-8 space-y-5 text-[16px] leading-relaxed text-paper-2/90">
+          <p>
+            O Cardápio no Verde foi criado por quem também sofre com esse
+            problema na prática, não só programou o cálculo e saiu vendendo.
+          </p>
+          <p>
+            O criador administra duas unidades de uma rede de sanduíches natural,
+            com cardápio próprio e ficha técnica de cada produto revisada por
+            dentro, não por planilha terceirizada. Foi enfrentando o mesmo
+            reajuste de fornecedor sem aviso, o mesmo prato que parecia vender
+            bem mas escondia margem apertada, que a ferramenta nasceu.
+          </p>
+          <p>
+            Não é um analista financeiro explicando teoria pra dono de
+            restaurante. É alguém que fecha caixa, negocia com fornecedor e
+            decide preço de cardápio na prática, todo mês, em loja de verdade.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------- Bloco 14: FAQ -------------------- */
+function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
   const items = [
     {
-      q: "Já uso planilha. Preciso disso?",
-      a: "A planilha não te avisa quando o insumo sobe. Ela mostra o número que você mesmo digitou meses atrás. O Cardápio no Verde recalcula o cardápio inteiro em minutos toda vez que algo muda, sem depender de você lembrar de mexer em fórmula.",
+      q: "Não tenho tempo pra mexer em mais uma ferramenta. Vale a pena?",
+      a: "Calcular um prato leva menos de dois minutos. Um cardápio de quinze itens fica pronto numa tarde de domingo, não numa semana perdida entre um cliente e outro.",
     },
     {
-      q: "Não tenho tempo pra aprender mais uma coisa.",
-      a: "Não tem curso. Não tem configuração. Você cadastra um prato em minutos, como quem manda um WhatsApp. Uma tarde de domingo já revisa o cardápio inteiro.",
+      q: "R$ 59 é barato demais, deve ser fraco ou incompleto.",
+      a: "O cálculo de CMV segue uma fórmula estável no setor de alimentação. O valor não está no algoritmo, está em entregar esse cálculo rápido e sem erro manual, sem cobrar mensalidade de sistema completo que um restaurante pequeno não usa inteiro.",
     },
     {
-      q: "R$ 59 é barato demais, deve ser fraco.",
-      a: "O cálculo de CMV é uma fórmula conhecida do setor. O valor do app está em entregar isso rápido, sem erro manual e sem mensalidade. Um único prato mal precificado te custa mais que R$ 59 em uma semana.",
+      q: "Já uso planilha, não preciso de outra coisa.",
+      a: "Planilha comum não avisa quando o preço de um insumo sobe no fornecedor. Você continua vendendo pelo preço antigo até perceber o prejuízo no fim do mês, e nesse tempo já são semanas de prato saindo no vermelho.",
     },
     {
-      q: "Meu restaurante é pequeno demais pra isso.",
-      a: "É o contrário. Restaurante pequeno não tem folga pra bancar prato no prejuízo por meses. É justamente quem tem menos volume que mais sente o impacto de um preço errado.",
+      q: "Meu restaurante é pequeno demais pra precisar disso.",
+      a: "Quanto menor o negócio, menor a margem de erro no caixa. Restaurante pequeno não tem departamento financeiro pra absorver prato mal precificado por meses sem perceber, então é justamente o pequeno que mais sente esse impacto.",
     },
     {
-      q: "E se eu não gostar?",
-      a: "Você tem 7 dias de garantia incondicional. Não gostou por qualquer motivo, devolvemos os R$ 59, sem pergunta e sem burocracia.",
+      q: "Meu cardápio é muito específico, ferramenta genérica não vai entender.",
+      a: "O simulador não assume ingrediente nem receita padrão. Ele calcula em cima do que você mesmo informa, então o resultado reflete o seu cardápio, seja qual for o tipo de comida.",
     },
     {
-      q: "Como recebo o acesso? Tenho que instalar alguma coisa?",
-      a: "Depois do pagamento você recebe por e-mail e WhatsApp o link único do seu app. Abre no celular, adiciona à tela de início como qualquer app, e pronto. Todos os seus pratos ficam salvos no próprio aparelho — não precisa de conta, senha nem internet o tempo todo.",
+      q: "E se eu não souber calcular o rendimento de um ingrediente depois do preparo?",
+      a: "Você lança o custo da embalagem e a quantidade usada no prato. Se um dia quiser refinar considerando perda de água, casca ou osso, o cálculo aceita esse ajuste, mas não é obrigatório pra começar.",
+    },
+    {
+      q: "Preciso pagar mensalidade depois?",
+      a: "Não. O acesso é único. Você paga uma vez e usa quantas vezes quiser, sempre que o cardápio ou o custo de um insumo mudar.",
     },
   ];
   return (
@@ -535,7 +678,7 @@ function Objecoes() {
         <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
           Perguntas honestas
         </div>
-        <h2 className="font-serif text-[38px] md:text-[52px] leading-[0.98] mt-4">
+        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4">
           Aquilo que você ia perguntar antes de comprar.
         </h2>
       </div>
@@ -543,17 +686,14 @@ function Objecoes() {
         {items.map((it, i) => {
           const isOpen = open === i;
           return (
-            <div
-              key={i}
-              className="paper-card rounded-2xl overflow-hidden"
-            >
+            <div key={i} className="paper-card rounded-2xl overflow-hidden">
               <button
                 type="button"
                 onClick={() => setOpen(isOpen ? null : i)}
                 className="w-full flex items-center justify-between gap-4 text-left p-5 md:p-6"
                 aria-expanded={isOpen}
               >
-                <span className="font-display font-extrabold text-[17px] md:text-[19px] text-ink">
+                <span className="font-display font-extrabold text-[16px] md:text-[18px] text-ink">
                   {it.q}
                 </span>
                 <span
@@ -562,7 +702,10 @@ function Objecoes() {
                   }`}
                   aria-hidden
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
                 </span>
               </button>
               {isOpen && (
@@ -578,185 +721,87 @@ function Objecoes() {
   );
 }
 
-/* -------------------- Entrega / Como você recebe -------------------- */
-function ComoRecebe() {
-  const steps = [
-    {
-      n: 1,
-      t: "Pagamento em 1 minuto",
-      d: "Pix, cartão ou boleto. Confirmação na hora.",
-    },
-    {
-      n: 2,
-      t: "Link único no seu WhatsApp e e-mail",
-      d: "Chega automático assim que o pagamento cai. Nenhum cadastro, nenhuma senha.",
-    },
-    {
-      n: 3,
-      t: "Adicione à tela do celular",
-      d: "Abre no navegador, você toca em 'Adicionar à tela de início' e vira ícone de app como qualquer outro.",
-    },
-    {
-      n: 4,
-      t: "Seus pratos ficam salvos no aparelho",
-      d: "Tudo o que você cadastra fica guardado no próprio celular. Sem servidor, sem risco de conta suspensa, sem depender de internet o tempo todo.",
-    },
+/* -------------------- Bloco 15: Oferta final -------------------- */
+function OfertaFinal() {
+  const inclui = [
+    "Acesso ao Semáforo de Margem, ferramenta web de página única",
+    "Cálculo de preço sugerido para todo prato no vermelho ou amarelo",
+    "Revisão ilimitada de cardápio, sem limite de pratos ou de vezes que você recalcula",
+    "Acesso único, sem mensalidade, para sempre",
   ];
   return (
-    <section className="bg-leaf text-paper-2">
-      <div className="max-w-6xl mx-auto px-5 py-16 md:py-24">
-        <div className="max-w-2xl">
-          <div className="text-[12px] font-extrabold tracking-widest text-[color:var(--receipt)] uppercase">
-            Como você recebe
-          </div>
-          <h2 className="font-serif text-[38px] md:text-[52px] leading-[0.98] mt-4 text-paper-2">
-            Comprou hoje. Usando ainda hoje. Sem enrolação técnica.
-          </h2>
-        </div>
-        <div className="mt-10 grid md:grid-cols-4 gap-4">
-          {steps.map((s) => (
-            <div
-              key={s.n}
-              className="rounded-2xl bg-white/[0.06] border border-white/15 p-6"
-            >
-              <div className="w-11 h-11 rounded-full bg-[color:var(--receipt)] text-leaf font-display font-extrabold grid place-items-center text-[18px]">
-                {s.n}
+    <section id="oferta" className="bg-[color:var(--paper-2)] border-t border-[color:var(--line)]">
+      <div className="max-w-5xl mx-auto px-5 py-16 md:py-24">
+        <div className="paper-card rounded-[32px] p-8 md:p-12 relative overflow-hidden">
+          <div
+            aria-hidden
+            className="absolute -top-24 -left-24 w-[300px] h-[300px] rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(229,182,74,.55), rgba(229,182,74,0) 68%)",
+            }}
+          />
+          <div className="relative grid md:grid-cols-[1.1fr_.9fr] gap-8 items-center">
+            <div>
+              <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
+                Oferta final
               </div>
-              <h3 className="font-display font-extrabold text-[18px] mt-4">
-                {s.t}
-              </h3>
-              <p className="text-[14px] text-white/75 mt-2 leading-relaxed">
-                {s.d}
+              <h2 className="font-serif text-[36px] md:text-[52px] leading-[1] mt-4">
+                O que você leva com o Cardápio no Verde
+              </h2>
+              <ul className="mt-6 space-y-3">
+                {inclui.map((f) => (
+                  <li key={f} className="flex items-start gap-3 text-[15px] font-semibold text-ink">
+                    <span className="mt-1 w-5 h-5 rounded-full bg-leaf-2 text-paper-2 grid place-items-center flex-shrink-0">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-6 text-[15px] text-[color:var(--muted-brand)] leading-relaxed">
+                Valor total dos componentes: <strong>R$ 228</strong>. Corrigindo um único prato,
+                isso se paga na primeira semana.
               </p>
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
-/* -------------------- Oferta / Preço -------------------- */
-function Oferta() {
-  return (
-    <section id="comprar" className="max-w-4xl mx-auto px-5 py-16 md:py-24">
-      <div className="paper-card rounded-[32px] p-8 md:p-12 relative overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute -top-24 -left-24 w-[300px] h-[300px] rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(229,182,74,.55), rgba(229,182,74,0) 68%)",
-          }}
-        />
-        <div className="relative grid md:grid-cols-[1.1fr_.9fr] gap-8 items-center">
-          <div>
-            <span className="inline-flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-widest text-tomato border border-tomato/40 bg-white px-3 py-1.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-tomato" />
-              Lote de lançamento · vagas limitadas
-            </span>
-            <h2 className="font-serif text-[42px] md:text-[56px] leading-[0.95] mt-5">
-              Um pagamento. Uso pra sempre.
-            </h2>
-            <p className="mt-4 text-[17px] text-[color:var(--muted-brand)] leading-relaxed">
-              Sem mensalidade. Sem taxa escondida. Sem cadastro chato. Você paga
-              uma vez e usa o Cardápio no Verde no seu restaurante pelo tempo
-              que quiser.
-            </p>
-            <ul className="mt-6 space-y-3">
-              {[
-                "Acesso vitalício ao app no celular",
-                "Cadastro ilimitado de pratos e ingredientes",
-                "Etiqueta visual verde / amarelo / vermelho",
-                "Atualizações futuras incluídas",
-                "Garantia incondicional de 7 dias",
-              ].map((f) => (
-                <li key={f} className="flex items-start gap-3 text-[15px] font-semibold text-ink">
-                  <span className="mt-1 w-5 h-5 rounded-full bg-leaf-2 text-paper-2 grid place-items-center flex-shrink-0">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            {/* Recibo */}
+            <div className="rounded-3xl bg-[#fff8ea] border border-[color:var(--line)] overflow-hidden shadow-plate">
+              <div className="bg-[#f0dfb8] px-5 py-3 flex items-center justify-between text-leaf font-extrabold">
+                <span>Cardápio no Verde</span>
+                <span className="text-[12px] uppercase tracking-widest">recibo</span>
+              </div>
+              <div className="p-6">
+                <div className="text-[13px] text-[color:var(--muted-brand)] font-bold">
+                  Preço hoje · pagamento único
+                </div>
+                <div className="flex items-end gap-3 mt-1">
+                  <span className="text-[color:var(--muted-brand)] line-through text-[20px] font-bold">
+                    R$ 228
                   </span>
-                  {f}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Recibo de preço */}
-          <div className="rounded-3xl bg-[#fff8ea] border border-[color:var(--line)] overflow-hidden shadow-plate">
-            <div className="bg-[#f0dfb8] px-5 py-3 flex items-center justify-between text-leaf font-extrabold">
-              <span>Cardápio no Verde</span>
-              <span className="text-[12px] uppercase tracking-widest">recibo</span>
-            </div>
-            <div className="p-6">
-              <div className="text-[13px] text-[color:var(--muted-brand)] font-bold">
-                Acesso vitalício
-              </div>
-              <div className="flex items-end gap-3 mt-1">
-                <span className="text-[color:var(--muted-brand)] line-through text-[20px] font-bold">
-                  R$ 169
-                </span>
-                <span className="font-serif text-leaf text-[72px] leading-[0.8]">
-                  R$ 59
-                </span>
-              </div>
-              <div className="text-[13px] text-[color:var(--muted-brand)] mt-2">
-                à vista · uma única vez · sem mensalidade
-              </div>
-              <div className="mt-4 space-y-2 text-[14px]">
-                <div className="flex justify-between py-2 font-bold">
-                  <span>App Cardápio no Verde</span>
-                  <span className="text-leaf">R$ 59,00</span>
+                  <span className="font-serif text-leaf text-[72px] leading-[0.8]">
+                    R$ 59
+                  </span>
                 </div>
-                <div className="flex justify-between py-2 receipt-dashed font-bold">
-                  <span>Atualizações futuras</span>
-                  <span className="text-leaf">Incluídas</span>
+                <div className="text-[13px] text-[color:var(--muted-brand)] mt-2">
+                  Uma única vez · sem mensalidade
                 </div>
-                <div className="flex justify-between py-2 receipt-dashed font-bold">
-                  <span>Mensalidade</span>
-                  <span className="text-leaf-2">R$ 0,00 · pra sempre</span>
+                <a
+                  href="https://pay.exemplo.com/cardapio-no-verde"
+                  className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-leaf text-paper-2 py-4 px-4 font-display font-extrabold text-[15px] text-center hover:bg-leaf-2 transition-colors"
+                >
+                  Quero descobrir qual prato está no vermelho
+                  <span aria-hidden>→</span>
+                </a>
+                <div className="mt-3 text-center text-[11px] text-[color:var(--muted-brand)] leading-relaxed">
+                  Ao continuar, você concorda com os termos de uso e a política
+                  de privacidade.
                 </div>
-              </div>
-              <a
-                href="https://pay.exemplo.com/cardapio-no-verde"
-                className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-leaf text-paper-2 py-4 font-display font-extrabold text-[16px] hover:bg-leaf-2 transition-colors"
-              >
-                Quero meu acesso agora
-                <span aria-hidden>→</span>
-              </a>
-              <div className="mt-3 text-center text-[12px] text-[color:var(--muted-brand)]">
-                Pix · cartão em até 3x · boleto
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* -------------------- Garantia -------------------- */
-function Garantia() {
-  return (
-    <section className="max-w-4xl mx-auto px-5 pb-16 md:pb-24">
-      <div className="rounded-[28px] border-2 border-dashed border-[color:var(--leaf)]/40 bg-[color:var(--paper-2)] p-8 md:p-10 flex flex-col md:flex-row gap-6 items-center">
-        <div className="w-24 h-24 rounded-full bg-leaf text-[color:var(--receipt)] grid place-items-center flex-shrink-0 shadow-plate">
-          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <polyline points="9 12 11 14 15 10"/>
-          </svg>
-        </div>
-        <div>
-          <div className="text-[12px] font-extrabold uppercase tracking-widest text-leaf-2">
-            Garantia de 7 dias
-          </div>
-          <h3 className="font-serif text-[30px] md:text-[36px] leading-tight mt-2">
-            Testa. Se não te ajudar, devolvemos os R$ 59.
-          </h3>
-          <p className="text-[15px] text-[color:var(--muted-brand)] mt-3 leading-relaxed">
-            O risco é nosso, não seu. Você tem 7 dias para usar à vontade. Não
-            gostou, por qualquer motivo? Mande uma mensagem e devolvemos o
-            valor integral. Sem pergunta, sem prova, sem burocracia.
-          </p>
         </div>
       </div>
     </section>
@@ -776,8 +821,7 @@ function Rodape() {
             </div>
           </div>
           <p className="mt-3 text-[13px] max-w-md">
-            Feito por gente de restaurante, pra gente de restaurante. Sem
-            cara de sistema, sem cara de curso, sem cara de app de gringo.
+            Feito por gente de restaurante, pra gente de restaurante.
           </p>
         </div>
         <div className="text-[12px] text-paper-2/60">
@@ -802,15 +846,10 @@ function StickyMobileCTA() {
   return (
     <div className="fixed bottom-0 inset-x-0 z-40 sm:hidden p-3 bg-[color:var(--paper-2)]/95 backdrop-blur border-t border-[color:var(--line)]">
       <a
-        href="#comprar"
-        className="flex items-center justify-between gap-3 rounded-2xl bg-leaf text-paper-2 px-5 py-4 font-display font-extrabold shadow-plate"
+        href={CTA_ANCHOR}
+        className="flex items-center justify-center gap-3 rounded-2xl bg-leaf text-paper-2 px-5 py-4 font-display font-extrabold shadow-plate text-[14px] text-center"
       >
-        <span>
-          <span className="block text-[11px] uppercase tracking-widest text-[color:var(--receipt)] font-extrabold">
-            Acesso vitalício
-          </span>
-          <span className="text-[16px]">R$ 59 · pra sempre</span>
-        </span>
+        Quero ver o custo real do meu cardápio
         <span aria-hidden>→</span>
       </a>
     </div>
@@ -824,15 +863,17 @@ function LandingPage() {
       <Header />
       <main>
         <Hero />
+        <BulletsDemo />
         <DorSection />
-        <ComoFunciona />
-        <Beneficios />
-        <ProvaSocial />
-        <Comparativo />
-        <ComoRecebe />
-        <Oferta />
-        <Garantia />
-        <Objecoes />
+        <ProvaCurta />
+        <CTAIntermediario />
+        <Metodo />
+        <ParaQuemE />
+        <Entregaveis />
+        <DepoimentosCompletos />
+        <Autoridade />
+        <FAQ />
+        <OfertaFinal />
       </main>
       <Rodape />
       <StickyMobileCTA />
