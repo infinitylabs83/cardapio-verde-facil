@@ -122,7 +122,7 @@ function Hero() {
         className="absolute inset-0 hidden md:block pointer-events-none"
         style={{
           background:
-            "linear-gradient(90deg, rgba(6,58,38,0.98) 0%, rgba(6,58,38,0.95) 30%, rgba(6,58,38,0.75) 50%, rgba(6,58,38,0.30) 72%, rgba(6,58,38,0.05) 100%)",
+            "linear-gradient(90deg, rgba(6,58,38,0.98) 0%, rgba(6,58,38,0.96) 25%, rgba(6,58,38,0.82) 40%, rgba(6,58,38,0.35) 58%, rgba(6,58,38,0) 72%)",
         }}
       />
       {/* Overlay mobile — foto ao fundo mais coberta */}
