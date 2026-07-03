@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import heroOwner from "@/assets/hero-clean.jpg.asset.json";
+import heroOwner from "@/assets/hero-repositioned.jpg";
 
 
 export const Route = createFileRoute("/")({
@@ -105,14 +105,14 @@ function Hero() {
     <section
       className="relative overflow-hidden min-h-[92vh] md:min-h-[100vh] flex items-center bg-[color:var(--leaf)]"
     >
-      {/* Foto de fundo — encostada à direita, proporção horizontal */}
+      {/* Foto de fundo — homem à direita, pratos em primeiro plano */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `url("${heroOwner.url}")`,
-          backgroundSize: "auto 128%",
-          backgroundPosition: "72% 55%",
+          backgroundImage: `url("${heroOwner}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "65% center",
           backgroundRepeat: "no-repeat",
         }}
       />
@@ -122,7 +122,7 @@ function Hero() {
         className="absolute inset-0 hidden md:block pointer-events-none"
         style={{
           background:
-            "linear-gradient(90deg, rgba(6,58,38,0.92) 0%, rgba(6,58,38,0.78) 28%, rgba(6,58,38,0.5) 48%, rgba(6,58,38,0.18) 68%, rgba(6,58,38,0) 85%)",
+            "linear-gradient(90deg, rgba(6,58,38,0.88) 0%, rgba(6,58,38,0.55) 32%, rgba(6,58,38,0.22) 54%, rgba(6,58,38,0) 75%)",
         }}
       />
       {/* Overlay mobile — foto ao fundo mais coberta */}
