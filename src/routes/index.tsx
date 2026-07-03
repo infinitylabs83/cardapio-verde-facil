@@ -109,79 +109,108 @@ function Hero() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(900px 450px at 10% 0%, rgba(125,161,93,.25), transparent 60%), radial-gradient(700px 400px at 90% 100%, rgba(229,182,74,.20), transparent 55%)",
+            "radial-gradient(900px 450px at 10% 0%, rgba(125,161,93,.22), transparent 60%), radial-gradient(700px 400px at 90% 100%, rgba(229,182,74,.18), transparent 55%)",
         }}
       />
+
+      {/* Foto — coluna direita, altura total do hero (mesma proporção da referência) */}
+      <div
+        aria-hidden
+        className="hidden lg:block absolute right-0 top-0 bottom-0 w-[46%] xl:w-[44%]"
+      >
+        <img
+          src={heroOwner.url}
+          alt="Dono de restaurante olhando comandas na cozinha"
+          className="w-full h-full object-cover object-center"
+        />
+        {/* fade da imagem para o verde à esquerda, sem borda dura */}
+        <div
+          className="absolute inset-y-0 left-0 w-40"
+          style={{
+            background:
+              "linear-gradient(to right, var(--leaf) 0%, rgba(18,63,43,0.6) 40%, transparent 100%)",
+          }}
+        />
+        {/* leve escurecida no topo pra o header respirar */}
+        <div
+          className="absolute inset-x-0 top-0 h-24"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(18,63,43,0.55), transparent)",
+          }}
+        />
+      </div>
+
       <div className="relative max-w-6xl mx-auto px-5 pt-12 pb-20 md:pt-20 md:pb-28">
-        {/* etiqueta topo */}
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-receipt">
-            <span className="w-2 h-2 rounded-full bg-receipt animate-pulse" />
-            Alerta pro dono de restaurante
-          </span>
-          <span className="h-px flex-1 bg-paper-2/20" />
-        </div>
-
-        {/* Headline gigante em papel claro */}
-        <h1 className="font-serif text-[52px] leading-[0.92] mt-6 sm:text-[76px] md:text-[104px] lg:text-[128px] text-paper-2">
-          Tem prato no seu
-          <br />
-          cardápio dando{" "}
-          <span className="relative inline-block">
-            <span className="relative z-10 text-tomato italic">prejuízo</span>
-            <svg
-              aria-hidden
-              viewBox="0 0 400 30"
-              className="absolute left-0 right-0 -bottom-2 w-full h-4 text-tomato"
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M2 20 C 80 4, 160 28, 240 10 S 380 24, 398 12"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-            </svg>
-          </span>
-          .
-          <br />
-          <span className="text-receipt">Você só não sabe qual.</span>
-        </h1>
-
-        {/* Sub-linha única */}
-        <p className="mt-10 font-display font-semibold text-[19px] md:text-[22px] leading-snug text-paper-2/90 max-w-[640px]">
-          Descubra em uma tarde. No seu celular. Sem planilha, sem contador,
-          sem mensalidade.
-        </p>
-
-        {/* Ação: CTA + preço colados */}
-        <div className="mt-10 inline-flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden shadow-plate max-w-full">
-          <a
-            href="#comprar"
-            className="bg-paper-2 text-leaf px-7 py-5 font-display font-extrabold text-[18px] flex items-center justify-center gap-3 hover:bg-receipt transition-colors"
-          >
-            Colocar meu cardápio no verde
-            <span aria-hidden>→</span>
-          </a>
-          <div className="bg-leaf-2 px-6 py-4 flex sm:flex-col items-center sm:items-start justify-between sm:justify-center gap-2 border-t sm:border-t-0 sm:border-l border-paper-2/20">
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-paper-2/80">
-              <span className="line-through opacity-70">R$ 169</span> · vitalício
+        <div className="lg:max-w-[58%] xl:max-w-[60%]">
+          {/* etiqueta topo */}
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-receipt">
+              <span className="w-2 h-2 rounded-full bg-receipt animate-pulse" />
+              Alerta pro dono de restaurante
             </span>
-            <span className="font-serif text-receipt text-[34px] leading-none">
-              R$ 59
-            </span>
+            <span className="h-px flex-1 bg-paper-2/20" />
           </div>
-        </div>
 
-        {/* linha de confiança minúscula */}
-        <div className="mt-6 text-[13px] text-paper-2/70 font-semibold">
-          Pagamento único · 7 dias de garantia · uso pra sempre
+          {/* Headline */}
+          <h1 className="font-serif text-[52px] leading-[0.92] mt-6 sm:text-[76px] md:text-[92px] lg:text-[104px] text-paper-2">
+            Tem prato no seu cardápio dando{" "}
+            <span className="relative inline-block">
+              <span className="relative z-10 text-tomato italic">prejuízo</span>
+              <svg
+                aria-hidden
+                viewBox="0 0 400 30"
+                className="absolute left-0 right-0 -bottom-2 w-full h-4 text-tomato"
+                preserveAspectRatio="none"
+              >
+                <path
+                  d="M2 20 C 80 4, 160 28, 240 10 S 380 24, 398 12"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            .{" "}
+            <span className="text-receipt">Você só não sabe qual.</span>
+          </h1>
+
+          {/* Sub-linha única */}
+          <p className="mt-10 font-display font-semibold text-[19px] md:text-[22px] leading-snug text-paper-2/90 max-w-[560px]">
+            Descubra em uma tarde. No seu celular. Sem planilha, sem contador,
+            sem mensalidade.
+          </p>
+
+          {/* Ação: CTA + preço colados */}
+          <div className="mt-10 inline-flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden shadow-plate max-w-full">
+            <a
+              href="#comprar"
+              className="bg-paper-2 text-leaf px-7 py-5 font-display font-extrabold text-[18px] flex items-center justify-center gap-3 hover:bg-receipt transition-colors"
+            >
+              Colocar meu cardápio no verde
+              <span aria-hidden>→</span>
+            </a>
+            <div className="bg-leaf-2 px-6 py-4 flex sm:flex-col items-center sm:items-start justify-between sm:justify-center gap-2 border-t sm:border-t-0 sm:border-l border-paper-2/20">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-paper-2/80">
+                <span className="line-through opacity-70">R$ 169</span> · vitalício
+              </span>
+              <span className="font-serif text-receipt text-[34px] leading-none">
+                R$ 59
+              </span>
+            </div>
+          </div>
+
+          {/* linha de confiança minúscula */}
+          <div className="mt-6 text-[13px] text-paper-2/70 font-semibold">
+            Pagamento único · 7 dias de garantia · uso pra sempre
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
 
 
 
