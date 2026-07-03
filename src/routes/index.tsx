@@ -103,11 +103,10 @@ function Hero() {
       {/* Foto de fundo — homem à direita, pratos em primeiro plano */}
       <div
         aria-hidden
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none bg-[position:center_20%] md:bg-[position:center_20%] bg-[position:center_10%]"
         style={{
           backgroundImage: `url("${heroOwner.url}")`,
           backgroundSize: "cover",
-          backgroundPosition: "center 20%",
           backgroundRepeat: "no-repeat",
         }}
       />
@@ -120,13 +119,13 @@ function Hero() {
             "linear-gradient(90deg, rgba(6,58,38,0.94) 0%, rgba(6,58,38,0.82) 22%, rgba(6,58,38,0.55) 44%, rgba(6,58,38,0.28) 62%, rgba(6,58,38,0.08) 80%, rgba(6,58,38,0) 92%)",
         }}
       />
-      {/* Overlay mobile */}
+      {/* Overlay mobile — mais leve para não apagar a foto */}
       <div
         aria-hidden
         className="absolute inset-0 md:hidden pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, rgba(6,58,38,0.94) 0%, rgba(6,58,38,0.86) 45%, rgba(6,58,38,0.75) 100%)",
+            "linear-gradient(180deg, rgba(6,58,38,0.78) 0%, rgba(6,58,38,0.55) 45%, rgba(6,58,38,0.30) 100%)",
         }}
       />
 
