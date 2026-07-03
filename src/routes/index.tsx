@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import heroOwner from "@/assets/hero-repositioned.jpg";
+import heroOwner from "@/assets/hero-reference.png.asset.json";
 
 
 export const Route = createFileRoute("/")({
@@ -110,9 +110,9 @@ function Hero() {
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `url("${heroOwner}")`,
-          backgroundSize: "cover",
-          backgroundPosition: "65% center",
+          backgroundImage: `url("${heroOwner.url}")`,
+          backgroundSize: "auto 100%",
+          backgroundPosition: "right center",
           backgroundRepeat: "no-repeat",
         }}
       />
