@@ -102,28 +102,44 @@ function Header() {
 /* -------------------- Hero -------------------- */
 function Hero() {
   return (
-    <section
-      className="relative overflow-hidden min-h-[92vh] md:min-h-screen flex items-center"
-      style={{
-        backgroundImage: `linear-gradient(90deg, rgba(6,58,38,0.98) 0%, rgba(6,58,38,0.94) 28%, rgba(6,58,38,0.78) 48%, rgba(6,58,38,0.35) 68%, rgba(6,58,38,0.10) 100%), url("${heroOwner.url}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "72% center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      {/* Overlay mobile — mais escuro em cima pro texto respirar */}
+    <section className="hero relative w-full overflow-hidden bg-[#063a26]">
+      {/* Camada 1 — imagem integrada */}
+      <img
+        src={heroOwner.url}
+        alt="Dono de restaurante servindo pratos"
+        className="hero-bg absolute inset-0 w-full h-full object-cover object-[75%_center] select-none pointer-events-none"
+        draggable={false}
+      />
+
+      {/* Camada 2 — overlay em gradiente sofisticado */}
+      <div
+        aria-hidden
+        className="hero-overlay absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(6,58,38,0.97) 0%, rgba(6,58,38,0.92) 30%, rgba(6,58,38,0.72) 52%, rgba(6,58,38,0.28) 72%, rgba(6,58,38,0.05) 100%)",
+        }}
+      />
       <div
         aria-hidden
         className="absolute inset-0 md:hidden pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, rgba(6,58,38,0.96) 0%, rgba(6,58,38,0.88) 45%, rgba(6,58,38,0.72) 100%)",
+            "linear-gradient(180deg, rgba(6,58,38,0.94) 0%, rgba(6,58,38,0.82) 55%, rgba(6,58,38,0.60) 100%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(120% 80% at 10% 40%, rgba(0,0,0,0.35) 0%, transparent 60%)",
         }}
       />
 
-      <div className="relative z-10 w-full max-w-[1240px] mx-auto px-5 md:pl-8 md:pr-5 pt-24 md:pt-28 pb-16 md:pb-20">
-        <div className="w-full md:w-[62%] max-w-[900px]">
-          {/* etiqueta topo */}
+      {/* Camada 3 — conteúdo */}
+      <div className="hero-content relative z-10 max-w-[1240px] mx-auto px-5 md:pl-10 md:pr-8 pt-24 md:pt-28 pb-20 md:pb-28 min-h-[92vh] md:min-h-[92vh] flex items-center">
+        <div className="w-full md:w-[60%] max-w-[860px]">
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-receipt">
               <span className="w-2 h-2 rounded-full bg-receipt animate-pulse" />
@@ -132,8 +148,7 @@ function Hero() {
             <span className="h-px flex-1 bg-paper-2/25 max-w-[240px]" />
           </div>
 
-          {/* Headline */}
-          <h1 className="font-serif mt-6 text-paper-2 text-[46px] leading-[0.95] sm:text-[64px] md:text-[80px] lg:text-[92px] md:leading-[0.92] [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">
+          <h1 className="font-serif mt-6 text-paper-2 text-[46px] leading-[0.95] sm:text-[64px] md:text-[80px] lg:text-[92px] md:leading-[0.92] [text-shadow:0_2px_28px_rgba(0,0,0,0.45)]">
             Tem prato no seu cardápio dando{" "}
             <span className="relative inline-block">
               <span className="relative z-10 text-tomato italic">prejuízo</span>
@@ -156,13 +171,11 @@ function Hero() {
             <span className="text-receipt">Você só não sabe qual.</span>
           </h1>
 
-          {/* Sub-linha */}
-          <p className="mt-8 md:mt-10 font-display font-semibold text-[18px] md:text-[21px] leading-snug text-paper-2/95 max-w-[560px] [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]">
+          <p className="mt-8 md:mt-10 font-display font-semibold text-[18px] md:text-[21px] leading-snug text-paper-2/95 max-w-[560px] [text-shadow:0_1px_14px_rgba(0,0,0,0.45)]">
             Descubra em uma tarde. No seu celular. Sem planilha, sem contador,
             sem mensalidade.
           </p>
 
-          {/* CTA + preço */}
           <div className="mt-8 md:mt-10 inline-flex flex-col sm:flex-row items-stretch rounded-2xl overflow-hidden shadow-plate max-w-full">
             <a
               href="#comprar"
@@ -181,7 +194,6 @@ function Hero() {
             </div>
           </div>
 
-          {/* linha de confiança */}
           <div className="mt-6 text-[13px] text-paper-2/80 font-semibold">
             Pagamento único · 7 dias de garantia · uso pra sempre
           </div>
@@ -190,6 +202,7 @@ function Hero() {
     </section>
   );
 }
+
 
 
 
