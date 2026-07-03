@@ -103,57 +103,42 @@ function Header() {
 function Hero() {
   return (
     <section className="relative overflow-hidden bg-leaf">
-      {/* manchas de luz sutis para dar profundidade */}
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(900px 450px at 10% 0%, rgba(125,161,93,.22), transparent 60%), radial-gradient(700px 400px at 90% 100%, rgba(229,182,74,.18), transparent 55%)",
-        }}
+      {/* Foto de fundo — ocupa todo o hero */}
+      <img
+        src={heroOwner.url}
+        alt="Dono de restaurante olhando comandas na cozinha"
+        className="absolute inset-0 w-full h-full object-cover object-right"
       />
 
-      {/* Foto — coluna direita, altura total do hero (mesma proporção da referência) */}
+      {/* Overlay verde: forte na esquerda (onde vai o texto), transparente na direita (onde aparece o dono) */}
       <div
         aria-hidden
-        className="hidden lg:block absolute right-0 top-0 bottom-0 w-[46%] xl:w-[44%]"
-      >
-        <img
-          src={heroOwner.url}
-          alt="Dono de restaurante olhando comandas na cozinha"
-          className="w-full h-full object-cover object-center"
-        />
-        {/* fade da imagem para o verde à esquerda, sem borda dura */}
-        <div
-          className="absolute inset-y-0 left-0 w-40"
-          style={{
-            background:
-              "linear-gradient(to right, var(--leaf) 0%, rgba(18,63,43,0.6) 40%, transparent 100%)",
-          }}
-        />
-        {/* leve escurecida no topo pra o header respirar */}
-        <div
-          className="absolute inset-x-0 top-0 h-24"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(18,63,43,0.55), transparent)",
-          }}
-        />
-      </div>
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(18,63,43,0.94) 0%, rgba(18,63,43,0.88) 35%, rgba(18,63,43,0.55) 60%, rgba(18,63,43,0.15) 85%, rgba(18,63,43,0.05) 100%)",
+        }}
+      />
+      {/* Escurecida sutil topo/base pra header e CTA respirarem */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-32 pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, rgba(18,63,43,0.6), transparent)" }}
+      />
 
-      <div className="relative max-w-6xl mx-auto px-5 pt-12 pb-20 md:pt-20 md:pb-28">
-        <div className="lg:max-w-[58%] xl:max-w-[60%]">
+      <div className="relative max-w-6xl mx-auto px-5 pt-14 pb-20 md:pt-20 md:pb-28">
+        <div className="max-w-[720px]">
           {/* etiqueta topo */}
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-receipt">
               <span className="w-2 h-2 rounded-full bg-receipt animate-pulse" />
               Alerta pro dono de restaurante
             </span>
-            <span className="h-px flex-1 bg-paper-2/20" />
+            <span className="h-px flex-1 bg-paper-2/20 max-w-[280px]" />
           </div>
 
           {/* Headline */}
-          <h1 className="font-serif text-[52px] leading-[0.92] mt-6 sm:text-[76px] md:text-[92px] lg:text-[104px] text-paper-2">
+          <h1 className="font-serif text-[52px] leading-[0.92] mt-6 sm:text-[76px] md:text-[92px] lg:text-[104px] text-paper-2 [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">
             Tem prato no seu cardápio dando{" "}
             <span className="relative inline-block">
               <span className="relative z-10 text-tomato italic">prejuízo</span>
@@ -177,7 +162,7 @@ function Hero() {
           </h1>
 
           {/* Sub-linha única */}
-          <p className="mt-10 font-display font-semibold text-[19px] md:text-[22px] leading-snug text-paper-2/90 max-w-[560px]">
+          <p className="mt-10 font-display font-semibold text-[19px] md:text-[22px] leading-snug text-paper-2/95 max-w-[560px] [text-shadow:0_1px_12px_rgba(0,0,0,0.35)]">
             Descubra em uma tarde. No seu celular. Sem planilha, sem contador,
             sem mensalidade.
           </p>
@@ -202,7 +187,7 @@ function Hero() {
           </div>
 
           {/* linha de confiança minúscula */}
-          <div className="mt-6 text-[13px] text-paper-2/70 font-semibold">
+          <div className="mt-6 text-[13px] text-paper-2/80 font-semibold">
             Pagamento único · 7 dias de garantia · uso pra sempre
           </div>
         </div>
@@ -210,6 +195,7 @@ function Hero() {
     </section>
   );
 }
+
 
 
 
