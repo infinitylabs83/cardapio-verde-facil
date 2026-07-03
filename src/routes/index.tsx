@@ -103,10 +103,9 @@ function Hero() {
       {/* Foto de fundo — homem à direita, pratos em primeiro plano */}
       <div
         aria-hidden
-        className="absolute inset-0 pointer-events-none bg-[position:center_20%] md:bg-[position:center_20%] bg-[position:center_10%]"
+        className="absolute inset-0 pointer-events-none bg-[position:center_10%] md:bg-[position:right_center] bg-[length:cover] md:bg-[length:auto_100%]"
         style={{
           backgroundImage: `url("${heroOwner.url}")`,
-          backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
         }}
       />
