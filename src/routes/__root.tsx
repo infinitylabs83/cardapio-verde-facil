@@ -77,13 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Cardápio no Verde — Descubra em minutos qual prato do seu cardápio dá prejuízo" },
+      { title: "Cardápio no Verde — Descubra qual prato do seu cardápio dá prejuízo" },
       {
         name: "description",
         content:
           "App simples para dono de restaurante calcular CMV, preço e lucro de cada prato. Acesso vitalício por R$ 59 (de R$ 169). Sem mensalidade, sem planilha.",
       },
-      { property: "og:title", content: "Cardápio no Verde — Seu cardápio no lucro" },
+      { property: "og:title", content: "Cardápio no Verde — Descubra qual prato do seu cardápio dá prejuízo" },
       {
         property: "og:description",
         content: "Zere o prejuízo escondido no seu cardápio. Acesso vitalício por R$ 59.",
@@ -91,6 +91,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#123f2b" },
+      { name: "twitter:title", content: "Cardápio no Verde — Descubra qual prato do seu cardápio dá prejuízo" },
+      { name: "description", content: "Ferramenta para dono de restaurante calcular o custo real de cada prato em minutos. Semáforo de Margem: veja o que está no vermelho, amarelo e verde. Sem mensalidade." },
+      { property: "og:description", content: "Ferramenta para dono de restaurante calcular o custo real de cada prato em minutos. Semáforo de Margem: veja o que está no vermelho, amarelo e verde. Sem mensalidade." },
+      { name: "twitter:description", content: "Ferramenta para dono de restaurante calcular o custo real de cada prato em minutos. Semáforo de Margem: veja o que está no vermelho, amarelo e verde. Sem mensalidade." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/71245bf6-6db9-4ff3-981f-5064e3fc8f24" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/71245bf6-6db9-4ff3-981f-5064e3fc8f24" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
