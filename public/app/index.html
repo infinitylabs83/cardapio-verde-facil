@@ -1478,6 +1478,7 @@ function renderCardapio(){
     : `<div class="aviso verde">🏆 Cardápio 100% no verde. Todo item vendido está deixando dinheiro no seu bolso.</div>`;
   const pctVerde = analises.length ? Math.round(nv/analises.length*100) : 0;
   $('cardapio-conteudo').innerHTML = `
+    <button class="btn secundario" style="margin-bottom:14px" onclick="novoPrato()">+ Adicionar item ao cardápio</button>
     <div class="placar">
       <div class="p pv"><b>${nv}</b><span>no verde</span></div>
       <div class="p pa"><b>${na}</b><span>no amarelo</span></div>
