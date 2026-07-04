@@ -116,7 +116,7 @@ function Hero() {
         className="absolute inset-0 pointer-events-none hidden md:block"
         style={{
           backgroundImage: `url("${heroOwner.url}")`,
-          backgroundSize: "auto 100%",
+          backgroundSize: "cover",
           backgroundPosition: "right center",
           backgroundRepeat: "no-repeat",
         }}
