@@ -640,52 +640,50 @@ function DepoimentosCompletos() {
 /* -------------------- Bloco 13: Autoridade -------------------- */
 function Autoridade() {
   return (
-    <section className="bg-leaf text-paper-2 relative overflow-hidden">
-      <img
-        src="/gustavo-fundador.png"
-        alt="Gustavo, fundador do Cardápio no Verde"
-        className="hidden md:block pointer-events-none select-none absolute right-0 bottom-0 w-[380px] opacity-90"
-      />
-      <div className="max-w-4xl mx-auto px-5 py-16 md:py-24 relative z-10">
-        <div className="text-[12px] font-extrabold tracking-widest text-[color:var(--receipt)] uppercase">
-          Quem criou
+    <section className="bg-leaf text-paper-2 overflow-hidden">
+      <div className="max-w-4xl mx-auto px-5 py-16 md:py-24 relative">
+        <img
+          src="/gustavo-fundador.png"
+          alt="Gustavo, fundador do Cardápio no Verde"
+          className="hidden md:block pointer-events-none select-none absolute right-0 bottom-0 w-[300px] opacity-90"
+        />
+        <div className="relative z-10 max-w-xl">
+          <div className="text-[12px] font-extrabold tracking-widest text-[color:var(--receipt)] uppercase">
+            Quem criou
+          </div>
+          <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4 text-paper-2">
+            Feito por quem também sofre com esse problema na prática.
+          </h2>
+          <div className="mt-8 space-y-5 text-[16px] leading-relaxed text-paper-2/90">
+            <p>
+              O Cardápio no Verde foi criado por quem sofre com esse problema na
+              prática — não por alguém que só programou o cálculo e saiu vendendo.
+            </p>
+            <p>
+              Gustavo atua no mercado de alimentação desde 2013. Já teve uma rede
+              própria de lojas de açaí, com marca própria, e hoje administra duas
+              unidades de uma rede de sanduíches naturais — cardápio próprio,
+              ficha técnica de cada item revisada por dentro, não por planilha
+              terceirizada.
+            </p>
+            <p>
+              Foi enfrentando esse mesmo problema — fornecedor que reajusta sem
+              avisar, item que parecia vender bem mas escondia margem apertada —
+              que a ferramenta nasceu.
+            </p>
+            <p>
+              Hoje, além de tocar as operações no dia a dia, também desenvolve
+              automações e aplicativos que ajudam as próprias lojas a reduzir
+              tempo, desperdício e erro de preço — o Cardápio no Verde é um
+              desses.
+            </p>
+            <p>
+              Não é um analista financeiro explicando teoria pra dono de
+              restaurante. É alguém que fecha caixa, negocia com fornecedor e
+              decide preço de cardápio na prática, todo mês, em loja de verdade.
+            </p>
+          </div>
         </div>
-        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4 text-paper-2 max-w-xl">
-          Feito por quem também sofre com esse problema na prática.
-        </h2>
-        <div className="mt-8 space-y-5 text-[16px] leading-relaxed text-paper-2/90 max-w-xl">
-          <p>
-            O Cardápio no Verde foi criado por quem sofre com esse problema na
-            prática — não por alguém que só programou o cálculo e saiu vendendo.
-          </p>
-          <p>
-            Gustavo atua no mercado de alimentação desde 2013. Já teve uma rede
-            própria de lojas de açaí, com marca própria, e hoje administra duas
-            unidades de uma rede de sanduíches natural — cardápio próprio, ficha
-            técnica de cada item revisada por dentro, não por planilha
-            terceirizada.
-          </p>
-          <p>
-            Foi enfrentando esse mesmo problema — reajuste de fornecedor sem
-            aviso, item que parecia vender bem mas escondia margem apertada —
-            que a ferramenta nasceu.
-          </p>
-          <p>
-            Hoje, além de tocar as operações no dia a dia, também desenvolve
-            automações e aplicativos que ajudam as próprias lojas a reduzir
-            tempo, desperdício e erro de preço — o Cardápio no Verde é um
-            desses.
-          </p>
-          <p>
-            Não é um analista financeiro explicando teoria pra dono de
-            restaurante. É alguém que fecha caixa, negocia com fornecedor e
-            decide preço de cardápio na prática, todo mês, em loja de verdade.
-          </p>
-        </div>
-        <div className="mt-6 font-extrabold text-paper-2 md:hidden">— Gustavo, fundador</div>
-      </div>
-      <div className="hidden md:block absolute right-8 bottom-6 font-extrabold text-paper-2 z-10">
-        Gustavo
       </div>
     </section>
   );
