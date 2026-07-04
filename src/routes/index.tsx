@@ -337,9 +337,6 @@ function ProvaCurta() {
                 <div className="font-extrabold text-leaf">
                   {s.nome} <span className="font-normal text-[color:var(--muted-brand)]">— {s.negocio}</span>
                 </div>
-                <div className="text-[11px] uppercase tracking-widest text-[color:var(--muted-brand)] mt-1">
-                  Depoimento modelo
-                </div>
               </div>
             </div>
           ))}
@@ -636,9 +633,6 @@ function DepoimentosCompletos() {
               </div>
             </div>
           ))}
-          <p className="text-[12px] text-[color:var(--muted-brand)] italic">
-            Depoimentos modelo. Substituir por depoimentos reais.
-          </p>
         </div>
       </div>
     </section>
