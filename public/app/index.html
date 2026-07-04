@@ -1,0 +1,1836 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PratoNoVerde — Seu cardápio no lucro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root{
+  --papel:#F6F2E6;
+  --card:#FFFDF7;
+  --tinta:#1F2B21;
+  --tinta-suave:#5A6657;
+  --verde:#1E7B45;
+  --verde-esc:#0C4426;
+  --verde-fundo:#E4F0E5;
+  --amarelo:#DFA524;
+  --amarelo-fundo:#FBF0D3;
+  --vermelho:#CE402B;
+  --vermelho-fundo:#FAE3DD;
+  --linha:#E5DCC4;
+  --raio:16px;
+  --sombra:0 2px 10px rgba(31,43,33,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Archivo',system-ui,sans-serif;
+  background:var(--papel);
+  color:var(--tinta);
+  font-size:16px;
+  line-height:1.45;
+  padding-bottom:86px;
+  min-height:100vh;
+}
+h1,h2,h3,.display{font-family:'Bricolage Grotesque','Archivo',sans-serif}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit;font-size:16px;color:var(--tinta)}
+:focus-visible{outline:3px solid var(--verde);outline-offset:2px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- topo ---------- */
+header.topo{
+  position:sticky;top:0;z-index:40;
+  background:var(--verde-esc);
+  color:#F3EFE0;
+  padding:14px 18px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.marca{font-family:'Bricolage Grotesque';font-weight:800;font-size:1.25rem;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.marca .no{font-weight:400;opacity:.75}
+.marca .verde-pill{background:#2E9C58;color:#fff;padding:1px 9px 2px;border-radius:99px;font-size:1.05rem}
+.btn-ajustes{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12)}
+.btn-ajustes svg{width:20px;height:20px;stroke:#F3EFE0}
+
+/* ---------- navegação inferior ---------- */
+nav.abas{
+  position:fixed;bottom:0;left:0;right:0;z-index:40;
+  background:var(--card);
+  border-top:1px solid var(--linha);
+  display:grid;grid-template-columns:repeat(4,1fr);
+  padding:6px 4px calc(8px + env(safe-area-inset-bottom));
+}
+nav.abas button{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:7px 2px;color:var(--tinta-suave);font-size:.72rem;font-weight:600;border-radius:12px;
+}
+nav.abas button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+nav.abas button.ativa{color:var(--verde-esc);background:var(--verde-fundo)}
+
+/* ---------- layout geral ---------- */
+main{max-width:560px;margin:0 auto;padding:18px 16px 30px}
+section.tela{display:none}
+section.tela.ativa{display:block;animation:surge .25s ease}
+@keyframes surge{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.titulo-tela{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.sub-tela{color:var(--tinta-suave);font-size:.95rem;margin-bottom:18px}
+
+.cartao{background:var(--card);border:1px solid var(--linha);border-radius:var(--raio);box-shadow:var(--sombra);padding:16px;margin-bottom:14px}
+.cartao h3{font-size:1.02rem;font-weight:700;margin-bottom:10px}
+
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  background:var(--verde);color:#fff;font-weight:700;font-size:1.05rem;
+  padding:15px;border-radius:14px;transition:transform .1s;
+}
+.btn:active{transform:scale(.98)}
+.btn.secundario{background:var(--card);color:var(--verde-esc);border:2px solid var(--verde)}
+.btn.fantasma{background:none;color:var(--tinta-suave);font-weight:600;padding:12px;text-decoration:underline;text-underline-offset:3px}
+.btn.perigo{background:none;color:var(--vermelho);font-weight:600;padding:12px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  padding:9px 14px;border-radius:99px;background:var(--card);
+  border:1.5px solid var(--linha);font-weight:600;font-size:.92rem;color:var(--tinta);
+}
+.chip.marcado{background:var(--verde-esc);border-color:var(--verde-esc);color:#fff}
+
+.campo{margin-bottom:14px}
+.campo label{display:block;font-weight:600;font-size:.92rem;margin-bottom:6px}
+.campo input,.campo select{
+  width:100%;padding:13px 14px;border:1.5px solid var(--linha);border-radius:12px;background:#fff;
+}
+.campo .dica{font-size:.82rem;color:var(--tinta-suave);margin-top:5px}
+.prefixo{position:relative}
+.prefixo span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--tinta-suave);font-weight:600}
+.prefixo input{padding-left:44px}
+
+/* ---------- etiqueta de preço (assinatura visual) ---------- */
+.etiqueta{
+  position:relative;background:var(--card);border:1px solid var(--linha);
+  border-radius:12px 16px 16px 12px;box-shadow:var(--sombra);
+  padding:14px 14px 14px 26px;margin-bottom:12px;
+  display:flex;align-items:center;gap:12px;
+}
+.etiqueta::before{ /* faixa colorida do semáforo */
+  content:"";position:absolute;left:0;top:0;bottom:0;width:12px;
+  border-radius:12px 0 0 12px;background:var(--cor,var(--verde));
+}
+.etiqueta::after{ /* furo da etiqueta */
+  content:"";position:absolute;left:3.5px;top:50%;transform:translateY(-50%);
+  width:5px;height:5px;border-radius:50%;background:var(--papel);
+  box-shadow:0 0 0 1.5px rgba(0,0,0,.18);
+}
+.etiqueta .info{flex:1;min-width:0}
+.etiqueta .nome{font-weight:700;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.etiqueta .linha2{font-size:.82rem;color:var(--tinta-suave);margin-top:2px}
+.etiqueta .valor{text-align:right}
+.etiqueta .valor b{font-family:'Bricolage Grotesque';font-size:1.15rem;font-weight:800;display:block}
+.etiqueta .valor small{font-size:.75rem;font-weight:700}
+.cor-verde{--cor:var(--verde)} .txt-verde{color:var(--verde)}
+.cor-amarelo{--cor:var(--amarelo)} .txt-amarelo{color:#A87A10}
+.cor-vermelho{--cor:var(--vermelho)} .txt-vermelho{color:var(--vermelho)}
+
+/* ---------- número grande "sobra pra você" ---------- */
+.sobrao{
+  text-align:center;padding:22px 16px 18px;border-radius:var(--raio);
+  background:var(--verde-fundo);border:1px solid #CDE3CF;margin-bottom:14px;
+}
+.sobrao.neg{background:var(--vermelho-fundo);border-color:#F0C7BD}
+.sobrao.meio{background:var(--amarelo-fundo);border-color:#EFDCA6}
+.sobrao .rotulo{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-suave)}
+.sobrao .numero{font-family:'Bricolage Grotesque';font-weight:800;font-size:2.7rem;letter-spacing:-.03em;line-height:1.1;margin:2px 0}
+.sobrao .frase{font-size:.95rem;max-width:34ch;margin:6px auto 0}
+
+/* ---------- slider de preço ---------- */
+.faixa-preco{padding:6px 2px 0}
+input[type=range]{width:100%;accent-color:var(--verde);height:34px}
+.marcas-preco{display:flex;justify-content:space-between;font-size:.78rem;color:var(--tinta-suave);font-weight:600}
+
+.tres-precos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.preco-op{background:var(--card);border:1.5px solid var(--linha);border-radius:14px;padding:12px 6px;text-align:center}
+.preco-op .tag{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--tinta-suave)}
+.preco-op .v{font-family:'Bricolage Grotesque';font-weight:800;font-size:1.15rem;margin-top:2px}
+.preco-op.ativa{border-color:var(--verde);background:var(--verde-fundo)}
+.preco-op:active{transform:scale(.97)}
+
+/* ---------- lista de ingredientes do prato ---------- */
+.item-ing{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px dashed var(--linha)}
+.item-ing:last-child{border-bottom:none}
+.item-ing .qtd{background:var(--verde-fundo);color:var(--verde-esc);font-weight:700;font-size:.8rem;padding:4px 8px;border-radius:8px;min-width:58px;text-align:center}
+.item-ing .n{flex:1;font-weight:600;font-size:.95rem}
+.item-ing .c{font-weight:700;font-size:.9rem}
+.item-ing .rm{color:var(--vermelho);font-size:1.3rem;line-height:1;padding:4px 8px}
+
+/* ---------- seletor de prato ---------- */
+.sel-prato{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
+.sel-prato .chip{white-space:nowrap;flex-shrink:0}
+
+/* ---------- modais ---------- */
+.veu{position:fixed;inset:0;background:rgba(20,30,22,.55);z-index:60;display:none;align-items:flex-end;justify-content:center}
+.veu.aberto{display:flex}
+.folha{
+  background:var(--papel);width:100%;max-width:560px;max-height:88vh;overflow-y:auto;
+  border-radius:22px 22px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));
+  animation:sobe .25s ease;
+}
+@keyframes sobe{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.folha-cabeca{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.folha-cabeca h2{font-size:1.2rem;font-weight:800}
+.fechar{font-size:1.6rem;line-height:1;padding:4px 10px;color:var(--tinta-suave)}
+
+/* picker de ingredientes */
+.busca-ing{position:sticky;top:-20px;background:var(--papel);padding:4px 0 10px;z-index:2}
+.busca-ing input{width:100%;padding:13px 14px;border:1.5px solid var(--linha);border-radius:12px;background:#fff}
+.grupo-ing{margin-bottom:12px}
+.grupo-ing h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-suave);margin:10px 0 6px}
+.lista-ing{display:flex;flex-wrap:wrap;gap:8px}
+.ing-chip{padding:9px 13px;border-radius:12px;background:var(--card);border:1.5px solid var(--linha);font-weight:600;font-size:.9rem}
+.ing-chip small{color:var(--tinta-suave);font-weight:500}
+
+/* semáforo topo do cardápio */
+.placar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.placar .p{border-radius:14px;padding:10px 6px;text-align:center;font-weight:700}
+.placar .p b{font-family:'Bricolage Grotesque';font-size:1.5rem;display:block;font-weight:800}
+.placar .p span{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+.p.pv{background:var(--verde-fundo);color:var(--verde-esc)}
+.p.pa{background:var(--amarelo-fundo);color:#8A650D}
+.p.pr{background:var(--vermelho-fundo);color:var(--vermelho)}
+
+/* vazio */
+.vazio{text-align:center;padding:34px 18px;color:var(--tinta-suave)}
+.vazio .icone{font-size:2.4rem;margin-bottom:8px}
+.vazio p{max-width:30ch;margin:0 auto 16px}
+
+/* wizard de boas-vindas */
+#wizard{position:fixed;inset:0;background:var(--verde-esc);z-index:80;display:none;overflow-y:auto}
+#wizard.aberto{display:block}
+.wiz-conteudo{max-width:520px;margin:0 auto;padding:34px 22px 40px;color:#F3EFE0;min-height:100vh;display:flex;flex-direction:column}
+.wiz-passo{display:none;flex:1;flex-direction:column}
+.wiz-passo.ativa{display:flex;animation:surge .3s ease}
+.wiz-conteudo .marca{font-size:1.5rem;margin-bottom:26px}
+.wiz-pergunta{font-family:'Bricolage Grotesque';font-weight:800;font-size:1.7rem;letter-spacing:-.02em;line-height:1.2;margin-bottom:10px}
+.wiz-apoio{opacity:.85;margin-bottom:22px;font-size:.98rem}
+.wiz-conteudo .chip{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28);color:#F3EFE0;padding:12px 16px;font-size:1rem}
+.wiz-conteudo .chip.marcado{background:#fff;color:var(--verde-esc);border-color:#fff}
+.wiz-conteudo input{background:rgba(255,255,255,.95)}
+.wiz-rodape{margin-top:auto;padding-top:26px}
+.wiz-rodape .btn{background:#fff;color:var(--verde-esc)}
+.wiz-rodape .btn.fantasma{background:none;color:rgba(255,255,255,.85)}
+.wiz-resumo{background:rgba(255,255,255,.1);border-radius:16px;padding:18px;margin-bottom:8px}
+.wiz-resumo .g{font-family:'Bricolage Grotesque';font-weight:800;font-size:2.2rem}
+.selo-estimado{display:inline-block;background:var(--amarelo);color:#3D2E05;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:99px;margin-left:6px;vertical-align:middle}
+
+.aviso{border-radius:14px;padding:12px 14px;font-size:.92rem;font-weight:600;margin-bottom:14px}
+.aviso.vermelho{background:var(--vermelho-fundo);color:var(--vermelho)}
+.aviso.amarelo{background:var(--amarelo-fundo);color:#8A650D}
+.aviso.verde{background:var(--verde-fundo);color:var(--verde-esc)}
+
+.canal{margin-bottom:12px}
+.canal .cab{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.canal .cab .nome-canal{font-weight:700}
+.canal .cab .taxa{font-size:.8rem;font-weight:700;color:var(--tinta-suave);background:var(--papel);border:1px solid var(--linha);padding:3px 9px;border-radius:99px}
+.canal .grade{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.canal .celula{background:var(--papel);border-radius:12px;padding:10px}
+.canal .celula .r{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--tinta-suave)}
+.canal .celula .v{font-family:'Bricolage Grotesque';font-weight:800;font-size:1.15rem;margin-top:2px}
+
+.linha-config{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px dashed var(--linha)}
+.linha-config:last-child{border-bottom:none}
+.linha-config label{font-weight:600;font-size:.95rem;flex:1}
+.linha-config input{width:110px;padding:10px;border:1.5px solid var(--linha);border-radius:10px;text-align:right;background:#fff}
+
+/* ---------- selo olhômetro + empurrãozinho ---------- */
+.selo-olho{display:inline-block;background:var(--amarelo-fundo);color:#8A650D;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:99px;vertical-align:middle;white-space:nowrap}
+.nudge{background:var(--verde-fundo);border:1px dashed #A9CDAF;border-radius:12px;padding:10px 12px;font-size:.88rem;color:var(--verde-esc);margin-top:10px}
+.inp-inline{width:58px;padding:4px 2px;border:1.5px dashed var(--verde);border-radius:8px;text-align:center;font-weight:700;background:#fff;font-size:.95rem}
+
+/* ---------- opções de início de prato ---------- */
+.opcao-inicio{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--linha);border-radius:14px;padding:14px;margin-bottom:10px}
+.opcao-inicio:active{transform:scale(.98)}
+.opcao-inicio .ic{font-size:1.6rem}
+.opcao-inicio b{display:block;font-size:1rem}
+.opcao-inicio small{color:var(--tinta-suave);font-size:.83rem}
+.tpl-lista{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+
+/* ---------- número mágico ---------- */
+.banner-magico{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:linear-gradient(135deg,var(--verde-esc),#166139);color:#F3EFE0;border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--sombra)}
+.banner-magico:active{transform:scale(.98)}
+.banner-magico .ic{font-size:1.7rem}
+.banner-magico b{display:block}
+.banner-magico small{opacity:.85;font-size:.83rem}
+.magico-caixa{background:var(--verde-fundo);border:1px solid #CDE3CF;border-radius:16px;padding:18px 14px;text-align:center;margin-bottom:14px}
+.magico-caixa .rotulo{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--tinta-suave)}
+.magico-num{font-family:'Bricolage Grotesque';font-weight:800;font-size:3rem;letter-spacing:-.03em;color:var(--verde-esc);line-height:1.1}
+
+/* ---------- conquistas ---------- */
+.conquistas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.conq{background:var(--card);border:1.5px solid var(--linha);border-radius:14px;padding:10px 6px;text-align:center}
+.conq .e{font-size:1.5rem}
+.conq .t{font-size:.68rem;font-weight:700;margin-top:3px;line-height:1.2}
+.conq.trancada{opacity:.4;filter:grayscale(1)}
+
+/* ---------- barra de progresso ---------- */
+.rotulo-progresso{display:flex;justify-content:space-between;font-size:.8rem;font-weight:700;color:var(--tinta-suave)}
+.progresso{background:var(--card);border:1px solid var(--linha);border-radius:99px;height:14px;overflow:hidden;margin:6px 0 14px}
+.progresso .fill{height:100%;background:linear-gradient(90deg,var(--verde),#2E9C58);border-radius:99px;transition:width .5s ease}
+
+/* ---------- comemoração ---------- */
+.toast-conq{position:fixed;left:50%;top:18%;transform:translateX(-50%);z-index:90;background:var(--verde-esc);color:#fff;padding:16px 26px;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.3);text-align:center;animation:pula .4s ease;max-width:85vw}
+.toast-conq .e{font-size:2rem}
+@keyframes pula{from{transform:translateX(-50%) scale(.6);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+.confete{position:fixed;top:-14px;z-index:89;width:9px;height:14px;border-radius:2px;animation:cai linear forwards;pointer-events:none}
+@keyframes cai{to{transform:translateY(105vh) rotate(720deg)}}
+
+/* ---------- cena "fazendo as contas" do wizard ---------- */
+.calc-linha{display:flex;align-items:center;gap:10px;font-size:1rem;margin-bottom:12px;animation:surge .35s ease}
+.calc-linha .ok{margin-left:auto;font-weight:700}
+.wiz-detalhe{background:rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;margin-top:14px;font-size:.92rem;text-align:left}
+.wiz-detalhe .l{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed rgba(255,255,255,.18)}
+.wiz-detalhe .l:last-child{border-bottom:none;font-weight:700;padding-top:8px}
+.pulsa{animation:pulsa 1.1s ease-in-out infinite}
+@keyframes pulsa{50%{opacity:.35}}
+
+/* ---------- marca do cliente ---------- */
+.marca img{width:30px;height:30px;border-radius:8px;object-fit:cover;background:#fff}
+.marca .logo-svg{width:28px;height:28px;flex-shrink:0}
+.marca .nome-rest{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}
+
+/* ---------- trava de acesso (login por link magico) ---------- */
+#gate{position:fixed;inset:0;background:var(--verde-esc);z-index:100;display:none;overflow-y:auto}
+#gate.aberto{display:block}
+.gate-conteudo{max-width:480px;margin:0 auto;padding:40px 22px;color:#F3EFE0;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+.gate-conteudo .marca{font-size:1.4rem;margin-bottom:22px;justify-content:center}
+.gate-conteudo h1{font-family:'Bricolage Grotesque';font-weight:800;font-size:1.6rem;margin-bottom:8px;text-align:center}
+.gate-conteudo p{opacity:.85;text-align:center;margin-bottom:22px}
+.gate-conteudo input{width:100%;padding:14px;border-radius:12px;border:2px solid rgba(255,255,255,.25);background:rgba(255,255,255,.95);margin-bottom:12px}
+.gate-msg{background:rgba(255,255,255,.1);border-radius:14px;padding:14px;text-align:center;margin-top:10px;font-size:.92rem}
+.gate-msg.erro{background:var(--vermelho-fundo);color:var(--vermelho)}
+
+/* ---------- identidade visual 2.0: caderno financeiro de cozinha ---------- */
+:root{
+  --papel:#F3EAD7;
+  --card:#FFF8EA;
+  --tinta:#1E261C;
+  --tinta-suave:#65705F;
+  --verde:#1F6D42;
+  --verde-esc:#123F2B;
+  --verde-fundo:#E4EEDC;
+  --amarelo:#E5B64A;
+  --amarelo-fundo:#F8E9BC;
+  --vermelho:#C7432F;
+  --vermelho-fundo:#F2D9CF;
+  --linha:#D8CAA9;
+  --raio:20px;
+  --sombra:0 14px 34px rgba(25,33,21,.11);
+}
+body{
+  background:
+    linear-gradient(90deg, rgba(18,63,43,.045) 1px, transparent 1px) 0 0/26px 26px,
+    linear-gradient(0deg, rgba(18,63,43,.035) 1px, transparent 1px) 0 0/26px 26px,
+    var(--papel);
+}
+h1,h2,h3,.display,.marca,.sobrao .numero,.preco-op .v,.placar .p b,.magico-num,.wiz-resumo .g{letter-spacing:-.035em}
+header.topo{background:rgba(18,63,43,.96);border-bottom:1px solid rgba(255,248,234,.12);box-shadow:0 10px 28px rgba(18,63,43,.16)}
+.marca{gap:10px;font-size:1.18rem}.marca .logo-svg{width:36px;height:36px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.18))}.marca .verde-pill{background:#FFF8EA;color:var(--verde-esc);border:1px solid rgba(229,182,74,.55);font-size:.92rem;padding:2px 9px 3px}
+.btn-ajustes{border-radius:14px;border:1px solid rgba(255,248,234,.16);background:rgba(255,248,234,.1)}
+nav.abas{background:rgba(255,248,234,.96);box-shadow:0 -12px 30px rgba(25,33,21,.1)}nav.abas button{border-radius:16px}nav.abas button.ativa{color:var(--verde-esc);background:#E9DDBD}
+main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{font-weight:600}
+.cartao,.preco-op,.opcao-inicio,.conq{background:rgba(255,248,234,.9);border-color:rgba(82,66,35,.18)}.cartao h3{font-size:1.1rem}
+.btn{border-radius:18px;background:linear-gradient(180deg,#23864F,var(--verde));box-shadow:0 10px 24px rgba(31,109,66,.22);font-weight:800}.btn.secundario{background:#FFF8EA;border:1.5px solid rgba(31,109,66,.38);box-shadow:none}.btn.fantasma{color:var(--tinta-suave);box-shadow:none}
+.chip{background:#FFF8EA;border-color:rgba(82,66,35,.22);border-radius:15px;font-weight:800}.chip.marcado{background:#FFF8EA;border-color:#FFF8EA;color:var(--verde-esc);box-shadow:0 0 0 4px rgba(255,248,234,.16)}
+.campo input,.campo select,.busca-ing input{border-radius:16px;background:#FFFDF6;border-color:rgba(82,66,35,.24);box-shadow:inset 0 0 0 1px rgba(18,63,43,.05)}.campo input:focus,.campo select:focus,.busca-ing input:focus{border-color:var(--verde);box-shadow:0 0 0 4px rgba(31,109,66,.14);outline:none}
+.etiqueta{border-radius:14px 20px 20px 14px;background:#FFF8EA;border-color:rgba(82,66,35,.2);box-shadow:0 10px 26px rgba(25,33,21,.09)}.etiqueta::before{width:9px;border-radius:14px 0 0 14px}.etiqueta::after{display:none}
+.sobrao{background:#E4EEDC;border-color:#CADBBE;box-shadow:var(--sombra)}.sobrao .numero{font-size:3rem}.tres-precos{gap:10px}.preco-op{border-radius:18px;box-shadow:0 8px 22px rgba(25,33,21,.06)}.preco-op.ativa{border-color:var(--verde);background:#E4EEDC;box-shadow:0 0 0 4px rgba(31,109,66,.1)}
+.item-ing{border-bottom-color:rgba(82,66,35,.2)}.item-ing .qtd,.canal .celula,.metric-lite{background:#EFE1BF}.aviso{border-radius:18px;border:1px solid transparent}.aviso.verde{border-color:#CBDDBF}.aviso.amarelo{border-color:#E5D08E}.aviso.vermelho{border-color:#E8BAAD}
+#wizard{background:radial-gradient(circle at 80% 92%, rgba(229,182,74,.2), transparent 36%),linear-gradient(180deg,#0F3A27,var(--verde-esc))}.wiz-conteudo{padding-top:26px}.wiz-conteudo .marca{font-size:1.25rem}.wiz-pergunta{font-size:2rem;line-height:1}.wiz-apoio{font-weight:650;color:rgba(255,248,234,.78)}
+.wiz-conteudo .chip{border-radius:16px;background:rgba(255,248,234,.08);border-color:rgba(255,248,234,.24);color:#FFF8EA}.wiz-conteudo .chip.marcado{background:#FFF8EA;border-color:#FFF8EA;color:var(--verde-esc)}.wiz-conteudo input{background:#FFF8EA;border:2px solid rgba(229,182,74,.55)}.wiz-rodape .btn{background:#FFF8EA;color:var(--verde-esc);box-shadow:0 12px 28px rgba(0,0,0,.12)}.wiz-resumo{background:rgba(255,248,234,.12);border:1px solid rgba(255,248,234,.12);border-radius:24px}.wiz-resumo .g{font-size:3rem}.wiz-detalhe{background:rgba(255,248,234,.12);border-radius:18px}
+.folha{background:var(--papel);border:1px solid rgba(82,66,35,.18)}.banner-magico{background:linear-gradient(135deg,#123F2B,#1F6D42);border:1px solid rgba(255,248,234,.12);border-radius:22px}.magico-caixa{background:#E4EEDC;border-color:#CADBBE;border-radius:22px}.magico-num{font-size:3.35rem}.placar .p{border-radius:18px}.progresso{height:16px}
+@media(max-width:420px){.wiz-pergunta{font-size:1.75rem}.titulo-tela{font-size:1.55rem}.sobrao .numero{font-size:2.45rem}}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="marca" id="marca-topo"></div>
+  <button class="btn-ajustes" onclick="abrirAjustes()" aria-label="Ajustes">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
+</header>
+
+<main>
+
+<!-- ============ TELA: MEUS PRATOS ============ -->
+<section class="tela ativa" id="tela-pratos">
+  <div id="pratos-lista-view">
+    <h1 class="titulo-tela">Meus pratos</h1>
+    <p class="sub-tela">Cadastre do seu jeito: no capricho ou no olhômetro. Depois dá pra caprichar.</p>
+    <button class="banner-magico" onclick="abrirMagico()">
+      <span class="ic">🪄</span>
+      <span style="flex:1"><b>Seu Número Mágico</b><small>Descubra por quanto vender qualquer prato</small></span>
+      <span style="font-size:1.4rem;opacity:.8">›</span>
+    </button>
+    <div id="lista-pratos"></div>
+    <button class="btn" onclick="novoPrato()">+ Montar um prato</button>
+  </div>
+
+  <div id="prato-editor-view" style="display:none">
+    <h1 class="titulo-tela" id="editor-titulo">Novo prato</h1>
+    <p class="sub-tela">Coloque o que vai dentro e quanto vai de cada coisa.</p>
+
+    <div class="cartao">
+      <div class="campo" style="margin-bottom:0">
+        <label for="inp-nome-prato">Nome do prato</label>
+        <input id="inp-nome-prato" type="text" placeholder="Ex.: Marmita de frango grelhado" maxlength="48">
+      </div>
+    </div>
+
+    <div class="cartao" id="cartao-rapido" style="display:none">
+      <h3>Quanto custa fazer? <span class="selo-olho">👀 no olhômetro</span></h3>
+      <div class="campo">
+        <label for="inp-custo-direto">Somando os ingredientes, dá mais ou menos...</label>
+        <div class="prefixo"><span>R$</span><input id="inp-custo-direto" type="number" inputmode="decimal" min="0" step="0.5" placeholder="Ex.: 11" oninput="mudarCustoDireto(this.value)"></div>
+        <div class="dica">Pode chutar por cima. Já dá pra ver se o preço tá bom.</div>
+      </div>
+      <div class="nudge">🌱 Tá valendo! Quando der um tempinho, monte a ficha desse prato — aí o cálculo fica cirúrgico.</div>
+      <button class="btn fantasma" onclick="trocarParaFicha()">Montar a ficha completa agora</button>
+    </div>
+
+    <div class="cartao" id="cartao-ficha">
+      <h3>O que vai no prato</h3>
+      <div id="editor-itens"></div>
+      <button class="btn secundario" style="margin-top:10px" onclick="abrirPicker()">+ Colocar ingrediente</button>
+    </div>
+
+    <div class="sobrao" style="padding:14px">
+      <div class="rotulo">Custo do prato até agora</div>
+      <div class="numero" id="editor-custo" style="font-size:2rem">R$ 0,00</div>
+    </div>
+
+    <button class="btn" id="btn-salvar-prato" onclick="salvarPrato()">Salvar prato</button>
+    <button class="btn secundario" id="btn-duplicar-prato" style="display:none;margin-top:8px" onclick="duplicarPrato()">📄 Duplicar este prato</button>
+    <button class="btn fantasma" onclick="cancelarEdicao()">Voltar sem salvar</button>
+    <button class="btn perigo" id="btn-excluir-prato" style="display:none" onclick="excluirPrato()">Apagar este prato</button>
+  </div>
+</section>
+
+<!-- ============ TELA: MEU PREÇO ============ -->
+<section class="tela" id="tela-preco">
+  <h1 class="titulo-tela">Meu preço</h1>
+  <p class="sub-tela">Arraste o preço e veja quanto sobra pra você.</p>
+  <div class="sel-prato" id="sel-prato-preco"></div>
+  <div id="preco-conteudo"></div>
+</section>
+
+<!-- ============ TELA: DELIVERY ============ -->
+<section class="tela" id="tela-delivery">
+  <h1 class="titulo-tela">Delivery</h1>
+  <p class="sub-tela">Cada canal come uma parte. Veja quanto cobrar em cada um pra não sair no prejuízo.</p>
+  <div class="sel-prato" id="sel-prato-delivery"></div>
+  <div id="delivery-conteudo"></div>
+</section>
+
+<!-- ============ TELA: CARDÁPIO ============ -->
+<section class="tela" id="tela-cardapio">
+  <h1 class="titulo-tela">Meu cardápio</h1>
+  <p class="sub-tela">Verde tá lucrando. Vermelho tá pagando pra trabalhar.</p>
+  <div id="cardapio-conteudo"></div>
+</section>
+
+</main>
+
+<!-- ============ NAV INFERIOR ============ -->
+<nav class="abas">
+  <button class="ativa" data-tela="pratos" onclick="irPara('pratos')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/></svg>
+    Pratos
+  </button>
+  <button data-tela="preco" onclick="irPara('preco')">
+    <svg viewBox="0 0 24 24"><path d="M20.6 13.4 11 3.8a2 2 0 0 0-1.4-.6H4a2 2 0 0 0-2 2v5.6c0 .5.2 1 .6 1.4l9.6 9.6a2 2 0 0 0 2.8 0l5.6-5.6a2 2 0 0 0 0-2.8z"/><circle cx="7.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+    Preço
+  </button>
+  <button data-tela="delivery" onclick="irPara('delivery')">
+    <svg viewBox="0 0 24 24"><circle cx="6" cy="17" r="2.6"/><circle cx="18" cy="17" r="2.6"/><path d="M6 17h6.5l2-8H18M14.5 9h-4M18 17l-1.5-8 2.5-2"/></svg>
+    Delivery
+  </button>
+  <button data-tela="cardapio" onclick="irPara('cardapio')">
+    <svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg>
+    Cardápio
+  </button>
+</nav>
+
+<!-- ============ MODAL: PICKER DE INGREDIENTES ============ -->
+<div class="veu" id="veu-picker">
+  <div class="folha">
+    <div class="folha-cabeca">
+      <h2>Colocar ingrediente</h2>
+      <button class="fechar" onclick="fecharVeu('veu-picker')" aria-label="Fechar">×</button>
+    </div>
+    <div class="busca-ing"><input id="inp-busca-ing" type="text" placeholder="Procurar: frango, arroz, queijo..." oninput="renderPicker()"></div>
+    <div id="picker-grupos"></div>
+    <div class="cartao" style="margin-top:14px">
+      <h3>Não achou? Crie o seu</h3>
+      <div class="campo"><label for="novo-ing-nome">Nome</label><input id="novo-ing-nome" type="text" placeholder="Ex.: Molho da casa"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="campo"><label for="novo-ing-un">Vendido por</label>
+          <select id="novo-ing-un"><option value="kg">Quilo (kg)</option><option value="l">Litro (L)</option><option value="un">Unidade</option></select>
+        </div>
+        <div class="campo"><label for="novo-ing-preco">Preço que você paga</label>
+          <div class="prefixo"><span>R$</span><input id="novo-ing-preco" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00"></div>
+        </div>
+      </div>
+      <button class="btn secundario" onclick="criarIngrediente()">Criar e colocar no prato</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: QUANTIDADE ============ -->
+<div class="veu" id="veu-qtd">
+  <div class="folha">
+    <div class="folha-cabeca"><h2 id="qtd-titulo">Quanto vai?</h2><button class="fechar" onclick="fecharVeu('veu-qtd')" aria-label="Fechar">×</button></div>
+    <p class="sub-tela" id="qtd-preco-info"></p>
+    <div class="chips" id="qtd-chips" style="margin-bottom:16px"></div>
+    <div class="campo">
+      <label for="inp-qtd-custom" id="qtd-custom-label">Ou digite a quantidade</label>
+      <input id="inp-qtd-custom" type="number" inputmode="decimal" min="0" placeholder="Ex.: 150">
+    </div>
+    <button class="btn" onclick="confirmarQtd()">Colocar no prato</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: COMO COMEÇAR UM PRATO ============ -->
+<div class="veu" id="veu-novo">
+  <div class="folha">
+    <div class="folha-cabeca"><h2>Como quer montar?</h2><button class="fechar" onclick="fecharVeu('veu-novo')" aria-label="Fechar">×</button></div>
+    <button class="opcao-inicio" onclick="iniciarRapido()">
+      <span class="ic">⚡</span>
+      <span><b>Rápido — sei o custo de cabeça</b><small>Digite quanto custa fazer e pronto. Dá pra detalhar depois.</small></span>
+    </button>
+    <button class="opcao-inicio" onclick="iniciarFicha()">
+      <span class="ic">🧾</span>
+      <span><b>Certinho — montar a ficha</b><small>Escolha os ingredientes e o app calcula o custo exato.</small></span>
+    </button>
+    <div class="cartao" style="margin-top:6px">
+      <h3>Ou comece de um prato pronto 🍽️</h3>
+      <p style="font-size:.85rem;color:var(--tinta-suave);margin-bottom:8px">Já vem com os ingredientes típicos. É só ajustar do seu jeito.</p>
+      <div class="tpl-lista" id="tpl-lista"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: NÚMERO MÁGICO ============ -->
+<div class="veu" id="veu-magico">
+  <div class="folha">
+    <div class="folha-cabeca"><h2>🪄 Seu Número Mágico</h2><button class="fechar" onclick="fecharVeu('veu-magico')" aria-label="Fechar">×</button></div>
+    <p class="sub-tela">Arraste a barra e diga quanto quer botar no bolso em cada venda.</p>
+    <div class="cartao">
+      <h3>Quero <span class="txt-verde" id="mg-pct">15%</span> de lucro</h3>
+      <input type="range" id="mg-range" min="0" max="40" step="1" value="15" oninput="renderMagico(this.value)" aria-label="Meta de lucro">
+      <div class="marcas-preco"><span>0%</span><span>40%</span></div>
+    </div>
+    <div class="magico-caixa">
+      <div class="rotulo">Número Mágico</div>
+      <div class="magico-num" id="mg-num">2,08</div>
+      <div style="font-size:.9rem;max-width:36ch;margin:6px auto 0" id="mg-frase"></div>
+    </div>
+    <div class="cartao">
+      <h3>Calcular um prato seu</h3>
+      <div class="campo">
+        <label for="mg-nome">Nome do prato</label>
+        <input id="mg-nome" type="text" maxlength="48" placeholder="Ex.: Burger da casa">
+      </div>
+      <div class="campo" style="margin-bottom:8px">
+        <label for="mg-custo">Custo dos ingredientes juntos</label>
+        <div class="prefixo"><span>R$</span><input id="mg-custo" type="number" inputmode="decimal" min="0" step="0.5" placeholder="Ex.: 12,50" oninput="renderMagico()"></div>
+      </div>
+      <div id="mg-resultado"></div>
+    </div>
+    <button class="btn" onclick="salvarMagico()">Usar essa meta no app inteiro</button>
+    <p style="font-size:.82rem;color:var(--tinta-suave);text-align:center;margin-top:8px">O Número Mágico já desconta suas contas do mês, impostos, maquininha e a fatia dos apps de entrega. Por isso ele é seu, e não um número genérico.</p>
+  </div>
+</div>
+
+<!-- ============ MODAL: PREÇOS DOS INSUMOS ============ -->
+<div class="veu" id="veu-insumos">
+  <div class="folha">
+    <div class="folha-cabeca"><h2>Preço de insumo mudou?</h2><button class="fechar" onclick="fecharVeu('veu-insumos')" aria-label="Fechar">×</button></div>
+    <p class="sub-tela">Atualize aqui e o cardápio inteiro recalcula sozinho.</p>
+    <div class="cartao" id="insumos-lista"></div>
+    <button class="btn" onclick="salvarPrecosInsumos()">Pronto, recalcular tudo</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: AJUSTES ============ -->
+<div class="veu" id="veu-ajustes">
+  <div class="folha">
+    <div class="folha-cabeca"><h2>Ajustes</h2><button class="fechar" onclick="fecharVeu('veu-ajustes')" aria-label="Fechar">×</button></div>
+    <div class="cartao">
+      <h3>Seu negócio</h3>
+      <div class="linha-config"><label>Vendas por mês (tudo que entra)</label><div class="prefixo" style="width:130px"><span>R$</span><input id="cfg-faturamento" type="number" inputmode="numeric" min="1000" style="width:130px;padding-left:38px"></div></div>
+      <div class="linha-config"><label>Gastos do mês (aluguel + contas + salários)</label><div class="prefixo" style="width:130px"><span>R$</span><input id="cfg-fixos" type="number" inputmode="numeric" min="0" style="width:130px;padding-left:38px"></div></div>
+      <div class="linha-config"><label>Impostos (% da venda) <small style="color:var(--tinta-suave);font-weight:500">— eu chuto pelo seu faturamento, mas pode corrigir</small></label><input id="cfg-impostos" type="number" inputmode="decimal" min="0" max="30" step="0.5"></div>
+      <div class="linha-config"><label>Vendas que saem por entrega (%)</label><input id="cfg-deliverypct" type="number" inputmode="numeric" min="0" max="100" step="5"></div>
+      <div class="linha-config"><label>Por onde entrega mais</label><select id="cfg-appentrega" style="width:150px;padding:10px;border:1.5px solid var(--linha);border-radius:10px;background:#fff"><option value="ifood">iFood</option><option value="outro">Outro app</option><option value="whats">Entrega minha</option><option value="nenhum">Não entrego</option></select></div>
+      <div class="linha-config"><label>Taxa do cartão (%)</label><input id="cfg-cartao" type="number" inputmode="decimal" min="0" max="10" step="0.1"></div>
+      <div class="linha-config"><label>Custo de cada entrega sua (motoboy)</label><div class="prefixo" style="width:130px"><span>R$</span><input id="cfg-entrega" type="number" inputmode="decimal" min="0" step="0.5" style="width:130px;padding-left:38px"></div></div>
+      <div class="linha-config"><label>Outro app de entrega (% total)</label><input id="cfg-outroapp" type="number" inputmode="decimal" min="0" max="40" step="0.5"></div>
+      <div class="linha-config"><label>Meta de lucro por venda (%) 🪄</label><input id="cfg-margem" type="number" inputmode="numeric" min="0" max="40" step="1"></div>
+    </div>
+    <div class="cartao">
+      <h3>Seu restaurante</h3>
+      <div class="campo"><label for="cfg-nome-rest">Nome do negócio</label><input id="cfg-nome-rest" type="text" maxlength="32" placeholder="Ex.: Churrasquinho do Zé"></div>
+      <div class="campo" style="margin-bottom:0">
+        <label>Sua logo</label>
+        <input type="file" id="inp-logo" accept="image/*" style="display:none" onchange="carregarLogo(event)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img id="prev-logo" alt="Logo do restaurante" style="width:44px;height:44px;border-radius:10px;object-fit:cover;background:var(--papel);border:1px solid var(--linha);display:none">
+          <button class="btn secundario" style="flex:1;padding:11px" onclick="document.getElementById('inp-logo').click()">Escolher foto da logo</button>
+        </div>
+        <div class="dica">Aparece no topo do app, deixando ele com a sua cara.</div>
+      </div>
+    </div>
+    <button class="btn" onclick="salvarAjustes()">Salvar ajustes</button>
+    <button class="btn fantasma" onclick="fecharVeu('veu-ajustes');abrirWizard(true)">Refazer as perguntas do começo</button>
+    <div class="cartao" style="margin-top:8px">
+      <h3>Seus dados</h3>
+      <p style="font-size:.88rem;color:var(--tinta-suave);margin-bottom:12px">Tudo fica salvo neste aparelho. Para trocar de celular ou evitar perda, guarde uma copia no Drive, iCloud, WhatsApp ou app Arquivos.</p>
+      <button class="btn secundario" onclick="exportarBackup()" style="margin-bottom:8px">Guardar minha copia</button>
+      <input type="file" id="inp-importar" accept=".pnv,.json,application/json" style="display:none" onchange="importarBackup(event)">
+      <button class="btn fantasma" onclick="document.getElementById('inp-importar').click()">Restaurar minha copia</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TRAVA DE ACESSO ============ -->
+<div id="gate">
+  <div class="gate-conteudo">
+    <div class="marca">Prato<span class="no">No</span><span class="verde-pill">Verde</span></div>
+    <div id="gate-corpo"></div>
+  </div>
+</div>
+
+<!-- ============ WIZARD DE BOAS-VINDAS ============ -->
+<div id="wizard">
+  <div class="wiz-conteudo">
+    <div class="marca">Prato<span class="no">No</span><span class="verde-pill">Verde</span></div>
+
+    <div class="wiz-passo ativa" id="wiz-0">
+      <div class="wiz-pergunta">Que tipo de negócio é o seu?</div>
+      <div class="wiz-apoio">Assim eu já deixo separados os ingredientes e os pratos da sua área.</div>
+      <div class="chips" id="wiz-nicho-chips"></div>
+      <div class="campo" style="margin-top:16px">
+        <label for="wiz-nome-rest" style="color:#F3EFE0">Nome do seu negócio (se quiser)</label>
+        <input id="wiz-nome-rest" type="text" maxlength="32" placeholder="Ex.: Churrasquinho do Zé">
+      </div>
+      <div class="wiz-rodape"><button class="btn" onclick="wizIr(1)">Continuar</button></div>
+    </div>
+
+    <div class="wiz-passo" id="wiz-1">
+      <div class="wiz-pergunta">Quanto seu negócio vende por mês, mais ou menos?</div>
+      <div class="wiz-apoio">Tudo que entra no caixa somado. Pode ser um chute — dá pra ajustar depois.</div>
+      <div class="chips" id="wiz-fat-chips"></div>
+      <div class="campo" style="margin-top:16px">
+        <label for="wiz-fat-custom" style="color:#F3EFE0">Ou digite o valor</label>
+        <div class="prefixo"><span>R$</span><input id="wiz-fat-custom" type="number" inputmode="numeric" min="1000" placeholder="Ex.: 25000"></div>
+      </div>
+      <div class="wiz-rodape">
+        <button class="btn" onclick="wizIr(2)">Continuar</button>
+        <button class="btn fantasma" onclick="wizPasso(0)">Voltar</button>
+      </div>
+    </div>
+
+    <div class="wiz-passo" id="wiz-2">
+      <div class="wiz-pergunta">Somando aluguel, contas e salários, quanto sai por mês?</div>
+      <div class="wiz-apoio">Aluguel + luz + água + gás + internet + salários + o que você tira pra viver. Pode chutar pra cima.</div>
+      <div class="campo">
+        <label for="wiz-fixos-custom" style="color:#F3EFE0">Valor por mês</label>
+        <div class="prefixo"><span>R$</span><input id="wiz-fixos-custom" type="number" inputmode="numeric" min="0" placeholder="Ex.: 8000"></div>
+      </div>
+      <div class="wiz-rodape">
+        <button class="btn" onclick="wizIr(3)">Continuar</button>
+        <button class="btn fantasma" onclick="wizNaoSei()">Não sei — usar a média dos restaurantes</button>
+        <button class="btn fantasma" onclick="wizPasso(1)">Voltar</button>
+      </div>
+    </div>
+
+    <div class="wiz-passo" id="wiz-3">
+      <div class="wiz-pergunta">Quanto das suas vendas sai por entrega?</div>
+      <div class="wiz-apoio">Entrega tem taxa, e taxa entra na conta. Pode responder por cima, sem medo.</div>
+      <div class="chips" id="wiz-del-chips"></div>
+      <div id="wiz-app-bloco" style="display:none;margin-top:20px">
+        <div class="wiz-apoio" style="margin-bottom:10px">E por onde você mais entrega?</div>
+        <div class="chips" id="wiz-app-chips"></div>
+      </div>
+      <div class="wiz-rodape">
+        <button class="btn" onclick="wizIr(4)">Fazer as contas ✨</button>
+        <button class="btn fantasma" onclick="wizPasso(2)">Voltar</button>
+      </div>
+    </div>
+
+    <div class="wiz-passo" id="wiz-4">
+      <div id="wiz-calculando">
+        <div class="wiz-pergunta">Deixa comigo…</div>
+        <div id="wiz-calc-linhas" style="margin-top:14px"></div>
+      </div>
+      <div id="wiz-resultado-wrap" style="display:none">
+        <div class="wiz-pergunta">Pronto. A matemática chata é comigo.</div>
+        <div class="wiz-apoio">De cada venda sua, essa fatia já tem dono — antes mesmo dos ingredientes:</div>
+        <div class="wiz-resumo">
+          <div class="g" id="wiz-resultado">28%</div>
+          <div id="wiz-resultado-txt" style="opacity:.9;font-size:.95rem">de cada venda já sai pra pagar contas, impostos e taxas</div>
+          <div class="wiz-detalhe" id="wiz-detalhe"></div>
+        </div>
+        <div class="wiz-apoio" style="margin-top:14px" id="wiz-aviso-final">Daqui pra frente você só monta os pratos. Eu desconto isso tudo sozinho, em cada cálculo.</div>
+      </div>
+      <div class="wiz-rodape">
+        <button class="btn" id="wiz-btn-comecar" onclick="fecharWizard()" disabled>Começar a montar meus pratos</button>
+        <button class="btn fantasma" onclick="wizPasso(1)">Revisar respostas</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================
+   PratoNoVerde — dados, armazenamento e cálculos
+===================================================== */
+
+/* ---------- base de ingredientes (preços médios, editáveis) ---------- */
+/* un: kg = quilo | l = litro | un = unidade  ·  p = preço  ·  fc = fator de correção (perda na limpeza) */
+const BASE = [
+ // Carnes
+ {id:'patinho',n:'Patinho (carne)',cat:'Carnes',un:'kg',p:42,fc:1.05},
+ {id:'acem',n:'Acém',cat:'Carnes',un:'kg',p:36,fc:1.08},
+ {id:'coxaomole',n:'Coxão mole',cat:'Carnes',un:'kg',p:44,fc:1.05},
+ {id:'alcatra',n:'Alcatra',cat:'Carnes',un:'kg',p:55,fc:1.05},
+ {id:'contrafile',n:'Contrafilé',cat:'Carnes',un:'kg',p:58,fc:1.08},
+ {id:'costela',n:'Costela bovina',cat:'Carnes',un:'kg',p:32,fc:1.15},
+ {id:'moida',n:'Carne moída',cat:'Carnes',un:'kg',p:38,fc:1},
+ {id:'porco',n:'Pernil / carne de porco',cat:'Carnes',un:'kg',p:22,fc:1.1},
+ {id:'linguica',n:'Linguiça toscana',cat:'Carnes',un:'kg',p:28,fc:1},
+ {id:'calabresa',n:'Calabresa',cat:'Carnes',un:'kg',p:26,fc:1},
+ {id:'bacon',n:'Bacon',cat:'Carnes',un:'kg',p:45,fc:1},
+ {id:'charque',n:'Charque / carne de sol',cat:'Carnes',un:'kg',p:42,fc:1.1},
+ // Frango & Ovos
+ {id:'peito',n:'Peito de frango',cat:'Frango & Ovos',un:'kg',p:22,fc:1.05},
+ {id:'coxa',n:'Coxa e sobrecoxa',cat:'Frango & Ovos',un:'kg',p:14,fc:1.1},
+ {id:'frangointeiro',n:'Frango inteiro',cat:'Frango & Ovos',un:'kg',p:12,fc:1.25},
+ {id:'ovo',n:'Ovo',cat:'Frango & Ovos',un:'un',p:0.9,fc:1},
+ // Peixes
+ {id:'tilapia',n:'Filé de tilápia',cat:'Peixes & Camarão',un:'kg',p:48,fc:1.05},
+ {id:'pescada',n:'Pescada / peixe branco',cat:'Peixes & Camarão',un:'kg',p:35,fc:1.15},
+ {id:'camarao',n:'Camarão limpo',cat:'Peixes & Camarão',un:'kg',p:70,fc:1},
+ // Hortifruti
+ {id:'tomate',n:'Tomate',cat:'Hortifruti',un:'kg',p:8,fc:1.15},
+ {id:'cebola',n:'Cebola',cat:'Hortifruti',un:'kg',p:6,fc:1.15},
+ {id:'alho',n:'Alho',cat:'Hortifruti',un:'kg',p:28,fc:1.25},
+ {id:'batata',n:'Batata',cat:'Hortifruti',un:'kg',p:6,fc:1.2},
+ {id:'batatadoce',n:'Batata doce',cat:'Hortifruti',un:'kg',p:6,fc:1.2},
+ {id:'macaxeira',n:'Macaxeira',cat:'Hortifruti',un:'kg',p:7,fc:1.35},
+ {id:'cenoura',n:'Cenoura',cat:'Hortifruti',un:'kg',p:6,fc:1.2},
+ {id:'abobora',n:'Abóbora',cat:'Hortifruti',un:'kg',p:5.5,fc:1.4},
+ {id:'repolho',n:'Repolho',cat:'Hortifruti',un:'kg',p:4.5,fc:1.15},
+ {id:'pimentao',n:'Pimentão',cat:'Hortifruti',un:'kg',p:9,fc:1.2},
+ {id:'alface',n:'Alface (pé)',cat:'Hortifruti',un:'un',p:3.5,fc:1.3},
+ {id:'couve',n:'Couve (maço)',cat:'Hortifruti',un:'un',p:4,fc:1.3},
+ {id:'cheiroverde',n:'Cheiro-verde (maço)',cat:'Hortifruti',un:'un',p:3,fc:1.2},
+ {id:'limao',n:'Limão',cat:'Hortifruti',un:'kg',p:7,fc:1.4},
+ {id:'banana',n:'Banana',cat:'Hortifruti',un:'kg',p:7,fc:1.4},
+ // Mercearia
+ {id:'arroz',n:'Arroz',cat:'Mercearia',un:'kg',p:6.5,fc:1},
+ {id:'feijaocarioca',n:'Feijão carioca',cat:'Mercearia',un:'kg',p:8.5,fc:1},
+ {id:'feijaopreto',n:'Feijão preto',cat:'Mercearia',un:'kg',p:9,fc:1},
+ {id:'farinhatrigo',n:'Farinha de trigo',cat:'Mercearia',un:'kg',p:5.5,fc:1},
+ {id:'farinhamandioca',n:'Farinha de mandioca',cat:'Mercearia',un:'kg',p:9,fc:1},
+ {id:'farofapronta',n:'Farofa pronta',cat:'Mercearia',un:'kg',p:12,fc:1},
+ {id:'oleo',n:'Óleo de soja',cat:'Mercearia',un:'l',p:8.5,fc:1},
+ {id:'azeite',n:'Azeite',cat:'Mercearia',un:'l',p:42,fc:1},
+ {id:'sal',n:'Sal',cat:'Mercearia',un:'kg',p:3,fc:1},
+ {id:'acucar',n:'Açúcar',cat:'Mercearia',un:'kg',p:5.5,fc:1},
+ {id:'leitecoco',n:'Leite de coco',cat:'Mercearia',un:'l',p:18,fc:1},
+ // Massas & Pães
+ {id:'macarrao',n:'Macarrão',cat:'Massas & Pães',un:'kg',p:8,fc:1},
+ {id:'lasanha',n:'Massa de lasanha',cat:'Massas & Pães',un:'kg',p:14,fc:1},
+ {id:'paofrances',n:'Pão francês',cat:'Massas & Pães',un:'kg',p:16,fc:1},
+ {id:'paohamburguer',n:'Pão de hambúrguer',cat:'Massas & Pães',un:'un',p:1.6,fc:1},
+ {id:'paosub',n:'Pão tipo sub / baguete',cat:'Massas & Pães',un:'un',p:2.5,fc:1},
+ // Queijos & Frios
+ {id:'mussarela',n:'Queijo mussarela',cat:'Queijos & Frios',un:'kg',p:42,fc:1},
+ {id:'coalho',n:'Queijo coalho',cat:'Queijos & Frios',un:'kg',p:48,fc:1},
+ {id:'prato',n:'Queijo prato',cat:'Queijos & Frios',un:'kg',p:44,fc:1},
+ {id:'parmesao',n:'Parmesão',cat:'Queijos & Frios',un:'kg',p:75,fc:1},
+ {id:'presunto',n:'Presunto',cat:'Queijos & Frios',un:'kg',p:28,fc:1},
+ {id:'requeijao',n:'Requeijão',cat:'Queijos & Frios',un:'kg',p:28,fc:1},
+ {id:'creamcheese',n:'Cream cheese',cat:'Queijos & Frios',un:'kg',p:38,fc:1},
+ {id:'manteiga',n:'Manteiga',cat:'Queijos & Frios',un:'kg',p:48,fc:1},
+ {id:'leite',n:'Leite',cat:'Queijos & Frios',un:'l',p:5.5,fc:1},
+ {id:'cremeleite',n:'Creme de leite',cat:'Queijos & Frios',un:'l',p:16,fc:1},
+ // Temperos & Molhos
+ {id:'molhotomate',n:'Molho de tomate',cat:'Temperos & Molhos',un:'kg',p:9,fc:1},
+ {id:'extrato',n:'Extrato de tomate',cat:'Temperos & Molhos',un:'kg',p:14,fc:1},
+ {id:'maionese',n:'Maionese',cat:'Temperos & Molhos',un:'kg',p:16,fc:1},
+ {id:'ketchup',n:'Ketchup',cat:'Temperos & Molhos',un:'kg',p:14,fc:1},
+ {id:'mostarda',n:'Mostarda',cat:'Temperos & Molhos',un:'kg',p:13,fc:1},
+ {id:'pimentareino',n:'Pimenta-do-reino',cat:'Temperos & Molhos',un:'kg',p:60,fc:1},
+ {id:'colorau',n:'Colorau',cat:'Temperos & Molhos',un:'kg',p:18,fc:1},
+ {id:'cominho',n:'Cominho',cat:'Temperos & Molhos',un:'kg',p:30,fc:1},
+ {id:'temperopronto',n:'Tempero pronto',cat:'Temperos & Molhos',un:'kg',p:20,fc:1},
+ // Bebidas
+ {id:'refri',n:'Refrigerante lata',cat:'Bebidas',un:'un',p:3.2,fc:1},
+ {id:'agua',n:'Água garrafinha',cat:'Bebidas',un:'un',p:1.2,fc:1},
+ {id:'polpa',n:'Polpa de fruta',cat:'Bebidas',un:'kg',p:15,fc:1},
+ // Embalagens
+ {id:'marmitaisopor',n:'Marmita de isopor',cat:'Embalagens',un:'un',p:1.1,fc:1},
+ {id:'marmitaaluminio',n:'Marmita de alumínio',cat:'Embalagens',un:'un',p:1.3,fc:1},
+ {id:'poteplastico',n:'Pote plástico c/ tampa',cat:'Embalagens',un:'un',p:0.8,fc:1},
+ {id:'caixaburger',n:'Caixa de hambúrguer',cat:'Embalagens',un:'un',p:1.2,fc:1},
+ {id:'sacola',n:'Sacola',cat:'Embalagens',un:'un',p:0.35,fc:1},
+ {id:'kittalher',n:'Kit talher + guardanapo',cat:'Embalagens',un:'un',p:0.6,fc:1},
+ {id:'caixapizza',n:'Caixa de pizza',cat:'Embalagens',un:'un',p:2.2,fc:1},
+ // Pizzaria
+ {id:'discopizza',n:'Disco / massa de pizza',cat:'Massas & Pães',un:'un',p:3.5,fc:1},
+ {id:'oregano',n:'Orégano',cat:'Temperos & Molhos',un:'kg',p:45,fc:1},
+ {id:'azeitona',n:'Azeitona',cat:'Mercearia',un:'kg',p:18,fc:1},
+ // Churrasco & Espetos
+ {id:'espeto',n:'Espeto de bambu',cat:'Churrasco & Espetos',un:'un',p:0.15,fc:1},
+ {id:'carvao',n:'Carvão',cat:'Churrasco & Espetos',un:'kg',p:6,fc:1},
+ {id:'paoalho',n:'Pão de alho',cat:'Churrasco & Espetos',un:'un',p:4.5,fc:1},
+ // Hot dog & Pastel
+ {id:'salsicha',n:'Salsicha',cat:'Carnes',un:'kg',p:14,fc:1},
+ {id:'paohotdog',n:'Pão de hot dog',cat:'Massas & Pães',un:'un',p:1.1,fc:1},
+ {id:'massapastel',n:'Massa de pastel',cat:'Massas & Pães',un:'kg',p:16,fc:1},
+ {id:'milho',n:'Milho verde (escorrido)',cat:'Mercearia',un:'kg',p:12,fc:1},
+ {id:'batatapalha',n:'Batata palha',cat:'Mercearia',un:'kg',p:22,fc:1},
+ // Açaí & Doces
+ {id:'acai',n:'Polpa de açaí',cat:'Açaí & Doces',un:'kg',p:22,fc:1},
+ {id:'granola',n:'Granola',cat:'Açaí & Doces',un:'kg',p:20,fc:1},
+ {id:'leitecond',n:'Leite condensado',cat:'Açaí & Doces',un:'kg',p:16,fc:1},
+];
+
+/* ---------- nichos: ingredientes em destaque + pratos prontos ---------- */
+const NICHOS = [
+ {id:'marmitaria', nome:'Marmitaria / Self-service', emoji:'🍱',
+  destaque:['peito','acem','moida','porco','arroz','feijaocarioca','feijaopreto','macarrao','batata','tomate','cebola','alho','oleo','farofapronta','marmitaisopor','kittalher','sacola'],
+  templates:[
+   {n:'Marmita executiva de frango', emb:1.5, itens:[['peito',150],['arroz',180],['feijaocarioca',120],['batata',100],['tomate',40],['alface',0.2],['oleo',15],['temperopronto',5],['marmitaisopor',1],['kittalher',1],['sacola',1]]},
+   {n:'Marmita de carne', emb:1.5, itens:[['acem',150],['arroz',180],['feijaocarioca',120],['macarrao',80],['farofapronta',25],['oleo',15],['marmitaisopor',1],['kittalher',1],['sacola',1]]},
+   {n:'Feijoada (marmita)', emb:1.5, itens:[['feijaopreto',180],['porco',80],['linguica',60],['charque',60],['arroz',150],['couve',0.25],['farinhamandioca',30],['marmitaisopor',1],['sacola',1]]},
+   {n:'Strogonoff de frango', emb:1.5, itens:[['peito',140],['cremeleite',60],['extrato',20],['arroz',180],['batatapalha',30],['marmitaisopor',1],['sacola',1]]},
+  ]},
+ {id:'hamburgueria', nome:'Hamburgueria', emoji:'🍔',
+  destaque:['paohamburguer','moida','bacon','mussarela','prato','presunto','ovo','alface','tomate','cebola','maionese','ketchup','mostarda','batata','caixaburger','refri'],
+  templates:[
+   {n:'X-Burger', emb:1.2, itens:[['paohamburguer',1],['moida',130],['prato',25],['maionese',20],['ketchup',15],['alface',0.1],['tomate',30],['caixaburger',1]]},
+   {n:'X-Tudo', emb:1.2, itens:[['paohamburguer',1],['moida',130],['bacon',30],['ovo',1],['presunto',20],['mussarela',30],['maionese',20],['alface',0.1],['tomate',30],['caixaburger',1]]},
+   {n:'X-Frango', emb:1.2, itens:[['paohamburguer',1],['peito',130],['mussarela',30],['maionese',20],['alface',0.1],['tomate',30],['caixaburger',1]]},
+   {n:'Porção de batata frita', emb:0.8, itens:[['batata',250],['oleo',60],['sal',3],['poteplastico',1]]},
+  ]},
+ {id:'pizzaria', nome:'Pizzaria', emoji:'🍕',
+  destaque:['discopizza','molhotomate','mussarela','calabresa','presunto','requeijao','peito','cebola','tomate','azeitona','oregano','caixapizza'],
+  templates:[
+   {n:'Pizza de mussarela (G)', emb:2.2, itens:[['discopizza',1],['molhotomate',100],['mussarela',280],['tomate',50],['oregano',3],['azeitona',20],['caixapizza',1]]},
+   {n:'Pizza de calabresa (G)', emb:2.2, itens:[['discopizza',1],['molhotomate',100],['mussarela',160],['calabresa',160],['cebola',50],['oregano',3],['caixapizza',1]]},
+   {n:'Pizza frango c/ catupiry (G)', emb:2.2, itens:[['discopizza',1],['molhotomate',100],['peito',160],['requeijao',120],['mussarela',100],['oregano',3],['caixapizza',1]]},
+   {n:'Pizza portuguesa (G)', emb:2.2, itens:[['discopizza',1],['molhotomate',100],['mussarela',180],['presunto',80],['ovo',1],['cebola',40],['azeitona',25],['oregano',3],['caixapizza',1]]},
+  ]},
+ {id:'churrasquinho', nome:'Churrasquinho / Espetinho', emoji:'🍢',
+  destaque:['alcatra','patinho','coxa','peito','linguica','coalho','paoalho','espeto','carvao','farofapronta','cheiroverde','tomate','cebola','refri'],
+  templates:[
+   {n:'Espetinho de carne', emb:0.3, itens:[['patinho',110],['espeto',1],['carvao',100],['farofapronta',20],['sal',2]]},
+   {n:'Espetinho de frango', emb:0.3, itens:[['peito',110],['espeto',1],['carvao',100],['farofapronta',20],['sal',2]]},
+   {n:'Espetinho de linguiça', emb:0.3, itens:[['linguica',110],['espeto',1],['carvao',100],['farofapronta',20]]},
+   {n:'Queijo coalho na brasa', emb:0.3, itens:[['coalho',100],['espeto',1],['carvao',80]]},
+   {n:'Pão de alho', emb:0.2, itens:[['paoalho',1],['carvao',50]]},
+  ]},
+ {id:'hotdogueria', nome:'Hotdogueria', emoji:'🌭',
+  destaque:['paohotdog','salsicha','molhotomate','milho','batatapalha','maionese','ketchup','mostarda','batata','requeijao','refri','sacola'],
+  templates:[
+   {n:'Hot dog completo', emb:0.6, itens:[['paohotdog',1],['salsicha',80],['molhotomate',40],['milho',20],['batatapalha',15],['maionese',20],['ketchup',10],['sacola',1]]},
+   {n:'Hot dog duplo', emb:0.6, itens:[['paohotdog',1],['salsicha',160],['molhotomate',50],['batata',60],['milho',25],['batatapalha',20],['maionese',25],['ketchup',10],['sacola',1]]},
+   {n:'Hot dog prensado', emb:0.6, itens:[['paohotdog',1],['salsicha',80],['mussarela',30],['presunto',20],['maionese',20],['sacola',1]]},
+  ]},
+ {id:'pastelaria', nome:'Pastelaria / Salgados', emoji:'🥟',
+  destaque:['massapastel','moida','mussarela','peito','requeijao','oleo','cebola','ovo','sacola','polpa','acucar'],
+  templates:[
+   {n:'Pastel de carne', emb:0.3, itens:[['massapastel',90],['moida',70],['cebola',15],['oleo',60],['sacola',1]]},
+   {n:'Pastel de queijo', emb:0.3, itens:[['massapastel',90],['mussarela',70],['oleo',60],['sacola',1]]},
+   {n:'Pastel de frango c/ requeijão', emb:0.3, itens:[['massapastel',90],['peito',60],['requeijao',25],['oleo',60],['sacola',1]]},
+   {n:'Suco de polpa (copo 300ml)', emb:0.4, itens:[['polpa',100],['acucar',15],['poteplastico',1]]},
+  ]},
+ {id:'lanches', nome:'Lanches / Açaí', emoji:'🍧',
+  destaque:['acai','granola','leitecond','banana','polpa','leite','paofrances','presunto','mussarela','manteiga','poteplastico','refri'],
+  templates:[
+   {n:'Açaí 500ml', emb:0.5, itens:[['acai',330],['granola',30],['leitecond',40],['banana',80],['poteplastico',1]]},
+   {n:'Açaí 300ml', emb:0.4, itens:[['acai',200],['granola',20],['leitecond',25],['banana',50],['poteplastico',1]]},
+   {n:'Misto quente', emb:0.4, itens:[['paofrances',80],['presunto',30],['mussarela',30],['manteiga',10]]},
+   {n:'Vitamina de banana', emb:0.4, itens:[['banana',100],['leite',200],['acucar',15],['poteplastico',1]]},
+  ]},
+ {id:'outro', nome:'Outro tipo de negócio', emoji:'🍴',
+  destaque:[],
+  templates:[
+   {n:'Marmita executiva de frango', emb:1.5, itens:[['peito',150],['arroz',180],['feijaocarioca',120],['batata',100],['oleo',15],['marmitaisopor',1],['sacola',1]]},
+   {n:'X-Burger', emb:1.2, itens:[['paohamburguer',1],['moida',130],['prato',25],['maionese',20],['alface',0.1],['tomate',30],['caixaburger',1]]},
+   {n:'Espetinho de carne', emb:0.3, itens:[['patinho',110],['espeto',1],['carvao',100],['farofapronta',20]]},
+  ]},
+];
+function nichoAtual(){ return NICHOS.find(n=>S.config && n.id===S.config.nicho) || NICHOS[NICHOS.length-1]; }
+
+/* ---------- armazenamento (funciona no navegador; se não der, guarda na sessão) ---------- */
+const memoria = {};
+const cofre = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return memoria[k] ?? null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){ memoria[k]=v; } }
+};
+
+let S = {
+  config:null,            // {faturamento, fixos, fixoPct, estimado, impostos, cartao, entrega, outroapp, nicho, margemAlvo, nomeRest, logo, usouMagico}
+  pratos:[],              // {id, nome, vendasDia, preco, emb, itens:[{ing, qtd}], custoDireto}
+  precos:{},              // preços editados dos ingredientes da base {ingId: preco}
+  custom:[],              // ingredientes criados pelo usuário
+  conquistas:{}           // {idConquista: true}
+};
+let checandoConq = false;
+function salvar(){
+  cofre.set('pnv', JSON.stringify(S));
+  if(!checandoConq){ checandoConq = true; try{ verificarConquistas(); } finally{ checandoConq = false; } }
+  if(typeof sincronizarParaServidor === 'function') sincronizarParaServidor();
+}
+function normalizar(){
+  S.conquistas = S.conquistas || {};
+  S.precos = S.precos || {}; S.custom = S.custom || []; S.pratos = S.pratos || [];
+  if(S.config){
+    if(S.config.margemAlvo === undefined) S.config.margemAlvo = 0.15;
+    if(!S.config.nicho) S.config.nicho = 'outro';
+    if(S.config.deliveryPct === undefined) S.config.deliveryPct = 0;
+    if(!S.config.appEntrega) S.config.appEntrega = 'nenhum';
+  }
+}
+function carregar(){
+  const raw = cofre.get('pnv');
+  if(raw){ try{ S = Object.assign(S, JSON.parse(raw)); }catch(e){} }
+  normalizar();
+}
+
+/* =====================================================
+   Acesso: login por link magico + sincronizacao com Supabase
+===================================================== */
+const SUPA_URL = 'https://dnkizipqqyhkfeivnisj.supabase.co';
+const SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRua2l6aXBxcXloa2ZlaXZuaXNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTk1OTUsImV4cCI6MjA5ODY5NTU5NX0.3FEGjpVqPQW_KX5Fx8LhQmYp7-lkiL55oZMmAGf1O7A';
+const sb = window.supabase.createClient(SUPA_URL, SUPA_ANON);
+let sessaoEmail = null;
+
+function abrirGate(){ $('gate').classList.add('aberto'); }
+function fecharGate(){ $('gate').classList.remove('aberto'); }
+
+function telaPedirEmail(msg){
+  $('gate-corpo').innerHTML = `
+    <h1>Seu acesso vitalício</h1>
+    <p>Digite o e-mail que você usou na compra. A gente manda um link pra entrar, sem senha.</p>
+    <input id="gate-email" type="email" placeholder="seuemail@exemplo.com" autocomplete="email">
+    <button class="btn" onclick="pedirLinkAcesso()">Receber meu acesso</button>
+    ${msg?`<div class="gate-msg erro">${esc(msg)}</div>`:''}
+  `;
+}
+function telaAguardandoEmail(){
+  $('gate-corpo').innerHTML = `
+    <h1>Prontinho!</h1>
+    <p>Manda um e-mail com seu link de acesso em instantes.</p>
+    <div class="gate-msg">Não achou? Confere o spam — às vezes leva um minutinho. O link vale por 1 hora.</div>
+    <button class="btn fantasma" style="color:#F3EFE0" onclick="telaPedirEmail()">Usar outro e-mail</button>
+  `;
+}
+function telaSemAcesso(email){
+  $('gate-corpo').innerHTML = `
+    <h1>Não encontramos sua compra</h1>
+    <p>Não achamos uma compra ativa pra <b>${esc(email)}</b>.</p>
+    <div class="gate-msg erro">Confere se foi o mesmo e-mail usado na hora da compra. Se o problema continuar, chama a gente.</div>
+    <button class="btn" onclick="telaPedirEmail()">Tentar outro e-mail</button>
+  `;
+}
+async function pedirLinkAcesso(){
+  const email = $('gate-email').value.trim();
+  if(!email){ telaPedirEmail('Digita um e-mail válido.'); return; }
+  const { error } = await sb.auth.signInWithOtp({ email, options:{ emailRedirectTo: window.location.href } });
+  if(error){ telaPedirEmail('Não consegui enviar agora. Tenta de novo em instantes.'); return; }
+  telaAguardandoEmail();
+}
+
+/* checa sessao ativa + licenca; retorna true se pode liberar o app */
+async function checarAcesso(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session){ telaPedirEmail(); abrirGate(); return false; }
+  sessaoEmail = session.user.email;
+  const { data: licenca } = await sb.from('licencas').select('status').eq('email', sessaoEmail).maybeSingle();
+  if(!licenca || licenca.status !== 'ativo'){ telaSemAcesso(sessaoEmail); abrirGate(); return false; }
+  fecharGate();
+  await sincronizarDoServidor();
+  return true;
+}
+/* traz o estado salvo na nuvem (se tiver) antes de renderizar o app */
+async function sincronizarDoServidor(){
+  try{
+    const { data } = await sb.from('dados_usuario').select('estado_json').eq('email', sessaoEmail).maybeSingle();
+    if(data && data.estado_json){ S = Object.assign(S, data.estado_json); normalizar(); }
+  }catch(e){ /* sem internet ou erro: segue com o que tem local */ }
+}
+/* manda o estado atual pra nuvem, sem travar a interface se falhar */
+function sincronizarParaServidor(){
+  if(!sessaoEmail) return;
+  sb.from('dados_usuario').upsert({ email:sessaoEmail, estado_json:S, atualizado_em:new Date().toISOString() })
+    .then(({error})=>{ if(error) console.warn('sync falhou, seguindo com o local', error); });
+}
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+function fmt(v){
+  const neg = v < -0.004;
+  const s = Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return (neg?'−':'') + 'R$ ' + s;
+}
+function esc(t){ return String(t).replace(/[<>&"]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+function todosIngredientes(){ return BASE.concat(S.custom); }
+function acharIng(id){ return todosIngredientes().find(i=>i.id===id); }
+function precoIng(ing){ return S.precos[ing.id] !== undefined ? S.precos[ing.id] : ing.p; }
+function rotuloQtd(ing, qtd){
+  if(ing.un==='kg') return qtd>=1000 ? (qtd/1000).toLocaleString('pt-BR')+' kg' : qtd+' g';
+  if(ing.un==='l')  return qtd>=1000 ? (qtd/1000).toLocaleString('pt-BR')+' L'  : qtd+' ml';
+  return qtd+' un';
+}
+
+/* ---------- cálculos ---------- */
+function custoItem(item){
+  const ing = acharIng(item.ing); if(!ing) return 0;
+  const p = precoIng(ing);
+  return ing.un==='un' ? item.qtd*p*ing.fc : (item.qtd/1000)*p*ing.fc;
+}
+function custoPrato(p){ return p.itens.length ? p.itens.reduce((t,i)=>t+custoItem(i),0) : (p.custoDireto||0); }
+function ehOlhometro(p){ return !p.itens.length; }   // custo chutado pelo dono, sem ficha
+function pctBase(){ return S.config.fixoPct + S.config.impostos/100; }        // fixos + impostos
+function pctSalao(){ return pctBase() + S.config.cartao/100; }                // + cartao
+/* imposto estimado pelo faturamento (Simples/MEI, por cima) - editavel nos Ajustes */
+function impostosAuto(fat){
+  if(fat<=7000) return 1;
+  if(fat<=15000) return 4;
+  if(fat<=30000) return 5.6;
+  if(fat<=60000) return 7;
+  return 8.5;
+}
+/* fatia media que os apps de entrega comem, pesada por quanto da venda sai por entrega */
+function taxaEntregaPct(){
+  const c = S.config;
+  if(!c || !c.deliveryPct) return 0;
+  const t = c.appEntrega==='ifood' ? 0.265 : (c.appEntrega==='outro' ? c.outroapp/100 : 0);
+  return c.deliveryPct * t;
+}
+/* fatia total da venda que ja tem dono, sem esconder operacao inviavel */
+function pctGeral(){ return pctSalao() + taxaEntregaPct(); }
+function lucroCom(preco, custoReais, pct){ return preco*(1-pct) - custoReais; }
+function precoPara(lucroAlvo, custoReais, pct){
+  const denom = 1 - pct;
+  return denom > 0.05 ? (custoReais+lucroAlvo)/denom : 0;
+}
+function margemAlvo(){ return (S.config && S.config.margemAlvo !== undefined) ? S.config.margemAlvo : 0.15; }
+function margemDisponivelParaIngredientes(lucroPct=margemAlvo()){
+  return 1 - pctGeral() - lucroPct;
+}
+function tetoIngredientes(preco, lucroPct=margemAlvo()){
+  return Math.max(0, preco * margemDisponivelParaIngredientes(lucroPct));
+}
+function precoSeguro(custo, lucroPct){
+  const denom = 1 - pctGeral() - lucroPct;
+  return denom > 0.05 ? custo/denom : 0;
+}
+function precosSugeridos(custo){
+  const meta = margemAlvo();
+  return {
+    min:  precoSeguro(custo, 0),
+    ideal:precoSeguro(custo, meta),
+    top:  precoSeguro(custo, meta + 0.10)
+  };
+}
+function analisar(p){
+  const custo = custoPrato(p);
+  const sug = precosSugeridos(custo);
+  const preco = p.preco || sug.ideal || sug.min || custo;
+  const lucro = lucroCom(preco, custo, pctGeral());
+  const margem = preco>0 ? lucro/preco : 0;
+  const tetoIng = tetoIngredientes(preco);
+  const excessoIng = Math.max(0, custo - tetoIng);
+  const cor = margem>=0.15 ? 'verde' : (margem>=0.05 ? 'amarelo' : 'vermelho');
+  return {custo, sug, preco, lucro, margem, cor, tetoIng, excessoIng};
+}
+function avisoHtml(tipo, texto){ return `<div class="aviso ${tipo}">${texto}</div>`; }
+function avisosOperacaoHtml(){
+  if(!S.config) return '';
+  const avisos = [];
+  const base = pctGeral();
+  const livre = margemDisponivelParaIngredientes();
+  if(S.config.fixoPct > 0.60) avisos.push(avisoHtml('vermelho', 'Suas contas fixas passam de 60% do faturamento. Antes de mexer nos pratos, essa operacao precisa de revisao.'));
+  else if(S.config.fixoPct > 0.45) avisos.push(avisoHtml('amarelo', 'Suas contas fixas estao pesadas: mais de 45% do faturamento. A margem dos pratos vai ficar apertada.'));
+  if(base >= 0.75) avisos.push(avisoHtml('vermelho', 'Mais de 75% da venda ja vai embora antes dos ingredientes. O app ainda calcula, mas a operacao esta no limite.'));
+  else if(base >= 0.60) avisos.push(avisoHtml('amarelo', 'Mais de 60% da venda ja tem dono antes dos ingredientes. Cuidado: qualquer insumo caro derruba seu lucro.'));
+  if(livre <= 0.05) avisos.push(avisoHtml('vermelho', 'Com sua meta de lucro atual, quase nao sobra espaco para ingredientes. Reduza a meta, reveja gastos ou aumente precos.'));
+  return avisos.join('');
+}
+function diagnosticoPratoHtml(p,a){
+  const avisos = [];
+  const op = avisosOperacaoHtml();
+  if(op) avisos.push(op);
+  const meta = Math.round(margemAlvo()*100);
+  if(a.sug.min && a.preco < a.sug.min - 0.01){
+    avisos.push(avisoHtml('vermelho', `Abaixo de ${fmt(a.sug.min)} esse prato da prejuizo. Todo prato vendido tira dinheiro do seu bolso.`));
+  }
+  if(a.tetoIng <= 0){
+    avisos.push(avisoHtml('vermelho', `Para buscar ${meta}% de lucro neste preco, nao sobra espaco para ingredientes. Aumente o preco ou reveja os gastos do negocio.`));
+  } else if(a.excessoIng > 0.01){
+    avisos.push(avisoHtml('vermelho', `Para ter ${meta}% de lucro vendendo por ${fmt(a.preco)}, os ingredientes nao podem passar de ${fmt(a.tetoIng)}. Hoje eles custam ${fmt(a.custo)}.`));
+  } else if(a.custo > a.tetoIng * 0.85){
+    avisos.push(avisoHtml('amarelo', `Margem apertada: para ${meta}% de lucro, seu teto de ingredientes e ${fmt(a.tetoIng)} e este prato ja usa ${fmt(a.custo)}.`));
+  }
+  if(a.lucro >= 0 && a.margem < margemAlvo()){
+    avisos.push(avisoHtml('amarelo', `Esse prato ainda lucra, mas nao chega na sua meta de ${meta}%. Ajuste preco, porcao ou insumos.`));
+  }
+  return avisos.join('');
+}
+
+/* =====================================================
+   Navegação e renderização
+===================================================== */
+let telaAtual = 'pratos';
+let pratoSel = null;        // prato escolhido nas telas Preço e Delivery
+let editando = null;        // prato em edição {id?, nome, vendasDia, itens, preco, emb}
+let ingEscolhido = null;    // ingrediente aguardando quantidade
+
+function irPara(tela){
+  telaAtual = tela;
+  document.querySelectorAll('section.tela').forEach(s=>s.classList.remove('ativa'));
+  $('tela-'+tela).classList.add('ativa');
+  document.querySelectorAll('nav.abas button').forEach(b=>b.classList.toggle('ativa', b.dataset.tela===tela));
+  window.scrollTo({top:0});
+  renderTudo();
+}
+function renderTudo(){
+  if(!S.config) return;
+  if(telaAtual==='pratos') renderListaPratos();
+  if(telaAtual==='preco') renderPreco();
+  if(telaAtual==='delivery') renderDelivery();
+  if(telaAtual==='cardapio') renderCardapio();
+}
+function abrirVeu(id){ $(id).classList.add('aberto'); }
+function fecharVeu(id){ $(id).classList.remove('aberto'); }
+
+/* ---------- TELA: Meus pratos ---------- */
+function renderListaPratos(){
+  $('pratos-lista-view').style.display = editando ? 'none' : 'block';
+  $('prato-editor-view').style.display = editando ? 'block' : 'none';
+  if(editando){ renderEditor(); return; }
+  const el = $('lista-pratos');
+  if(!S.pratos.length){
+    el.innerHTML = `<div class="vazio"><div class="icone">🍽️</div><p>Nenhum prato ainda. Monte o primeiro e descubra na hora quanto ele custa de verdade.</p></div>`;
+    return;
+  }
+  el.innerHTML = S.pratos.map(p=>{
+    const a = analisar(p);
+    return `<div class="etiqueta cor-${a.cor}" role="button" tabindex="0" onclick="editarPrato('${p.id}')" onkeydown="if(event.key==='Enter')editarPrato('${p.id}')">
+      <div class="info"><div class="nome">${esc(p.nome)}</div>
+      <div class="linha2">Custa ${fmt(a.custo)}${ehOlhometro(p)?' 👀':''} pra fazer · vende a ${fmt(a.preco)}</div></div>
+      <div class="valor"><b class="txt-${a.cor}">${fmt(a.lucro)}</b><small class="txt-${a.cor}">sobra por prato</small></div>
+    </div>`;
+  }).join('') ;
+}
+function novoPrato(){
+  const tpls = nichoAtual().templates;
+  $('tpl-lista').innerHTML = tpls.map((t,ix)=>`<button class="chip" onclick="usarTemplate(${ix})">${esc(t.n)}</button>`).join('');
+  abrirVeu('veu-novo');
+}
+function prepararEditor(dados, titulo){
+  editando = Object.assign({id:null, nome:'', vendasDia:10, itens:[], preco:null, emb:1.5, custoDireto:null, modo:'ficha'}, dados);
+  $('editor-titulo').textContent = titulo;
+  $('inp-nome-prato').value = editando.nome;
+  $('inp-custo-direto').value = editando.custoDireto || '';
+  $('btn-excluir-prato').style.display='none';
+  $('btn-duplicar-prato').style.display='none';
+  fecharVeu('veu-novo');
+  renderListaPratos();
+  window.scrollTo({top:0});
+}
+function iniciarRapido(){ prepararEditor({modo:'rapido'}, 'Prato rápido ⚡'); }
+function iniciarFicha(){ prepararEditor({}, 'Novo prato'); }
+function usarTemplate(ix){
+  const t = nichoAtual().templates[ix];
+  prepararEditor({nome:t.n, emb:t.emb, itens:t.itens.map(([ing,qtd])=>({ing,qtd}))}, 'Ajuste do seu jeito');
+}
+function editarPrato(id){
+  const p = S.pratos.find(x=>x.id===id); if(!p) return;
+  editando = JSON.parse(JSON.stringify(p));
+  editando.modo = editando.itens.length ? 'ficha' : 'rapido';
+  $('editor-titulo').textContent = 'Mexer no prato';
+  $('inp-nome-prato').value = p.nome;
+  $('inp-custo-direto').value = editando.custoDireto || '';
+  $('btn-excluir-prato').style.display='block';
+  $('btn-duplicar-prato').style.display='block';
+  renderListaPratos();
+}
+function duplicarPrato(){
+  editando = JSON.parse(JSON.stringify(editando));
+  editando.id = null; editando.preco = null;
+  editando.nome = (editando.nome + ' 2').slice(0,48);
+  $('editor-titulo').textContent = 'Novo prato (cópia)';
+  $('inp-nome-prato').value = editando.nome;
+  $('btn-excluir-prato').style.display='none';
+  $('btn-duplicar-prato').style.display='none';
+  renderEditor(); window.scrollTo({top:0});
+}
+function renderEditor(){
+  const rapido = editando.modo==='rapido';
+  $('cartao-rapido').style.display = rapido ? 'block' : 'none';
+  $('cartao-ficha').style.display  = rapido ? 'none' : 'block';
+  if(!rapido){
+    const el = $('editor-itens');
+    if(!editando.itens.length){
+      el.innerHTML = `<p style="color:var(--tinta-suave);font-size:.92rem">Ainda vazio. Toque no botão abaixo e escolha o primeiro ingrediente.</p>`;
+    } else {
+      el.innerHTML = editando.itens.map((it,ix)=>{
+        const ing = acharIng(it.ing); if(!ing) return '';
+        return `<div class="item-ing">
+          <span class="qtd">${rotuloQtd(ing,it.qtd)}</span>
+          <span class="n">${esc(ing.n)}</span>
+          <span class="c">${fmt(custoItem(it))}</span>
+          <button class="rm" onclick="removerItem(${ix})" aria-label="Tirar ${esc(ing.n)}">×</button>
+        </div>`;
+      }).join('');
+    }
+  }
+  $('editor-custo').textContent = fmt(custoPrato(editando));
+}
+function mudarCustoDireto(v){
+  editando.custoDireto = Math.max(0, parseFloat(String(v).replace(',','.'))||0);
+  $('editor-custo').textContent = fmt(editando.custoDireto);
+}
+function trocarParaFicha(){ editando.modo='ficha'; renderEditor(); }
+function removerItem(ix){ editando.itens.splice(ix,1); renderEditor(); }
+function salvarPrato(){
+  const nome = $('inp-nome-prato').value.trim();
+  if(!nome){ alert('Dá um nome pro prato primeiro 🙂'); return; }
+  if(editando.modo==='rapido'){ editando.itens = []; }
+  if(!editando.itens.length && !(editando.custoDireto>0)){
+    alert(editando.modo==='rapido' ? 'Digita quanto custa fazer, mais ou menos 🙂' : 'Coloca pelo menos um ingrediente.');
+    return;
+  }
+  editando.nome = nome;
+  editando.vendasDia = Math.max(1, parseInt(editando.vendasDia)||10);
+  if(!editando.preco){ const ps = precosSugeridos(custoPrato(editando)); editando.preco = Math.ceil(((ps.ideal || ps.min || custoPrato(editando)*3 || 10))*2)/2; }
+  if(editando.id){
+    const ix = S.pratos.findIndex(p=>p.id===editando.id); S.pratos[ix]=editando;
+  } else {
+    editando.id = 'p'+Date.now(); S.pratos.push(editando);
+  }
+  pratoSel = editando.id;
+  editando = null; salvar(); irPara('preco');
+}
+function cancelarEdicao(){ editando=null; renderListaPratos(); }
+function excluirPrato(){
+  if(!confirm('Apagar este prato do cardápio?')) return;
+  S.pratos = S.pratos.filter(p=>p.id!==editando.id);
+  if(pratoSel===editando.id) pratoSel=null;
+  editando=null; salvar(); renderListaPratos();
+}
+
+/* ---------- picker de ingredientes ---------- */
+function abrirPicker(){ $('inp-busca-ing').value=''; renderPicker(); abrirVeu('veu-picker'); }
+function chipIng(i){ return `<button class="ing-chip" onclick="escolherIng('${i.id}')">${esc(i.n)} <small>· ${fmt(precoIng(i))}/${i.un==='un'?'un':i.un}</small></button>`; }
+function renderPicker(){
+  const q = $('inp-busca-ing').value.toLowerCase().trim();
+  const lista = todosIngredientes().filter(i=>!q || i.n.toLowerCase().includes(q));
+  const cats = [...new Set(lista.map(i=>i.cat))];
+  let html = '';
+  const dest = nichoAtual().destaque;
+  if(!q && dest.length){
+    const top = dest.map(acharIng).filter(Boolean);
+    html += `<div class="grupo-ing"><h4>⭐ Os queridinhos do seu negócio</h4><div class="lista-ing">${top.map(chipIng).join('')}</div></div>`;
+  }
+  html += cats.map(c=>`
+    <div class="grupo-ing"><h4>${esc(c)}</h4><div class="lista-ing">
+      ${lista.filter(i=>i.cat===c).map(chipIng).join('')}
+    </div></div>`).join('');
+  $('picker-grupos').innerHTML = html || `<p style="color:var(--tinta-suave)">Nada com esse nome. Crie o seu logo abaixo. 👇</p>`;
+}
+function escolherIng(id){
+  ingEscolhido = acharIng(id); if(!ingEscolhido) return;
+  fecharVeu('veu-picker');
+  $('qtd-titulo').textContent = 'Quanto vai de '+ingEscolhido.n.toLowerCase()+'?';
+  $('qtd-preco-info').textContent = 'Você paga '+fmt(precoIng(ingEscolhido))+' por '+(ingEscolhido.un==='un'?'unidade':ingEscolhido.un.toUpperCase())+'.';
+  const chips = ingEscolhido.un==='un' ? [1,2,3,4,6,12] : (ingEscolhido.un==='l' ? [10,20,50,100,200,300,500] : [10,20,30,50,100,150,200,300,500]);
+  const suf = ingEscolhido.un==='un' ? ' un' : (ingEscolhido.un==='l' ? ' ml' : ' g');
+  $('qtd-chips').innerHTML = chips.map(c=>`<button class="chip" onclick="setQtd(${c},this)">${c}${suf}</button>`).join('');
+  $('qtd-custom-label').textContent = ingEscolhido.un==='un' ? 'Ou digite quantas unidades' : 'Ou digite '+(ingEscolhido.un==='l'?'quantos ml':'quantos gramas');
+  $('inp-qtd-custom').value='';
+  abrirVeu('veu-qtd');
+}
+let qtdEscolhida = null;
+function setQtd(v,btn){ qtdEscolhida=v; document.querySelectorAll('#qtd-chips .chip').forEach(c=>c.classList.remove('marcado')); btn.classList.add('marcado'); $('inp-qtd-custom').value=''; }
+function confirmarQtd(){
+  const custom = parseFloat($('inp-qtd-custom').value.replace(',','.'));
+  const q = custom>0 ? custom : qtdEscolhida;
+  if(!q){ alert('Escolha ou digite a quantidade.'); return; }
+  editando.itens.push({ing:ingEscolhido.id, qtd:q});
+  qtdEscolhida=null; fecharVeu('veu-qtd'); renderEditor();
+}
+function criarIngrediente(){
+  const n = $('novo-ing-nome').value.trim();
+  const p = parseFloat($('novo-ing-preco').value.replace(',','.'));
+  if(!n || !(p>0)){ alert('Preencha o nome e o preço.'); return; }
+  const ing = {id:'c'+Date.now(), n, cat:'Criados por você', un:$('novo-ing-un').value, p, fc:1};
+  S.custom.push(ing); salvar();
+  $('novo-ing-nome').value=''; $('novo-ing-preco').value='';
+  fecharVeu('veu-picker'); escolherIng(ing.id);
+}
+
+/* ---------- seletor de prato (telas Preço e Delivery) ---------- */
+function renderSelPrato(elId){
+  const el = $(elId);
+  if(!S.pratos.length){ el.innerHTML=''; return false; }
+  if(!pratoSel || !S.pratos.find(p=>p.id===pratoSel)) pratoSel = S.pratos[0].id;
+  el.innerHTML = S.pratos.map(p=>`<button class="chip ${p.id===pratoSel?'marcado':''}" onclick="pratoSel='${p.id}';renderTudo()">${esc(p.nome)}</button>`).join('');
+  return true;
+}
+function vazioPratos(msgEl){
+  $(msgEl).innerHTML = `<div class="vazio"><div class="icone">🥘</div><p>Primeiro monte um prato na aba <b>Pratos</b>. Aí eu mostro tudo aqui.</p><button class="btn" onclick="irPara('pratos')">Montar meu primeiro prato</button></div>`;
+}
+
+/* ---------- TELA: Meu preço ---------- */
+function renderPreco(){
+  if(!renderSelPrato('sel-prato-preco')){ vazioPratos('preco-conteudo'); return; }
+  const p = S.pratos.find(x=>x.id===pratoSel);
+  const a = analisar(p);
+  const baseSugerida = a.sug.top || a.sug.ideal || a.sug.min || Math.max(a.preco, a.custo*3, 10);
+  const min = Math.max(1, Math.floor((a.sug.min || a.preco || 1)*0.5));
+  const max = Math.max(min+10, Math.ceil(baseSugerida*1.8));
+  const frase = frasePreco(a.lucro, p.vendasDia);
+  const classe = a.cor==='verde' ? '' : (a.cor==='amarelo' ? 'meio' : 'neg');
+  const meta = Math.round(margemAlvo()*100);
+  const folga = Math.max(0, a.tetoIng - a.custo);
+  $('preco-conteudo').innerHTML = `
+    <div id="preco-alerta">${diagnosticoPratoHtml(p,a)}</div>
+    <div class="sobrao ${classe}" id="sobra-box">
+      <div class="rotulo">Sobra pra voce, por prato</div>
+      <div class="numero txt-${a.cor}" id="sobra-num">${fmt(a.lucro)}</div>
+      <div class="frase" id="sobra-frase">${frase}</div>
+    </div>
+    <div class="cartao">
+      <h3>Preco de venda: <span class="txt-verde" id="preco-atual">${fmt(a.preco)}</span></h3>
+      <div class="faixa-preco">
+        <input type="range" min="${min}" max="${max}" step="0.5" value="${a.preco}" aria-label="Preco de venda"
+          oninput="previewPreco(this.value)" onchange="mudarPreco(this.value)">
+        <div class="marcas-preco"><span>${fmt(min)}</span><span>${fmt(max)}</span></div>
+      </div>
+    </div>
+    <div class="tres-precos">
+      <button class="preco-op ${a.sug.min && Math.abs(a.preco-a.sug.min)<0.26?'ativa':''}" ${a.sug.min?`onclick="aplicarPreco(${a.sug.min.toFixed(2)})"`:''}><div class="tag">Minimo</div><div class="v">${a.sug.min?fmt(a.sug.min):'Nao cabe'}</div></button>
+      <button class="preco-op ${a.sug.ideal && Math.abs(a.preco-a.sug.ideal)<0.26?'ativa':''}" ${a.sug.ideal?`onclick="aplicarPreco(${a.sug.ideal.toFixed(2)})"`:''}><div class="tag">Meta ${meta}%</div><div class="v">${a.sug.ideal?fmt(a.sug.ideal):'Nao cabe'}</div></button>
+      <button class="preco-op ${a.sug.top && Math.abs(a.preco-a.sug.top)<0.26?'ativa':''}" ${a.sug.top?`onclick="aplicarPreco(${a.sug.top.toFixed(2)})"`:''}><div class="tag">Premium</div><div class="v">${a.sug.top?fmt(a.sug.top):'Nao cabe'}</div></button>
+    </div>
+    <div class="cartao">
+      <h3>Teto de ingredientes</h3>
+      <div class="item-ing"><span class="n">Para lucrar ${meta}% vendendo por ${fmt(a.preco)}</span><span class="c" id="bd-teto-ing">${fmt(a.tetoIng)}</span></div>
+      <div class="item-ing"><span class="n">Ingredientes usados agora</span><span class="c" id="bd-custo-ing">${fmt(a.custo)}</span></div>
+      <div class="item-ing"><span class="n"><b id="bd-folga-label">${a.excessoIng>0.01?'Estourou o teto':'Folga para ingredientes'}</b></span><span class="c" id="bd-folga-ing"><b>${a.excessoIng>0.01?fmt(a.excessoIng):fmt(folga)}</b></span></div>
+    </div>
+    <div class="cartao">
+      <h3>Pra onde vai cada real desse prato</h3>
+      <div class="item-ing"><span class="n">Ingredientes${ehOlhometro(p)?' <span class="selo-olho">olhometro</span>':''}</span><span class="c">${fmt(a.custo)}</span></div>
+      <div class="item-ing"><span class="n">Contas do mes (fatia do prato)</span><span class="c" id="bd-fixos">${fmt(a.preco*S.config.fixoPct)}</span></div>
+      <div class="item-ing"><span class="n">Impostos e cartao</span><span class="c" id="bd-taxas">${fmt(a.preco*(S.config.impostos+S.config.cartao)/100)}</span></div>
+      ${taxaEntregaPct()>0?`<div class="item-ing"><span class="n">Apps de entrega (sua fatia)</span><span class="c" id="bd-apps">${fmt(a.preco*taxaEntregaPct())}</span></div>`:''}
+      <div class="item-ing"><span class="n"><b>Lucro real</b></span><span class="c" id="bd-lucro"><b>${fmt(a.lucro)}</b></span></div>
+    </div>`;
+}
+/* frase da projeção do mês, com o "quantos por dia" editável ali mesmo — é um "se", não uma cobrança */
+function frasePreco(lucro, vendasDia){
+  if(lucro < 0) return `Nesse preço, <b>você paga ${fmt(Math.abs(lucro))} do próprio bolso</b> a cada prato vendido.`;
+  const mes = lucro * vendasDia * 26;
+  return `Se vender <input class="inp-inline" type="number" inputmode="numeric" min="1" max="999" value="${vendasDia}" onchange="mudarVendas(this.value)" aria-label="Vendas por dia"> por dia, sobram <b>${fmt(mes)}</b> no mês pra você.`;
+}
+function mudarVendas(v){
+  const p = S.pratos.find(x=>x.id===pratoSel);
+  p.vendasDia = Math.min(999, Math.max(1, parseInt(v)||10));
+  salvar(); renderPreco();
+}
+/* atualiza os números ao vivo enquanto o dedo arrasta, sem reconstruir o slider */
+function previewPreco(v){
+  const p = S.pratos.find(x=>x.id===pratoSel);
+  const preco = parseFloat(v);
+  const custo = custoPrato(p);
+  const sug = precosSugeridos(custo);
+  const lucro = lucroCom(preco, custo, pctGeral());
+  const margem = preco>0 ? lucro/preco : 0;
+  const tetoIng = tetoIngredientes(preco);
+  const excessoIng = Math.max(0, custo - tetoIng);
+  const cor = margem>=0.15 ? 'verde' : (margem>=0.05 ? 'amarelo' : 'vermelho');
+  $('preco-atual').textContent = fmt(preco);
+  const num = $('sobra-num');
+  num.textContent = fmt(lucro);
+  num.className = 'numero txt-'+cor;
+  $('sobra-box').className = 'sobrao ' + (cor==='verde'?'':(cor==='amarelo'?'meio':'neg'));
+  const vdInline = document.querySelector('#sobra-frase .inp-inline');
+  const vd = vdInline ? (parseInt(vdInline.value)||p.vendasDia) : p.vendasDia;
+  $('sobra-frase').innerHTML = frasePreco(lucro, vd);
+  $('preco-alerta').innerHTML = diagnosticoPratoHtml(p,{custo, sug, preco, lucro, margem, cor, tetoIng, excessoIng});
+  const tetoEl = $('bd-teto-ing'); if(tetoEl) tetoEl.textContent = fmt(tetoIng);
+  const custoEl = $('bd-custo-ing'); if(custoEl) custoEl.textContent = fmt(custo);
+  const folgaLabel = $('bd-folga-label'); if(folgaLabel) folgaLabel.textContent = excessoIng>0.01 ? 'Estourou o teto' : 'Folga para ingredientes';
+  const folgaEl = $('bd-folga-ing'); if(folgaEl) folgaEl.innerHTML = `<b>${excessoIng>0.01?fmt(excessoIng):fmt(Math.max(0,tetoIng-custo))}</b>`;
+  $('bd-fixos').textContent = fmt(preco*S.config.fixoPct);
+  $('bd-taxas').textContent = fmt(preco*(S.config.impostos+S.config.cartao)/100);
+  const bdApps = $('bd-apps'); if(bdApps) bdApps.textContent = fmt(preco*taxaEntregaPct());
+  $('bd-lucro').innerHTML = `<b class="txt-${cor}">${fmt(lucro)}</b>`;
+}
+function mudarPreco(v){
+  const p = S.pratos.find(x=>x.id===pratoSel);
+  p.preco = parseFloat(v); salvar(); renderPreco();
+}
+function aplicarPreco(v){
+  const p = S.pratos.find(x=>x.id===pratoSel);
+  p.preco = Math.round(v*2)/2; salvar(); renderPreco();
+}
+
+/* ---------- TELA: Delivery ---------- */
+function canais(){
+  const c = S.config;
+  return [
+    {id:'salao', nome:'No salão / balcão', taxa:'sem taxa de app', pct:pctSalao(), extra:p=>0},
+    {id:'ib', nome:'iFood — Plano Básico', taxa:'15,2% + sua entrega', pct:pctBase()+0.152, extra:p=>p.emb + c.entrega},
+    {id:'ie', nome:'iFood — Plano Entrega', taxa:'26,5%', pct:pctBase()+0.265, extra:p=>p.emb},
+    {id:'oa', nome:'Outro app', taxa:c.outroapp.toLocaleString('pt-BR')+'% (mude nos Ajustes)', pct:pctBase()+c.outroapp/100, extra:p=>p.emb},
+    {id:'wz', nome:'WhatsApp / entrega sua', taxa:'sem taxa de app', pct:pctSalao(), extra:p=>p.emb + c.entrega},
+  ];
+}
+function renderDelivery(){
+  if(!renderSelPrato('sel-prato-delivery')){ vazioPratos('delivery-conteudo'); return; }
+  const p = S.pratos.find(x=>x.id===pratoSel);
+  const a = analisar(p);
+  const alvo = Math.max(a.lucro, 0.01);
+  const linhas = canais().map(cn=>{
+    const extra = cn.extra(p);
+    const sugerido = precoPara(alvo, a.custo+extra, cn.pct);
+    const mesmoPreco = lucroCom(a.preco, a.custo+extra, cn.pct);
+    const cor = mesmoPreco/a.preco>=0.15?'verde':(mesmoPreco/a.preco>=0.05?'amarelo':'vermelho');
+    return `<div class="cartao canal">
+      <div class="cab"><span class="nome-canal">${cn.nome}</span><span class="taxa">${cn.taxa}</span></div>
+      <div class="grade">
+        <div class="celula"><div class="r">Cobre no app</div><div class="v txt-verde">${fmt(sugerido)}</div></div>
+        <div class="celula"><div class="r">Se cobrar ${fmt(a.preco)}</div><div class="v txt-${cor}">${mesmoPreco>=0?'sobra ':'perde '}${fmt(Math.abs(mesmoPreco))}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+  $('delivery-conteudo').innerHTML = `
+    <div class="cartao">
+      <div class="linha-config"><label>Embalagem deste prato (marmita, sacola...)</label>
+        <div class="prefixo" style="width:110px"><span>R$</span><input type="number" inputmode="decimal" min="0" step="0.1" value="${p.emb}" style="width:110px;padding-left:38px" onchange="mudarEmb(this.value)"></div>
+      </div>
+    </div>
+    <div class="aviso verde">💡 "Cobre no app" é o preço que mantém em cada canal <b>a mesma sobra</b> que esse prato já te dá hoje (${fmt(alvo)} por prato). Cobrar mais caro no app é normal — todo mundo faz. Se é o cliente quem paga a taxa de entrega, deixe o custo do motoboy em R$ 0 nos ⚙️ Ajustes.</div>
+    ${linhas}`;
+}
+function mudarEmb(v){
+  const p = S.pratos.find(x=>x.id===pratoSel);
+  p.emb = Math.max(0, parseFloat(String(v).replace(',','.'))||0);
+  salvar(); renderDelivery();
+}
+
+/* ---------- TELA: Cardápio (semáforo) ---------- */
+function renderCardapio(){
+  if(!S.pratos.length){ vazioPratos('cardapio-conteudo'); return; }
+  const analises = S.pratos.map(p=>({p, a:analisar(p)}));
+  const nv = analises.filter(x=>x.a.cor==='verde').length;
+  const na = analises.filter(x=>x.a.cor==='amarelo').length;
+  const nr = analises.filter(x=>x.a.cor==='vermelho').length;
+  const mes = analises.reduce((t,x)=>t + x.a.lucro*x.p.vendasDia*26, 0);
+  const ordem = {vermelho:0, amarelo:1, verde:2};
+  analises.sort((x,y)=>ordem[x.a.cor]-ordem[y.a.cor]);
+  const missao = nr>0 ? `<div class="aviso vermelho">🎯 Sua missão: colocar ${nr===1?'1 prato que está':nr+' pratos que estão'} no vermelho de volta no verde. Toque no prato pra ajustar o preço.</div>`
+    : na>0 ? `<div class="aviso amarelo">Quase lá! Ajuste os pratos em amarelo pra deixar o cardápio inteiro no verde.</div>`
+    : `<div class="aviso verde">🏆 Cardápio 100% no verde. Todo prato vendido está deixando dinheiro no seu bolso.</div>`;
+  const pctVerde = analises.length ? Math.round(nv/analises.length*100) : 0;
+  $('cardapio-conteudo').innerHTML = `
+    <div class="placar">
+      <div class="p pv"><b>${nv}</b><span>no verde</span></div>
+      <div class="p pa"><b>${na}</b><span>no amarelo</span></div>
+      <div class="p pr"><b>${nr}</b><span>no vermelho</span></div>
+    </div>
+    <div class="rotulo-progresso"><span>Rumo ao cardápio 100% verde</span><span>${pctVerde}%</span></div>
+    <div class="progresso"><div class="fill" style="width:${pctVerde}%"></div></div>
+    <div class="sobrao ${mes>=0?'':'neg'}" style="padding:16px">
+      <div class="rotulo">Lucro estimado do cardápio no mês</div>
+      <div class="numero" style="font-size:2.1rem">${fmt(mes)}</div>
+      <div class="frase" style="font-size:.82rem;color:var(--tinta-suave)">Conta feita com um chute de vendas por dia de cada prato — dá pra ajustar na tela Preço.</div>
+    </div>
+    ${missao}
+    ${analises.map(({p,a})=>`
+      <div class="etiqueta cor-${a.cor}" role="button" tabindex="0" onclick="pratoSel='${p.id}';irPara('preco')" onkeydown="if(event.key==='Enter'){pratoSel='${p.id}';irPara('preco')}">
+        <div class="info"><div class="nome">${esc(p.nome)}</div>
+        <div class="linha2">vende a ${fmt(a.preco)} · sobra ${(a.margem*100).toFixed(0)}% da venda</div></div>
+        <div class="valor"><b class="txt-${a.cor}">${fmt(a.lucro)}</b><small class="txt-${a.cor}">por prato</small></div>
+      </div>`).join('')}
+    <button class="btn secundario" style="margin-top:6px" onclick="abrirInsumos()">📈 Preço de insumo mudou</button>
+    <h3 style="margin:18px 0 8px;font-size:1rem">Suas conquistas</h3>
+    <div class="conquistas">${CONQUISTAS.map(c=>`
+      <div class="conq ${S.conquistas[c.id]?'':'trancada'}"><div class="e">${c.e}</div><div class="t">${c.t}</div></div>`).join('')}
+    </div>`;
+}
+
+/* ---------- conquistas e comemoração ---------- */
+const CONQUISTAS = [
+ {id:'primeiro',   e:'🍽️', t:'Primeiro prato no app',      cond:()=>S.pratos.length>=1},
+ {id:'verde1',     e:'🟢', t:'Primeiro prato no verde',    cond:()=>S.pratos.some(p=>analisar(p).cor==='verde')},
+ {id:'ficha1',     e:'🧾', t:'Primeira ficha completa',    cond:()=>S.pratos.some(p=>p.itens.length>=3)},
+ {id:'cinco',      e:'🖐️', t:'5 pratos no cardápio',       cond:()=>S.pratos.length>=5},
+ {id:'magico',     e:'🪄', t:'Número Mágico definido',     cond:()=>!!(S.config&&S.config.usouMagico)},
+ {id:'verdetotal', e:'🏆', t:'Cardápio 100% verde',        cond:()=>S.pratos.length>=3 && S.pratos.every(p=>analisar(p).cor==='verde')},
+];
+function verificarConquistas(){
+  if(!S.config) return;
+  for(const c of CONQUISTAS){
+    let ok = false;
+    try{ ok = !S.conquistas[c.id] && c.cond(); }catch(e){}
+    if(ok){
+      S.conquistas[c.id] = true;
+      cofre.set('pnv', JSON.stringify(S));
+      celebrar(c.e, 'Conquista desbloqueada!', c.t);
+    }
+  }
+}
+let filaCelebra = 0;
+function celebrar(emoji, titulo, sub){
+  const atraso = filaCelebra * 2800; filaCelebra++;
+  setTimeout(()=>{
+    const t = document.createElement('div');
+    t.className = 'toast-conq';
+    t.innerHTML = `<div class="e">${emoji}</div><b>${esc(titulo)}</b><div style="font-size:.9rem;opacity:.9">${esc(sub)}</div>`;
+    document.body.appendChild(t);
+    const cores = ['#1E7B45','#DFA524','#CE402B','#2E9C58','#F6F2E6'];
+    for(let i=0;i<26;i++){
+      const c = document.createElement('div');
+      c.className = 'confete';
+      c.style.left = (Math.random()*100)+'vw';
+      c.style.background = cores[i%cores.length];
+      c.style.animationDuration = (1.6+Math.random()*1.4)+'s';
+      c.style.animationDelay = (Math.random()*0.4)+'s';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(), 3800);
+    }
+    setTimeout(()=>{ t.remove(); filaCelebra = Math.max(0, filaCelebra-1); }, 2600);
+  }, atraso);
+}
+
+/* ---------- número mágico ---------- */
+function abrirMagico(){
+  $('mg-range').value = Math.round(margemAlvo()*100);
+  $('mg-custo').value = ''; $('mg-nome').value = '';
+  renderMagico();
+  abrirVeu('veu-magico');
+}
+function renderMagico(v){
+  const pct = parseInt(v !== undefined ? v : $('mg-range').value) || 0;
+  $('mg-pct').textContent = pct + '%';
+  const base = pctGeral();
+  const espacoIngredientes = 1 - base - pct/100;
+  if(espacoIngredientes <= 0.05){
+    $('mg-num').textContent = '---';
+    $('mg-frase').innerHTML = `Com seus gastos atuais, nao cabe ${pct}% de lucro e ingredientes no mesmo preco. Primeiro reduza gastos, aumente preco ou escolha uma meta menor.`;
+    $('mg-resultado').innerHTML = `<div class="aviso vermelho">Hoje ${Math.round(base*100)}% da venda ja tem dono antes dos ingredientes.</div>`;
+    return;
+  }
+  const M = 1/espacoIngredientes;
+  const Mtxt = M.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  $('mg-num').textContent = Mtxt;
+  $('mg-frase').innerHTML = `Multiplique os ingredientes por <b>${Mtxt}</b>. Assim ${Math.round(base*100)}% paga contas/taxas, <b>${pct}%</b> vira lucro e ${Math.round(espacoIngredientes*100)}% fica para o CMV.`;
+  const custo = parseFloat(String($('mg-custo').value).replace(',','.'));
+  $('mg-resultado').innerHTML = custo>0
+    ? `<div class="aviso verde" style="margin-bottom:8px">Cobre <b>${fmt(custo*M)}</b>. Para essa meta, ingredientes ate <b>${fmt(custo)}</b> cabem na conta e o lucro estimado fica em <b>${fmt(custo*M*pct/100)}</b>.</div>
+       <button class="btn secundario" onclick="salvarDoMagico()">Salvar este prato no cardapio</button>
+       <p style="font-size:.8rem;color:var(--tinta-suave);margin-top:6px">Ele entra no olhometro: sem ficha, valendo o custo que voce disse. Depois voce pode montar a ficha completa.</p>`
+    : '';
+}
+function salvarDoMagico(){
+  const nome = $('mg-nome').value.trim();
+  if(!nome){ alert('Dá um nome pro prato primeiro 🙂'); return; }
+  const custo = parseFloat(String($('mg-custo').value).replace(',','.'));
+  if(!(custo>0)){ alert('Digita o custo dos ingredientes.'); return; }
+  const pct = (parseInt($('mg-range').value)||0)/100;
+  const denom = 1 - pctGeral() - pct;
+  if(denom <= 0.05){ alert('Essa meta não cabe no preço. Diminui um pouco a barra.'); return; }
+  const preco = Math.ceil((custo/denom)*2)/2;
+  S.pratos.push({id:'p'+Date.now(), nome, vendasDia:10, preco, emb:1.5, itens:[], custoDireto:custo});
+  salvar();
+  $('mg-nome').value = ''; $('mg-custo').value = '';
+  renderMagico();
+  $('mg-resultado').innerHTML = `<div class="aviso verde" style="margin-bottom:0">⚡ <b>${esc(nome)}</b> entrou no cardápio por ${fmt(preco)}. Manda o próximo!</div>`;
+  renderTudo();
+  $('mg-nome').focus();
+}
+function salvarMagico(){
+  S.config.margemAlvo = (parseInt($('mg-range').value)||0)/100;
+  S.config.usouMagico = true;
+  salvar(); fecharVeu('veu-magico'); renderTudo();
+}
+
+/* ---------- marca no topo (PratoNoVerde ou o restaurante do cliente) ---------- */
+const LOGO_PNV = `<svg class="logo-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true"><circle cx="40" cy="40" r="36" fill="#123F2B"/><circle cx="40" cy="40" r="27" fill="#FFF8EA"/><path d="M23 43c12-17 25-18 35-6-8 0-14 5-17 16-3-7-9-10-18-10Z" fill="#1F6D42"/><path d="M39 54c.6-13 5.8-23 16-30" fill="none" stroke="#123F2B" stroke-width="4" stroke-linecap="round"/><path d="M24 58h32" stroke="#E5B64A" stroke-width="5" stroke-linecap="round"/></svg>`;
+function renderMarca(){
+  const el = $('marca-topo'); if(!el) return;
+  const c = S.config;
+  if(c && c.nomeRest){
+    el.innerHTML = (c.logo ? `<img src="${c.logo}" alt="Logo">` : LOGO_PNV) + `<span class="nome-rest">${esc(c.nomeRest)}</span>`;
+  } else {
+    el.innerHTML = LOGO_PNV + `Prato<span class="no">No</span><span class="verde-pill">Verde</span>`;
+  }
+}
+function carregarLogo(ev){
+  const f = ev.target.files[0]; if(!f) return;
+  const img = new Image();
+  img.onload = ()=>{
+    const cv = document.createElement('canvas');
+    cv.width = 96; cv.height = 96;
+    const ctx = cv.getContext('2d');
+    const s = Math.min(img.width, img.height);
+    ctx.drawImage(img, (img.width-s)/2, (img.height-s)/2, s, s, 0, 0, 96, 96);
+    S.config.logo = cv.toDataURL('image/jpeg', .85);
+    salvar(); renderMarca();
+    const pv = $('prev-logo'); pv.src = S.config.logo; pv.style.display = 'block';
+    URL.revokeObjectURL(img.src);
+  };
+  img.src = URL.createObjectURL(f);
+}
+
+/* ---------- modal de insumos ---------- */
+function abrirInsumos(){
+  const usados = [...new Set(S.pratos.flatMap(p=>p.itens.map(i=>i.ing)))].map(acharIng).filter(Boolean);
+  if(!usados.length){ alert('Monte um prato primeiro.'); return; }
+  $('insumos-lista').innerHTML = usados.map(ing=>`
+    <div class="linha-config"><label>${esc(ing.n)} <small style="color:var(--tinta-suave)">(${ing.un==='un'?'unidade':ing.un})</small></label>
+      <div class="prefixo" style="width:110px"><span>R$</span><input data-ing-id="${ing.id}" type="number" inputmode="decimal" min="0" step="0.1" value="${precoIng(ing)}" style="width:110px;padding-left:38px"></div>
+    </div>`).join('');
+  abrirVeu('veu-insumos');
+}
+function mudarPrecoIng(id, v){
+  const p = Math.max(0, parseFloat(String(v).replace(',','.'))||0);
+  const custom = S.custom.find(c=>c.id===id);
+  if(custom) custom.p = p; else S.precos[id] = p;
+  salvar();
+}
+function salvarPrecosInsumos(){
+  document.querySelectorAll('#insumos-lista input[data-ing-id]').forEach(inp=>{
+    mudarPrecoIng(inp.dataset.ingId, inp.value);
+  });
+  fecharVeu('veu-insumos');
+  renderTudo();
+}
+
+/* ---------- ajustes ---------- */
+function abrirAjustes(){
+  const c = S.config;
+  $('cfg-faturamento').value=c.faturamento; $('cfg-fixos').value=c.fixos;
+  $('cfg-impostos').value=c.impostos; $('cfg-cartao').value=c.cartao;
+  $('cfg-entrega').value=c.entrega; $('cfg-outroapp').value=c.outroapp;
+  $('cfg-deliverypct').value = Math.round((c.deliveryPct||0)*100);
+  $('cfg-appentrega').value = c.appEntrega || 'nenhum';
+  $('cfg-margem').value = Math.round(margemAlvo()*100);
+  $('cfg-nome-rest').value = c.nomeRest || '';
+  const pv = $('prev-logo');
+  if(c.logo){ pv.src = c.logo; pv.style.display = 'block'; } else { pv.style.display = 'none'; }
+  abrirVeu('veu-ajustes');
+}
+function salvarAjustes(){
+  const c = S.config;
+  c.faturamento = Math.max(1000, parseFloat($('cfg-faturamento').value)||c.faturamento);
+  c.fixos = Math.max(0, parseFloat($('cfg-fixos').value)||0);
+  if(c.fixos > c.faturamento){ alert('Essa conta nao fecha: seus gastos fixos ficaram maiores que o faturamento. Revise antes de salvar.'); return; }
+  c.fixoPct = c.faturamento > 0 ? c.fixos / c.faturamento : 0;
+  c.estimado = false;
+  c.impostos = Math.min(30, Math.max(0, parseFloat($('cfg-impostos').value)||0));
+  c.cartao = Math.min(10, Math.max(0, parseFloat($('cfg-cartao').value)||0));
+  c.entrega = Math.max(0, parseFloat($('cfg-entrega').value)||0);
+  c.outroapp = Math.min(40, Math.max(0, parseFloat($('cfg-outroapp').value)||0));
+  c.deliveryPct = Math.min(100, Math.max(0, parseFloat($('cfg-deliverypct').value)||0))/100;
+  c.appEntrega = $('cfg-appentrega').value;
+  if(c.deliveryPct===0) c.appEntrega = 'nenhum';
+  c.margemAlvo = Math.min(40, Math.max(0, parseFloat($('cfg-margem').value)||0))/100;
+  c.nomeRest = $('cfg-nome-rest').value.trim();
+  salvar(); fecharVeu('veu-ajustes'); renderMarca(); renderTudo();
+}
+function exportarBackup(){
+  const blob = new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const loja = (S.config && S.config.nomeRest ? S.config.nomeRest : 'minha-loja').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'minha-loja';
+  a.download = 'prato-no-verde-' + loja + '.pnv';
+  a.click(); URL.revokeObjectURL(a.href);
+  setTimeout(()=>alert('Copia criada. No celular, salve esse arquivo no Drive, iCloud, WhatsApp ou app Arquivos.'), 250);
+}
+function importarBackup(ev){
+  const f = ev.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{ try{ S = JSON.parse(r.result); normalizar(); salvar(); fecharVeu('veu-ajustes'); renderMarca(); renderTudo(); alert('Pronto. Seus pratos, custos e ajustes voltaram.'); }catch(e){ alert('Esse arquivo nao e uma copia valida do Prato No Verde.'); } };
+  r.readAsText(f);
+}
+/* =====================================================
+   Wizard das 3 perguntas
+===================================================== */
+let wizFat = null;
+let wizNicho = null;
+let wizDel = null, wizApp = null;
+const FAT_OPCOES = [[5000,'R$ 5 mil'],[10000,'R$ 10 mil'],[15000,'R$ 15 mil'],[20000,'R$ 20 mil'],[30000,'R$ 30 mil'],[40000,'R$ 40 mil'],[60000,'R$ 60 mil'],[80000,'R$ 80 mil ou mais']];
+const DEL_OPCOES = [[0,'Nada — só no balcão'],[0.25,'Uns 25%'],[0.5,'Metade'],[0.75,'Uns 75%'],[1,'Tudo — só delivery']];
+const APP_OPCOES = [['ifood','iFood'],['outro','Outro app'],['whats','Entrega minha / WhatsApp']];
+function abrirWizard(refazendo){
+  $('wiz-nicho-chips').innerHTML = NICHOS.map(n=>`<button class="chip ${refazendo&&S.config&&S.config.nicho===n.id?'marcado':''}" onclick="wizNichoSel('${n.id}',this)">${n.emoji} ${n.nome}</button>`).join('');
+  $('wiz-fat-chips').innerHTML = FAT_OPCOES.map(([v,l])=>`<button class="chip" onclick="wizFatSel(${v},this)">${l}</button>`).join('');
+  $('wiz-del-chips').innerHTML = DEL_OPCOES.map(([v,l])=>`<button class="chip ${refazendo&&S.config&&S.config.deliveryPct===v?'marcado':''}" onclick="wizDelSel(${v},this)">${l}</button>`).join('');
+  $('wiz-app-chips').innerHTML = APP_OPCOES.map(([id,l])=>`<button class="chip ${refazendo&&S.config&&S.config.appEntrega===id?'marcado':''}" onclick="wizAppSel('${id}',this)">${l}</button>`).join('');
+  if(refazendo && S.config){
+    wizNicho = S.config.nicho;
+    wizDel = S.config.deliveryPct; wizApp = S.config.appEntrega==='nenhum' ? null : S.config.appEntrega;
+    $('wiz-app-bloco').style.display = wizDel>0 ? 'block' : 'none';
+    $('wiz-nome-rest').value = S.config.nomeRest || '';
+    $('wiz-fat-custom').value = S.config.faturamento;
+    $('wiz-fixos-custom').value = S.config.fixos || '';
+  }
+  wizPasso(0); $('wizard').classList.add('aberto');
+}
+function wizDelSel(v,btn){
+  wizDel = v;
+  document.querySelectorAll('#wiz-del-chips .chip').forEach(c=>c.classList.remove('marcado'));
+  btn.classList.add('marcado');
+  $('wiz-app-bloco').style.display = v>0 ? 'block' : 'none';
+}
+function wizAppSel(id,btn){
+  wizApp = id;
+  document.querySelectorAll('#wiz-app-chips .chip').forEach(c=>c.classList.remove('marcado'));
+  btn.classList.add('marcado');
+}
+function wizNichoSel(id,btn){ wizNicho=id; document.querySelectorAll('#wiz-nicho-chips .chip').forEach(c=>c.classList.remove('marcado')); btn.classList.add('marcado'); }
+function wizFatSel(v,btn){ wizFat=v; document.querySelectorAll('#wiz-fat-chips .chip').forEach(c=>c.classList.remove('marcado')); btn.classList.add('marcado'); $('wiz-fat-custom').value=''; }
+function wizPasso(n){ document.querySelectorAll('.wiz-passo').forEach(p=>p.classList.remove('ativa')); $('wiz-'+n).classList.add('ativa'); }
+let wizResultado = null;
+function wizIr(n){
+  if(n===1){
+    if(!wizNicho){ alert('Escolha o tipo do seu negócio.'); return; }
+    wizPasso(1); return;
+  }
+  if(n===2){
+    const custom = parseFloat($('wiz-fat-custom').value);
+    const fat = custom>0 ? custom : wizFat;
+    if(!fat){ alert('Escolha uma faixa ou digite o valor.'); return; }
+    wizResultado = {faturamento:fat};
+    wizPasso(2); return;
+  }
+  if(n===3){
+    const fixos = parseFloat($('wiz-fixos-custom').value);
+    if(!(fixos>=0) || $('wiz-fixos-custom').value===''){ alert('Digite um valor — pode ser chute — ou toque em "Não sei".'); return; }
+    let pct = fixos / wizResultado.faturamento;
+    if(pct >= 1){ alert('Essa conta ainda nao fecha: os gastos fixos ficaram iguais ou maiores que o faturamento. Revise o faturamento ou os gastos antes de continuar.'); return; }
+    wizResultado.fixosAltos = pct > 0.45;
+    wizResultado.fixos = fixos; wizResultado.fixoPct = pct; wizResultado.estimado = false;
+    wizPasso(3); return;
+  }
+  if(n===4){
+    if(wizDel===null){ alert('Escolha quanto sai por entrega — pode ser por cima.'); return; }
+    if(wizDel>0 && !wizApp){ alert('Diz por onde você mais entrega.'); return; }
+    wizCalcular(); return;
+  }
+  wizPasso(n);
+}
+function wizNaoSei(){
+  wizResultado.fixos = 0; wizResultado.fixoPct = 0.28; wizResultado.estimado = true; wizResultado.fixosAltos = false;
+  wizPasso(3);
+}
+/* a cena da "matemática chata": calcula tudo sozinho e mostra com calma */
+function wizCalcular(){
+  wizResultado.impostos = impostosAuto(wizResultado.faturamento);
+  wizResultado.deliveryPct = wizDel;
+  wizResultado.appEntrega = wizDel>0 ? wizApp : 'nenhum';
+  const cartaoPct = ((S.config && S.config.cartao!==undefined) ? S.config.cartao : 2)/100;
+  const taxaApp = wizResultado.appEntrega==='ifood' ? 0.265
+    : (wizResultado.appEntrega==='outro' ? (((S.config && S.config.outroapp)||20)/100) : 0);
+  const fatiaApps = wizDel * taxaApp;
+  const fatia = wizResultado.fixoPct + wizResultado.impostos/100 + cartaoPct + fatiaApps;
+
+  $('wiz-calculando').style.display = 'block';
+  $('wiz-resultado-wrap').style.display = 'none';
+  $('wiz-btn-comecar').disabled = true;
+  const alvo = $('wiz-calc-linhas'); alvo.innerHTML = '';
+  const linhas = [
+    ['🏠','Somando as contas do mês'],
+    ['🧾','Calculando seu imposto pelo que você vende'],
+    ['💳','Descontando a maquininha do cartão'],
+  ];
+  if(fatiaApps>0) linhas.push(['🛵','Medindo a mordida do app de entrega']);
+  wizPasso(4);
+  linhas.forEach(([e,t],i)=>{
+    setTimeout(()=>{
+      alvo.insertAdjacentHTML('beforeend', `<div class="calc-linha"><span>${e}</span><span>${t}…</span><span class="ok">✓</span></div>`);
+    }, 350 + i*650);
+  });
+  setTimeout(()=>{
+    $('wiz-calculando').style.display = 'none';
+    $('wiz-resultado-wrap').style.display = 'block';
+    $('wiz-resultado').innerHTML = Math.round(fatia*100)+'%' + (wizResultado.estimado ? ' <span class="selo-estimado">com a média do setor</span>' : '');
+    const det = [
+      ['🏠 Contas do mês'+(wizResultado.estimado?' (média do setor)':''), wizResultado.fixoPct],
+      ['🧾 Impostos', wizResultado.impostos/100],
+      ['💳 Maquininha do cartão', cartaoPct],
+    ];
+    if(fatiaApps>0) det.push(['🛵 App de entrega (sua fatia)', fatiaApps]);
+    $('wiz-detalhe').innerHTML =
+      `<div style="font-weight:700;margin-bottom:4px">De cada R$ 100 que entram no caixa:</div>` +
+      det.map(([t,v])=>`<div class="l"><span>${t}</span><span>R$ ${Math.round(v*100)}</span></div>`).join('') +
+      `<div class="l"><span>🍅 Sobra para ingredientes + lucro</span><span>R$ ${Math.round((1-fatia)*100)}</span></div>`;
+    $('wiz-aviso-final').textContent = fatia>=0.6
+      ? '⚠️ Olha… mais da metade de cada venda já vai embora antes da comida. Dá pra trabalhar assim, mas os preços vão precisar de capricho — e eu te ajudo nisso.'
+      : (wizResultado.fixosAltos
+        ? 'Seus gastos estao puxados para o que voce vende. Daqui pra frente, o app vai avisar quando algum prato nao couber nessa margem.'
+        : 'Daqui pra frente você só monta os pratos. Eu desconto isso tudo sozinho, em cada cálculo.');
+    $('wiz-btn-comecar').disabled = false;
+  }, 350 + linhas.length*650 + 550);
+}
+function fecharWizard(){
+  S.config = Object.assign(
+    {impostos:6, cartao:2, entrega:6, outroapp:20, margemAlvo:0.15, nomeRest:'', logo:null, deliveryPct:0, appEntrega:'nenhum'},
+    S.config||{},
+    wizResultado,
+    {nicho: wizNicho||'outro', nomeRest: $('wiz-nome-rest').value.trim()}
+  );
+  salvar();
+  $('wizard').classList.remove('aberto');
+  renderMarca(); renderTudo();
+}
+
+/* =====================================================
+   Início
+===================================================== */
+document.querySelectorAll('.veu').forEach(v=>v.addEventListener('click', e=>{ if(e.target===v) v.classList.remove('aberto'); }));
+let appJaIniciado = false;
+async function iniciarApp(){
+  const liberado = await checarAcesso();
+  if(!liberado || appJaIniciado) return; // fica na tela de acesso; checarAcesso() ja cuidou da UI
+  appJaIniciado = true;
+  carregar();
+  renderMarca();
+  if(!S.config){ abrirWizard(false); } else { renderTudo(); }
+}
+iniciarApp();
+sb.auth.onAuthStateChange((event)=>{ if(event==='SIGNED_IN') iniciarApp(); });
+</script>
+</body>
+</html>
+
+
+
+
+
