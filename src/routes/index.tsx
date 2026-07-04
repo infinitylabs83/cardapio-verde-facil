@@ -113,11 +113,11 @@ function Hero() {
       />
       <div
         aria-hidden
-        className="absolute inset-0 pointer-events-none hidden md:block"
+        className="absolute right-0 top-0 bottom-0 w-[62%] pointer-events-none hidden md:block"
         style={{
           backgroundImage: `url("${heroOwner.url}")`,
           backgroundSize: "cover",
-          backgroundPosition: "right center",
+          backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
         }}
       />
@@ -127,7 +127,7 @@ function Hero() {
         className="absolute inset-0 hidden md:block pointer-events-none"
         style={{
           background:
-            "linear-gradient(90deg, rgba(6,58,38,0.94) 0%, rgba(6,58,38,0.82) 22%, rgba(6,58,38,0.55) 44%, rgba(6,58,38,0.28) 62%, rgba(6,58,38,0.08) 80%, rgba(6,58,38,0) 92%)",
+            "linear-gradient(90deg, rgba(6,58,38,1) 0%, rgba(6,58,38,1) 38%, rgba(6,58,38,0.75) 48%, rgba(6,58,38,0.35) 58%, rgba(6,58,38,0.08) 72%, rgba(6,58,38,0) 85%)",
         }}
       />
       {/* Overlay mobile — mais leve para não apagar a foto */}
