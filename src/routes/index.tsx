@@ -206,7 +206,7 @@ function Hero() {
 /* -------------------- Bullets + Vídeo demo -------------------- */
 function BulletsDemo() {
   const bullets = [
-    "O fornecedor reajustou o insumo há meses e o preço do prato continua o mesmo. Em poucos minutos você descobre qual item já está no vermelho e corrige antes do próximo fechamento.",
+    "O fornecedor reajustou o insumo há meses e ninguém foi conferir se o preço do prato ainda faz sentido. Você atualiza o preço do insumo uma vez, e em segundos vê quais itens já caíram no vermelho.",
     "Aquela promoção que enche o salão pode estar pagando para o cliente comer. Com o custo real na tela, você decide o desconto sabendo exatamente quanto sobra por prato vendido.",
     "Reajustar no achismo assusta o cliente, e reajustar de menos come sua margem em silêncio. Com o número certo na mão, você define o preço com segurança e ainda sabe justificar o valor.",
   ];
@@ -263,8 +263,8 @@ function DorSection() {
     "São 23h de terça-feira. O salão já fechou, a cozinha limpou o último balcão, e você senta com o celular pra somar as vendas do dia no aplicativo do banco. O número parece bom. Mas você não sabe dizer, prato por prato, quanto daquele total virou lucro de verdade.",
     "Faz três meses que o fornecedor de carne reajustou o quilo do contrafilé. Você lembra vagamente de ter visto o boleto mais alto naquele mês, resmungou, pagou e seguiu em frente. O preço do prato no cardápio continua o mesmo desde então. Ninguém avisou, porque ninguém ia avisar. Fornecedor não liga pra te contar que seu prato ficou mais caro de fazer.",
     "No fim de semana, o prato mais pedido do cardápio esgota antes das 21h. Você fica feliz com o movimento, tira foto pra postar no Instagram da loja. O que você não vê é que, se aquele prato específico está no vermelho por causa do reajuste que passou despercebido, quanto mais ele vende, mais dinheiro sai do seu bolso, não entra.",
-    "Você já tentou resolver isso com planilha. Abriu uma no Google Sheets, colocou fórmula, preencheu com capricho na primeira semana. Na segunda, o movimento do salão engoliu o tempo. Na terceira, você nem lembrava mais que a planilha existia. Ela não te avisa quando o preço do óleo sobe. Ela só fica lá, parada, mostrando um número que já não é mais verdade.",
-    "O motivo disso não é falta de organização sua. É que ninguém te ensinou a calcular ficha técnica com o preço do insumo mudando toda semana, e nenhuma ferramenta te avisa quando a conta que você fez no lançamento do cardápio deixou de valer. O problema não é você, é que o custo do seu prato é um alvo em movimento e você está mirando parado.",
+    "Você já tentou resolver isso com planilha. Abriu uma no Google Sheets, colocou fórmula, preencheu com capricho na primeira semana. Na segunda, o movimento do salão engoliu o tempo. Na terceira, você nem lembrava mais que a planilha existia. Ela não avisa quando o preço do óleo sobe, e só descobrir isso já significa conferir boleto por boleto.",
+    "O motivo disso não é falta de organização sua. É que ninguém te ensinou a calcular ficha técnica com o preço do insumo mudando toda semana, e refazer essa conta na mão toda vez que algo muda é trabalho demais pra fazer sozinho. O problema não é você, é que o custo do seu prato é um alvo em movimento e você está mirando parado.",
   ];
   return (
     <section className="bg-[color:var(--paper)] border-b border-[color:var(--line)]">
@@ -703,7 +703,7 @@ function FAQ() {
     },
     {
       q: "Já uso planilha, não preciso de outra coisa.",
-      a: "Planilha comum não avisa quando o preço de um insumo sobe no fornecedor. Você continua vendendo pelo preço antigo até perceber o prejuízo no fim do mês, e nesse tempo já são semanas de prato saindo no vermelho.",
+      a: "Planilha comum não recalcula sozinha — é fórmula manual, fácil de errar ou esquecer. No Cardápio no Verde, você atualiza o preço de um insumo uma vez e o cardápio inteiro recalcula na hora, sem fórmula nenhuma pra manter.",
     },
     {
       q: "Meu restaurante é pequeno demais pra precisar disso.",
@@ -715,7 +715,7 @@ function FAQ() {
     },
     {
       q: "E se eu não souber calcular o rendimento de um ingrediente depois do preparo?",
-      a: "Você lança o custo da embalagem e a quantidade usada no prato. Se um dia quiser refinar considerando perda de água, casca ou osso, o cálculo aceita esse ajuste, mas não é obrigatório pra começar.",
+      a: "Isso já vem calculado: boa parte dos ingredientes da nossa base já tem embutido um fator médio de perda (limpeza, osso, casca), então você não precisa calcular nada na mão. Se cadastrar um ingrediente que a gente não tem, o custo é exatamente o que você informar.",
     },
     {
       q: "Preciso pagar mensalidade depois?",
