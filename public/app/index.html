@@ -368,24 +368,24 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
 <!-- ============ TELA: MEUS PRATOS ============ -->
 <section class="tela ativa" id="tela-pratos">
   <div id="pratos-lista-view">
-    <h1 class="titulo-tela">Meus pratos</h1>
+    <h1 class="titulo-tela">Meus itens</h1>
     <p class="sub-tela">Cadastre do seu jeito: no capricho ou no olhômetro. Depois dá pra caprichar.</p>
     <button class="banner-magico" onclick="abrirMagico()">
       <span class="ic">🪄</span>
-      <span style="flex:1"><b>Seu Número Mágico</b><small>Descubra por quanto vender qualquer prato</small></span>
+      <span style="flex:1"><b>Seu Número Mágico</b><small>Descubra por quanto vender qualquer item</small></span>
       <span style="font-size:1.4rem;opacity:.8">›</span>
     </button>
     <div id="lista-pratos"></div>
-    <button class="btn" onclick="novoPrato()">+ Montar um prato</button>
+    <button class="btn" onclick="novoPrato()">+ Montar um item</button>
   </div>
 
   <div id="prato-editor-view" style="display:none">
-    <h1 class="titulo-tela" id="editor-titulo">Novo prato</h1>
+    <h1 class="titulo-tela" id="editor-titulo">Novo item</h1>
     <p class="sub-tela">Coloque o que vai dentro e quanto vai de cada coisa.</p>
 
     <div class="cartao">
       <div class="campo" style="margin-bottom:0">
-        <label for="inp-nome-prato">Nome do prato</label>
+        <label for="inp-nome-prato">Nome do item</label>
         <input id="inp-nome-prato" type="text" placeholder="Ex.: Marmita de frango grelhado" maxlength="48">
       </div>
     </div>
@@ -397,25 +397,25 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
         <div class="prefixo"><span>R$</span><input id="inp-custo-direto" type="number" inputmode="decimal" min="0" step="0.5" placeholder="Ex.: 11" oninput="mudarCustoDireto(this.value)"></div>
         <div class="dica">Pode chutar por cima. Já dá pra ver se o preço tá bom.</div>
       </div>
-      <div class="nudge">🌱 Tá valendo! Quando der um tempinho, monte a ficha desse prato — aí o cálculo fica cirúrgico.</div>
+      <div class="nudge">🌱 Tá valendo! Quando der um tempinho, monte a ficha desse item — aí o cálculo fica cirúrgico.</div>
       <button class="btn fantasma" onclick="trocarParaFicha()">Montar a ficha completa agora</button>
     </div>
 
     <div class="cartao" id="cartao-ficha">
-      <h3>O que vai no prato</h3>
+      <h3>O que vai no item</h3>
       <div id="editor-itens"></div>
       <button class="btn secundario" style="margin-top:10px" onclick="abrirPicker()">+ Colocar ingrediente</button>
     </div>
 
     <div class="sobrao" style="padding:14px">
-      <div class="rotulo">Custo do prato até agora</div>
+      <div class="rotulo">Custo do item até agora</div>
       <div class="numero" id="editor-custo" style="font-size:2rem">R$ 0,00</div>
     </div>
 
-    <button class="btn" id="btn-salvar-prato" onclick="salvarPrato()">Salvar prato</button>
-    <button class="btn secundario" id="btn-duplicar-prato" style="display:none;margin-top:8px" onclick="duplicarPrato()">📄 Duplicar este prato</button>
+    <button class="btn" id="btn-salvar-prato" onclick="salvarPrato()">Salvar item</button>
+    <button class="btn secundario" id="btn-duplicar-prato" style="display:none;margin-top:8px" onclick="duplicarPrato()">📄 Duplicar este item</button>
     <button class="btn fantasma" onclick="cancelarEdicao()">Voltar sem salvar</button>
-    <button class="btn perigo" id="btn-excluir-prato" style="display:none" onclick="excluirPrato()">Apagar este prato</button>
+    <button class="btn perigo" id="btn-excluir-prato" style="display:none" onclick="excluirPrato()">Apagar este item</button>
   </div>
 </section>
 
@@ -448,7 +448,7 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
 <nav class="abas">
   <button class="ativa" data-tela="pratos" onclick="irPara('pratos')">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/></svg>
-    Pratos
+    Itens
   </button>
   <button data-tela="preco" onclick="irPara('preco')">
     <svg viewBox="0 0 24 24"><path d="M20.6 13.4 11 3.8a2 2 0 0 0-1.4-.6H4a2 2 0 0 0-2 2v5.6c0 .5.2 1 .6 1.4l9.6 9.6a2 2 0 0 0 2.8 0l5.6-5.6a2 2 0 0 0 0-2.8z"/><circle cx="7.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg>
@@ -484,7 +484,7 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
           <div class="prefixo"><span>R$</span><input id="novo-ing-preco" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00"></div>
         </div>
       </div>
-      <button class="btn secundario" onclick="criarIngrediente()">Criar e colocar no prato</button>
+      <button class="btn secundario" onclick="criarIngrediente()">Criar e colocar no item</button>
     </div>
   </div>
 </div>
@@ -493,13 +493,17 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
 <div class="veu" id="veu-qtd">
   <div class="folha">
     <div class="folha-cabeca"><h2 id="qtd-titulo">Quanto vai?</h2><button class="fechar" onclick="fecharVeu('veu-qtd')" aria-label="Fechar">×</button></div>
-    <p class="sub-tela" id="qtd-preco-info"></p>
+    <div class="campo">
+      <label for="inp-qtd-preco" id="qtd-preco-label">Você paga isso por unidade</label>
+      <div class="prefixo"><span>R$</span><input id="inp-qtd-preco" type="number" inputmode="decimal" min="0" step="0.01"></div>
+      <div class="dica">Mudou o preço? Ajusta aqui — vale pra esse item e pra todos os outros que usam esse ingrediente.</div>
+    </div>
     <div class="chips" id="qtd-chips" style="margin-bottom:16px"></div>
     <div class="campo">
       <label for="inp-qtd-custom" id="qtd-custom-label">Ou digite a quantidade</label>
       <input id="inp-qtd-custom" type="number" inputmode="decimal" min="0" placeholder="Ex.: 150">
     </div>
-    <button class="btn" onclick="confirmarQtd()">Colocar no prato</button>
+    <button class="btn" onclick="confirmarQtd()">Colocar no item</button>
   </div>
 </div>
 
@@ -516,7 +520,7 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
       <span><b>Certinho — montar a ficha</b><small>Escolha os ingredientes e o app calcula o custo exato.</small></span>
     </button>
     <div class="cartao" style="margin-top:6px">
-      <h3>Ou comece de um prato pronto 🍽️</h3>
+      <h3>Ou comece de um item pronto 🍽️</h3>
       <p style="font-size:.85rem;color:var(--tinta-suave);margin-bottom:8px">Já vem com os ingredientes típicos. É só ajustar do seu jeito.</p>
       <div class="tpl-lista" id="tpl-lista"></div>
     </div>
@@ -539,9 +543,9 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
       <div style="font-size:.9rem;max-width:36ch;margin:6px auto 0" id="mg-frase"></div>
     </div>
     <div class="cartao">
-      <h3>Calcular um prato seu</h3>
+      <h3>Calcular um item seu</h3>
       <div class="campo">
-        <label for="mg-nome">Nome do prato</label>
+        <label for="mg-nome">Nome do item</label>
         <input id="mg-nome" type="text" maxlength="48" placeholder="Ex.: Burger da casa">
       </div>
       <div class="campo" style="margin-bottom:8px">
@@ -621,7 +625,7 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
 
     <div class="wiz-passo ativa" id="wiz-0">
       <div class="wiz-pergunta">Que tipo de negócio é o seu?</div>
-      <div class="wiz-apoio">Assim eu já deixo separados os ingredientes e os pratos da sua área.</div>
+      <div class="wiz-apoio">Assim eu já deixo separados os ingredientes e os itens da sua área.</div>
       <div class="chips" id="wiz-nicho-chips"></div>
       <div class="campo" style="margin-top:16px">
         <label for="wiz-nome-rest" style="color:#F3EFE0">Nome do seu negócio (se quiser)</label>
@@ -685,10 +689,10 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
           <div id="wiz-resultado-txt" style="opacity:.9;font-size:.95rem">de cada venda já sai pra pagar contas, impostos e taxas</div>
           <div class="wiz-detalhe" id="wiz-detalhe"></div>
         </div>
-        <div class="wiz-apoio" style="margin-top:14px" id="wiz-aviso-final">Daqui pra frente você só monta os pratos. Eu desconto isso tudo sozinho, em cada cálculo.</div>
+        <div class="wiz-apoio" style="margin-top:14px" id="wiz-aviso-final">Daqui pra frente você só monta os itens do seu cardápio. Eu desconto isso tudo sozinho, em cada cálculo.</div>
       </div>
       <div class="wiz-rodape">
-        <button class="btn" id="wiz-btn-comecar" onclick="fecharWizard()" disabled>Começar a montar meus pratos</button>
+        <button class="btn" id="wiz-btn-comecar" onclick="fecharWizard()" disabled>Começar a montar meus itens</button>
         <button class="btn fantasma" onclick="wizPasso(1)">Revisar respostas</button>
       </div>
     </div>
@@ -1082,8 +1086,8 @@ function avisosOperacaoHtml(){
   const avisos = [];
   const base = pctGeral();
   const livre = margemDisponivelParaIngredientes();
-  if(S.config.fixoPct > 0.60) avisos.push(avisoHtml('vermelho', 'Suas contas fixas passam de 60% do faturamento. Antes de mexer nos pratos, essa operacao precisa de revisao.'));
-  else if(S.config.fixoPct > 0.45) avisos.push(avisoHtml('amarelo', 'Suas contas fixas estao pesadas: mais de 45% do faturamento. A margem dos pratos vai ficar apertada.'));
+  if(S.config.fixoPct > 0.60) avisos.push(avisoHtml('vermelho', 'Suas contas fixas passam de 60% do faturamento. Antes de mexer nos itens, essa operacao precisa de revisao.'));
+  else if(S.config.fixoPct > 0.45) avisos.push(avisoHtml('amarelo', 'Suas contas fixas estao pesadas: mais de 45% do faturamento. A margem dos itens vai ficar apertada.'));
   if(base >= 0.75) avisos.push(avisoHtml('vermelho', 'Mais de 75% da venda ja vai embora antes dos ingredientes. O app ainda calcula, mas a operacao esta no limite.'));
   else if(base >= 0.60) avisos.push(avisoHtml('amarelo', 'Mais de 60% da venda ja tem dono antes dos ingredientes. Cuidado: qualquer insumo caro derruba seu lucro.'));
   if(livre <= 0.05) avisos.push(avisoHtml('vermelho', 'Com sua meta de lucro atual, quase nao sobra espaco para ingredientes. Reduza a meta, reveja gastos ou aumente precos.'));
@@ -1095,17 +1099,17 @@ function diagnosticoPratoHtml(p,a){
   if(op) avisos.push(op);
   const meta = Math.round(margemAlvo()*100);
   if(a.sug.min && a.preco < a.sug.min - 0.01){
-    avisos.push(avisoHtml('vermelho', `Abaixo de ${fmt(a.sug.min)} esse prato da prejuizo. Todo prato vendido tira dinheiro do seu bolso.`));
+    avisos.push(avisoHtml('vermelho', `Abaixo de ${fmt(a.sug.min)} esse item da prejuizo. Todo item vendido tira dinheiro do seu bolso.`));
   }
   if(a.tetoIng <= 0){
     avisos.push(avisoHtml('vermelho', `Para buscar ${meta}% de lucro neste preco, nao sobra espaco para ingredientes. Aumente o preco ou reveja os gastos do negocio.`));
   } else if(a.excessoIng > 0.01){
     avisos.push(avisoHtml('vermelho', `Para ter ${meta}% de lucro vendendo por ${fmt(a.preco)}, os ingredientes nao podem passar de ${fmt(a.tetoIng)}. Hoje eles custam ${fmt(a.custo)}.`));
   } else if(a.custo > a.tetoIng * 0.85){
-    avisos.push(avisoHtml('amarelo', `Margem apertada: para ${meta}% de lucro, seu teto de ingredientes e ${fmt(a.tetoIng)} e este prato ja usa ${fmt(a.custo)}.`));
+    avisos.push(avisoHtml('amarelo', `Margem apertada: para ${meta}% de lucro, seu teto de ingredientes e ${fmt(a.tetoIng)} e este item ja usa ${fmt(a.custo)}.`));
   }
   if(a.lucro >= 0 && a.margem < margemAlvo()){
-    avisos.push(avisoHtml('amarelo', `Esse prato ainda lucra, mas nao chega na sua meta de ${meta}%. Ajuste preco, porcao ou insumos.`));
+    avisos.push(avisoHtml('amarelo', `Esse item ainda lucra, mas nao chega na sua meta de ${meta}%. Ajuste preco, porcao ou insumos.`));
   }
   return avisos.join('');
 }
@@ -1143,7 +1147,7 @@ function renderListaPratos(){
   if(editando){ renderEditor(); return; }
   const el = $('lista-pratos');
   if(!S.pratos.length){
-    el.innerHTML = `<div class="vazio"><div class="icone">🍽️</div><p>Nenhum prato ainda. Monte o primeiro e descubra na hora quanto ele custa de verdade.</p></div>`;
+    el.innerHTML = `<div class="vazio"><div class="icone">🍽️</div><p>Nenhum item ainda. Monte o primeiro e descubra na hora quanto ele custa de verdade.</p></div>`;
     return;
   }
   el.innerHTML = S.pratos.map(p=>{
@@ -1151,7 +1155,7 @@ function renderListaPratos(){
     return `<div class="etiqueta cor-${a.cor}" role="button" tabindex="0" onclick="editarPrato('${p.id}')" onkeydown="if(event.key==='Enter')editarPrato('${p.id}')">
       <div class="info"><div class="nome">${esc(p.nome)}</div>
       <div class="linha2">Custa ${fmt(a.custo)}${ehOlhometro(p)?' 👀':''} pra fazer · vende a ${fmt(a.preco)}</div></div>
-      <div class="valor"><b class="txt-${a.cor}">${fmt(a.lucro)}</b><small class="txt-${a.cor}">sobra por prato</small></div>
+      <div class="valor"><b class="txt-${a.cor}">${fmt(a.lucro)}</b><small class="txt-${a.cor}">sobra por item</small></div>
     </div>`;
   }).join('') ;
 }
@@ -1171,8 +1175,8 @@ function prepararEditor(dados, titulo){
   renderListaPratos();
   window.scrollTo({top:0});
 }
-function iniciarRapido(){ prepararEditor({modo:'rapido'}, 'Prato rápido ⚡'); }
-function iniciarFicha(){ prepararEditor({}, 'Novo prato'); }
+function iniciarRapido(){ prepararEditor({modo:'rapido'}, 'Item rápido ⚡'); }
+function iniciarFicha(){ prepararEditor({}, 'Novo item'); }
 function usarTemplate(ix){
   const t = nichoAtual().templates[ix];
   prepararEditor({nome:t.n, emb:t.emb, itens:t.itens.map(([ing,qtd])=>({ing,qtd}))}, 'Ajuste do seu jeito');
@@ -1181,7 +1185,7 @@ function editarPrato(id){
   const p = S.pratos.find(x=>x.id===id); if(!p) return;
   editando = JSON.parse(JSON.stringify(p));
   editando.modo = editando.itens.length ? 'ficha' : 'rapido';
-  $('editor-titulo').textContent = 'Mexer no prato';
+  $('editor-titulo').textContent = 'Mexer no item';
   $('inp-nome-prato').value = p.nome;
   $('inp-custo-direto').value = editando.custoDireto || '';
   $('btn-excluir-prato').style.display='block';
@@ -1192,7 +1196,7 @@ function duplicarPrato(){
   editando = JSON.parse(JSON.stringify(editando));
   editando.id = null; editando.preco = null;
   editando.nome = (editando.nome + ' 2').slice(0,48);
-  $('editor-titulo').textContent = 'Novo prato (cópia)';
+  $('editor-titulo').textContent = 'Novo item (cópia)';
   $('inp-nome-prato').value = editando.nome;
   $('btn-excluir-prato').style.display='none';
   $('btn-duplicar-prato').style.display='none';
@@ -1228,7 +1232,7 @@ function trocarParaFicha(){ editando.modo='ficha'; renderEditor(); }
 function removerItem(ix){ editando.itens.splice(ix,1); renderEditor(); }
 function salvarPrato(){
   const nome = $('inp-nome-prato').value.trim();
-  if(!nome){ alert('Dá um nome pro prato primeiro 🙂'); return; }
+  if(!nome){ alert('Dá um nome pro item primeiro 🙂'); return; }
   if(editando.modo==='rapido'){ editando.itens = []; }
   if(!editando.itens.length && !(editando.custoDireto>0)){
     alert(editando.modo==='rapido' ? 'Digita quanto custa fazer, mais ou menos 🙂' : 'Coloca pelo menos um ingrediente.');
@@ -1247,7 +1251,7 @@ function salvarPrato(){
 }
 function cancelarEdicao(){ editando=null; renderListaPratos(); }
 function excluirPrato(){
-  if(!confirm('Apagar este prato do cardápio?')) return;
+  if(!confirm('Apagar este item do cardápio?')) return;
   S.pratos = S.pratos.filter(p=>p.id!==editando.id);
   if(pratoSel===editando.id) pratoSel=null;
   editando=null; salvar(); renderListaPratos();
@@ -1276,7 +1280,9 @@ function escolherIng(id){
   ingEscolhido = acharIng(id); if(!ingEscolhido) return;
   fecharVeu('veu-picker');
   $('qtd-titulo').textContent = 'Quanto vai de '+ingEscolhido.n.toLowerCase()+'?';
-  $('qtd-preco-info').textContent = 'Você paga '+fmt(precoIng(ingEscolhido))+' por '+(ingEscolhido.un==='un'?'unidade':ingEscolhido.un.toUpperCase())+'.';
+  const unLabel = ingEscolhido.un==='un' ? 'unidade' : ingEscolhido.un.toUpperCase();
+  $('qtd-preco-label').textContent = 'Você paga isso por '+unLabel;
+  $('inp-qtd-preco').value = precoIng(ingEscolhido);
   const chips = ingEscolhido.un==='un' ? [1,2,3,4,6,12] : (ingEscolhido.un==='l' ? [10,20,50,100,200,300,500] : [10,20,30,50,100,150,200,300,500]);
   const suf = ingEscolhido.un==='un' ? ' un' : (ingEscolhido.un==='l' ? ' ml' : ' g');
   $('qtd-chips').innerHTML = chips.map(c=>`<button class="chip" onclick="setQtd(${c},this)">${c}${suf}</button>`).join('');
@@ -1290,6 +1296,8 @@ function confirmarQtd(){
   const custom = parseFloat($('inp-qtd-custom').value.replace(',','.'));
   const q = custom>0 ? custom : qtdEscolhida;
   if(!q){ alert('Escolha ou digite a quantidade.'); return; }
+  const novoPreco = parseFloat(String($('inp-qtd-preco').value).replace(',','.'));
+  if(novoPreco>=0 && novoPreco !== precoIng(ingEscolhido)){ mudarPrecoIng(ingEscolhido.id, novoPreco); }
   editando.itens.push({ing:ingEscolhido.id, qtd:q});
   qtdEscolhida=null; fecharVeu('veu-qtd'); renderEditor();
 }
@@ -1312,7 +1320,7 @@ function renderSelPrato(elId){
   return true;
 }
 function vazioPratos(msgEl){
-  $(msgEl).innerHTML = `<div class="vazio"><div class="icone">🥘</div><p>Primeiro monte um prato na aba <b>Pratos</b>. Aí eu mostro tudo aqui.</p><button class="btn" onclick="irPara('pratos')">Montar meu primeiro prato</button></div>`;
+  $(msgEl).innerHTML = `<div class="vazio"><div class="icone">🥘</div><p>Primeiro monte um item na aba <b>Itens</b>. Aí eu mostro tudo aqui.</p><button class="btn" onclick="irPara('pratos')">Montar meu primeiro item</button></div>`;
 }
 
 /* ---------- TELA: Meu preço ---------- */
@@ -1330,7 +1338,7 @@ function renderPreco(){
   $('preco-conteudo').innerHTML = `
     <div id="preco-alerta">${diagnosticoPratoHtml(p,a)}</div>
     <div class="sobrao ${classe}" id="sobra-box">
-      <div class="rotulo">Sobra pra voce, por prato</div>
+      <div class="rotulo">Sobra pra voce, por item</div>
       <div class="numero txt-${a.cor}" id="sobra-num">${fmt(a.lucro)}</div>
       <div class="frase" id="sobra-frase">${frase}</div>
     </div>
@@ -1354,9 +1362,9 @@ function renderPreco(){
       <div class="item-ing"><span class="n"><b id="bd-folga-label">${a.excessoIng>0.01?'Estourou o teto':'Folga para ingredientes'}</b></span><span class="c" id="bd-folga-ing"><b>${a.excessoIng>0.01?fmt(a.excessoIng):fmt(folga)}</b></span></div>
     </div>
     <div class="cartao">
-      <h3>Pra onde vai cada real desse prato</h3>
+      <h3>Pra onde vai cada real desse item</h3>
       <div class="item-ing"><span class="n">Ingredientes${ehOlhometro(p)?' <span class="selo-olho">olhometro</span>':''}</span><span class="c">${fmt(a.custo)}</span></div>
-      <div class="item-ing"><span class="n">Contas do mes (fatia do prato)</span><span class="c" id="bd-fixos">${fmt(a.preco*S.config.fixoPct)}</span></div>
+      <div class="item-ing"><span class="n">Contas do mes (fatia do item)</span><span class="c" id="bd-fixos">${fmt(a.preco*S.config.fixoPct)}</span></div>
       <div class="item-ing"><span class="n">Impostos e cartao</span><span class="c" id="bd-taxas">${fmt(a.preco*(S.config.impostos+S.config.cartao)/100)}</span></div>
       ${taxaEntregaPct()>0?`<div class="item-ing"><span class="n">Apps de entrega (sua fatia)</span><span class="c" id="bd-apps">${fmt(a.preco*taxaEntregaPct())}</span></div>`:''}
       <div class="item-ing"><span class="n"><b>Lucro real</b></span><span class="c" id="bd-lucro"><b>${fmt(a.lucro)}</b></span></div>
@@ -1364,7 +1372,7 @@ function renderPreco(){
 }
 /* frase da projeção do mês, com o "quantos por dia" editável ali mesmo — é um "se", não uma cobrança */
 function frasePreco(lucro, vendasDia){
-  if(lucro < 0) return `Nesse preço, <b>você paga ${fmt(Math.abs(lucro))} do próprio bolso</b> a cada prato vendido.`;
+  if(lucro < 0) return `Nesse preço, <b>você paga ${fmt(Math.abs(lucro))} do próprio bolso</b> a cada item vendido.`;
   const mes = lucro * vendasDia * 26;
   return `Se vender <input class="inp-inline" type="number" inputmode="numeric" min="1" max="999" value="${vendasDia}" onchange="mudarVendas(this.value)" aria-label="Vendas por dia"> por dia, sobram <b>${fmt(mes)}</b> no mês pra você.`;
 }
@@ -1442,11 +1450,11 @@ function renderDelivery(){
   }).join('');
   $('delivery-conteudo').innerHTML = `
     <div class="cartao">
-      <div class="linha-config"><label>Embalagem deste prato (marmita, sacola...)</label>
+      <div class="linha-config"><label>Embalagem deste item (marmita, sacola...)</label>
         <div class="prefixo" style="width:110px"><span>R$</span><input type="number" inputmode="decimal" min="0" step="0.1" value="${p.emb}" style="width:110px;padding-left:38px" onchange="mudarEmb(this.value)"></div>
       </div>
     </div>
-    <div class="aviso verde">💡 "Cobre no app" é o preço que mantém em cada canal <b>a mesma sobra</b> que esse prato já te dá hoje (${fmt(alvo)} por prato). Cobrar mais caro no app é normal — todo mundo faz. Se é o cliente quem paga a taxa de entrega, deixe o custo do motoboy em R$ 0 nos ⚙️ Ajustes.</div>
+    <div class="aviso verde">💡 "Cobre no app" é o preço que mantém em cada canal <b>a mesma sobra</b> que esse item já te dá hoje (${fmt(alvo)} por item). Cobrar mais caro no app é normal — todo mundo faz. Se é o cliente quem paga a taxa de entrega, deixe o custo do motoboy em R$ 0 nos ⚙️ Ajustes.</div>
     ${linhas}`;
 }
 function mudarEmb(v){
@@ -1465,9 +1473,9 @@ function renderCardapio(){
   const mes = analises.reduce((t,x)=>t + x.a.lucro*x.p.vendasDia*26, 0);
   const ordem = {vermelho:0, amarelo:1, verde:2};
   analises.sort((x,y)=>ordem[x.a.cor]-ordem[y.a.cor]);
-  const missao = nr>0 ? `<div class="aviso vermelho">🎯 Sua missão: colocar ${nr===1?'1 prato que está':nr+' pratos que estão'} no vermelho de volta no verde. Toque no prato pra ajustar o preço.</div>`
-    : na>0 ? `<div class="aviso amarelo">Quase lá! Ajuste os pratos em amarelo pra deixar o cardápio inteiro no verde.</div>`
-    : `<div class="aviso verde">🏆 Cardápio 100% no verde. Todo prato vendido está deixando dinheiro no seu bolso.</div>`;
+  const missao = nr>0 ? `<div class="aviso vermelho">🎯 Sua missão: colocar ${nr===1?'1 item que está':nr+' itens que estão'} no vermelho de volta no verde. Toque no item pra ajustar o preço.</div>`
+    : na>0 ? `<div class="aviso amarelo">Quase lá! Ajuste os itens em amarelo pra deixar o cardápio inteiro no verde.</div>`
+    : `<div class="aviso verde">🏆 Cardápio 100% no verde. Todo item vendido está deixando dinheiro no seu bolso.</div>`;
   const pctVerde = analises.length ? Math.round(nv/analises.length*100) : 0;
   $('cardapio-conteudo').innerHTML = `
     <div class="placar">
@@ -1478,16 +1486,16 @@ function renderCardapio(){
     <div class="rotulo-progresso"><span>Rumo ao cardápio 100% verde</span><span>${pctVerde}%</span></div>
     <div class="progresso"><div class="fill" style="width:${pctVerde}%"></div></div>
     <div class="sobrao ${mes>=0?'':'neg'}" style="padding:16px">
-      <div class="rotulo">Lucro estimado do cardápio no mês</div>
+      <div class="rotulo">Se as vendas baterem o esperado, seu lucro no mês seria</div>
       <div class="numero" style="font-size:2.1rem">${fmt(mes)}</div>
-      <div class="frase" style="font-size:.82rem;color:var(--tinta-suave)">Conta feita com um chute de vendas por dia de cada prato — dá pra ajustar na tela Preço.</div>
+      <div class="frase" style="font-size:.88rem;font-weight:700;color:var(--verde-esc)">📊 Esse número usa um chute de vendas por dia pra cada item — ninguém confirmou isso ainda. Ajuste o chute de cada item na aba Preço pra deixar mais real.</div>
     </div>
     ${missao}
     ${analises.map(({p,a})=>`
       <div class="etiqueta cor-${a.cor}" role="button" tabindex="0" onclick="pratoSel='${p.id}';irPara('preco')" onkeydown="if(event.key==='Enter'){pratoSel='${p.id}';irPara('preco')}">
         <div class="info"><div class="nome">${esc(p.nome)}</div>
         <div class="linha2">vende a ${fmt(a.preco)} · sobra ${(a.margem*100).toFixed(0)}% da venda</div></div>
-        <div class="valor"><b class="txt-${a.cor}">${fmt(a.lucro)}</b><small class="txt-${a.cor}">por prato</small></div>
+        <div class="valor"><b class="txt-${a.cor}">${fmt(a.lucro)}</b><small class="txt-${a.cor}">por item</small></div>
       </div>`).join('')}
     <button class="btn secundario" style="margin-top:6px" onclick="abrirInsumos()">📈 Preço de insumo mudou</button>
     <h3 style="margin:18px 0 8px;font-size:1rem">Suas conquistas</h3>
@@ -1498,10 +1506,10 @@ function renderCardapio(){
 
 /* ---------- conquistas e comemoração ---------- */
 const CONQUISTAS = [
- {id:'primeiro',   e:'🍽️', t:'Primeiro prato no app',      cond:()=>S.pratos.length>=1},
- {id:'verde1',     e:'🟢', t:'Primeiro prato no verde',    cond:()=>S.pratos.some(p=>analisar(p).cor==='verde')},
+ {id:'primeiro',   e:'🍽️', t:'Primeiro item no cardápio',  cond:()=>S.pratos.length>=1},
+ {id:'verde1',     e:'🟢', t:'Primeiro item no verde',     cond:()=>S.pratos.some(p=>analisar(p).cor==='verde')},
  {id:'ficha1',     e:'🧾', t:'Primeira ficha completa',    cond:()=>S.pratos.some(p=>p.itens.length>=3)},
- {id:'cinco',      e:'🖐️', t:'5 pratos no cardápio',       cond:()=>S.pratos.length>=5},
+ {id:'cinco',      e:'🖐️', t:'5 itens no cardápio',        cond:()=>S.pratos.length>=5},
  {id:'magico',     e:'🪄', t:'Número Mágico definido',     cond:()=>!!(S.config&&S.config.usouMagico)},
  {id:'verdetotal', e:'🏆', t:'Cardápio 100% verde',        cond:()=>S.pratos.length>=3 && S.pratos.every(p=>analisar(p).cor==='verde')},
 ];
@@ -1565,13 +1573,13 @@ function renderMagico(v){
   const custo = parseFloat(String($('mg-custo').value).replace(',','.'));
   $('mg-resultado').innerHTML = custo>0
     ? `<div class="aviso verde" style="margin-bottom:8px">Cobre <b>${fmt(custo*M)}</b>. Para essa meta, ingredientes ate <b>${fmt(custo)}</b> cabem na conta e o lucro estimado fica em <b>${fmt(custo*M*pct/100)}</b>.</div>
-       <button class="btn secundario" onclick="salvarDoMagico()">Salvar este prato no cardapio</button>
+       <button class="btn secundario" onclick="salvarDoMagico()">Salvar este item no cardapio</button>
        <p style="font-size:.8rem;color:var(--tinta-suave);margin-top:6px">Ele entra no olhometro: sem ficha, valendo o custo que voce disse. Depois voce pode montar a ficha completa.</p>`
     : '';
 }
 function salvarDoMagico(){
   const nome = $('mg-nome').value.trim();
-  if(!nome){ alert('Dá um nome pro prato primeiro 🙂'); return; }
+  if(!nome){ alert('Dá um nome pro item primeiro 🙂'); return; }
   const custo = parseFloat(String($('mg-custo').value).replace(',','.'));
   if(!(custo>0)){ alert('Digita o custo dos ingredientes.'); return; }
   const pct = (parseInt($('mg-range').value)||0)/100;
@@ -1600,7 +1608,7 @@ function renderMarca(){
   if(c && c.nomeRest){
     el.innerHTML = (c.logo ? `<img src="${c.logo}" alt="Logo">` : LOGO_PNV) + `<span class="nome-rest">${esc(c.nomeRest)}</span>`;
   } else {
-    el.innerHTML = LOGO_PNV + `Prato<span class="no">No</span><span class="verde-pill">Verde</span>`;
+    el.innerHTML = LOGO_PNV + `Cardápio<span class="verde-pill" style="margin-left:6px">no Verde</span>`;
   }
 }
 function carregarLogo(ev){
@@ -1623,7 +1631,7 @@ function carregarLogo(ev){
 /* ---------- modal de insumos ---------- */
 function abrirInsumos(){
   const usados = [...new Set(S.pratos.flatMap(p=>p.itens.map(i=>i.ing)))].map(acharIng).filter(Boolean);
-  if(!usados.length){ alert('Monte um prato primeiro.'); return; }
+  if(!usados.length){ alert('Monte um item primeiro.'); return; }
   $('insumos-lista').innerHTML = usados.map(ing=>`
     <div class="linha-config"><label>${esc(ing.n)} <small style="color:var(--tinta-suave)">(${ing.un==='un'?'unidade':ing.un})</small></label>
       <div class="prefixo" style="width:110px"><span>R$</span><input data-ing-id="${ing.id}" type="number" inputmode="decimal" min="0" step="0.1" value="${precoIng(ing)}" style="width:110px;padding-left:38px"></div>
@@ -1688,7 +1696,7 @@ function exportarBackup(){
 function importarBackup(ev){
   const f = ev.target.files[0]; if(!f) return;
   const r = new FileReader();
-  r.onload = ()=>{ try{ S = JSON.parse(r.result); normalizar(); salvar(); fecharVeu('veu-ajustes'); renderMarca(); renderTudo(); alert('Pronto. Seus pratos, custos e ajustes voltaram.'); }catch(e){ alert('Esse arquivo nao e uma copia valida do Prato No Verde.'); } };
+  r.onload = ()=>{ try{ S = JSON.parse(r.result); normalizar(); salvar(); fecharVeu('veu-ajustes'); renderMarca(); renderTudo(); alert('Pronto. Seus itens, custos e ajustes voltaram.'); }catch(e){ alert('Esse arquivo nao e uma copia valida do Cardápio no Verde.'); } };
   r.readAsText(f);
 }
 /* =====================================================
