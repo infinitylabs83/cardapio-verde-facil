@@ -82,13 +82,21 @@ function Header() {
             </div>
           </div>
         </div>
-        <a
-          href={CTA_ANCHOR}
-          className="hidden sm:inline-flex items-center gap-2 rounded-full bg-paper-2 text-leaf px-4 py-2 font-extrabold text-[13px] hover:bg-receipt transition-colors"
-        >
-          Quero ver o custo real do meu cardápio
-          <span aria-hidden>→</span>
-        </a>
+        <div className="flex items-center gap-3">
+          <a
+            href="/app"
+            className="text-paper-2/90 underline underline-offset-2 text-[13px] font-semibold hover:text-paper-2"
+          >
+            Já sou cliente
+          </a>
+          <a
+            href={CTA_ANCHOR}
+            className="hidden sm:inline-flex items-center gap-2 rounded-full bg-paper-2 text-leaf px-4 py-2 font-extrabold text-[13px] hover:bg-receipt transition-colors"
+          >
+            Quero ver o custo real do meu cardápio
+            <span aria-hidden>→</span>
+          </a>
+        </div>
       </div>
     </header>
   );
