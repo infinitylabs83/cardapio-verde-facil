@@ -1799,15 +1799,21 @@ function wizCalcular(){
       ['💳 Maquininha do cartão', cartaoPct],
     ];
     if(fatiaApps>0) det.push(['🛵 App de entrega (sua fatia)', fatiaApps]);
+    const sobraTotal = Math.max(0, 1 - fatia);
+    const meta = margemAlvo();
+    const lucroMeta = Math.min(meta, sobraTotal);
+    const paraIngredientes = Math.max(0, sobraTotal - lucroMeta);
+    const linha = (t,v) => `<div class="l"><span>${t}</span><span>R$ ${Math.round(v*100)} <small style="opacity:.75">(${Math.round(v*100)}%)</small></span></div>`;
     $('wiz-detalhe').innerHTML =
       `<div style="font-weight:700;margin-bottom:4px">De cada R$ 100 que entram no caixa:</div>` +
-      det.map(([t,v])=>`<div class="l"><span>${t}</span><span>R$ ${Math.round(v*100)}</span></div>`).join('') +
-      `<div class="l"><span>🍅 Sobra para ingredientes + lucro</span><span>R$ ${Math.round((1-fatia)*100)}</span></div>`;
+      det.map(([t,v])=>linha(t,v)).join('') +
+      linha('🎯 Sua meta de lucro ('+Math.round(meta*100)+'%)', lucroMeta) +
+      linha('🍅 Sobra pra comprar os ingredientes', paraIngredientes);
     $('wiz-aviso-final').textContent = fatia>=0.6
       ? '⚠️ Olha… mais da metade de cada venda já vai embora antes da comida. Dá pra trabalhar assim, mas os preços vão precisar de capricho — e eu te ajudo nisso.'
       : (wizResultado.fixosAltos
-        ? 'Seus gastos estao puxados para o que voce vende. Daqui pra frente, o app vai avisar quando algum prato nao couber nessa margem.'
-        : 'Daqui pra frente você só monta os pratos. Eu desconto isso tudo sozinho, em cada cálculo.');
+        ? 'Seus gastos estao puxados para o que voce vende. Daqui pra frente, o app vai avisar quando algum item do cardápio nao couber nessa margem.'
+        : 'Daqui pra frente você só monta os itens do seu cardápio. Eu desconto isso tudo sozinho, em cada cálculo.');
     $('wiz-btn-comecar').disabled = false;
   }, 350 + linhas.length*650 + 550);
 }
