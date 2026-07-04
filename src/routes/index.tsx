@@ -640,15 +640,20 @@ function DepoimentosCompletos() {
 /* -------------------- Bloco 13: Autoridade -------------------- */
 function Autoridade() {
   return (
-    <section className="bg-leaf text-paper-2">
-      <div className="max-w-4xl mx-auto px-5 py-16 md:py-24">
+    <section className="bg-leaf text-paper-2 relative overflow-hidden">
+      <img
+        src="/gustavo-fundador.png"
+        alt="Gustavo, fundador do Cardápio no Verde"
+        className="hidden md:block pointer-events-none select-none absolute right-0 bottom-0 w-[380px] opacity-90"
+      />
+      <div className="max-w-4xl mx-auto px-5 py-16 md:py-24 relative z-10">
         <div className="text-[12px] font-extrabold tracking-widest text-[color:var(--receipt)] uppercase">
           Quem criou
         </div>
-        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4 text-paper-2">
+        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4 text-paper-2 max-w-xl">
           Feito por quem também sofre com esse problema na prática.
         </h2>
-        <div className="mt-8 space-y-5 text-[16px] leading-relaxed text-paper-2/90">
+        <div className="mt-8 space-y-5 text-[16px] leading-relaxed text-paper-2/90 max-w-xl">
           <p>
             O Cardápio no Verde foi criado por quem sofre com esse problema na
             prática — não por alguém que só programou o cálculo e saiu vendendo.
@@ -677,6 +682,10 @@ function Autoridade() {
             decide preço de cardápio na prática, todo mês, em loja de verdade.
           </p>
         </div>
+        <div className="mt-6 font-extrabold text-paper-2 md:hidden">— Gustavo, fundador</div>
+      </div>
+      <div className="hidden md:block absolute right-8 bottom-6 font-extrabold text-paper-2 z-10">
+        Gustavo
       </div>
     </section>
   );
