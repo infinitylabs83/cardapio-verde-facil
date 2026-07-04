@@ -650,15 +650,26 @@ function Autoridade() {
         </h2>
         <div className="mt-8 space-y-5 text-[16px] leading-relaxed text-paper-2/90">
           <p>
-            O Cardápio no Verde foi criado por quem também sofre com esse
-            problema na prática, não só programou o cálculo e saiu vendendo.
+            O Cardápio no Verde foi criado por quem sofre com esse problema na
+            prática — não por alguém que só programou o cálculo e saiu vendendo.
           </p>
           <p>
-            O criador administra duas unidades de uma rede de sanduíches natural,
-            com cardápio próprio e ficha técnica de cada produto revisada por
-            dentro, não por planilha terceirizada. Foi enfrentando o mesmo
-            reajuste de fornecedor sem aviso, o mesmo prato que parecia vender
-            bem mas escondia margem apertada, que a ferramenta nasceu.
+            Gustavo atua no mercado de alimentação desde 2013. Já teve uma rede
+            própria de lojas de açaí, com marca própria, e hoje administra duas
+            unidades de uma rede de sanduíches natural — cardápio próprio, ficha
+            técnica de cada item revisada por dentro, não por planilha
+            terceirizada.
+          </p>
+          <p>
+            Foi enfrentando esse mesmo problema — reajuste de fornecedor sem
+            aviso, item que parecia vender bem mas escondia margem apertada —
+            que a ferramenta nasceu.
+          </p>
+          <p>
+            Hoje, além de tocar as operações no dia a dia, também desenvolve
+            automações e aplicativos que ajudam as próprias lojas a reduzir
+            tempo, desperdício e erro de preço — o Cardápio no Verde é um
+            desses.
           </p>
           <p>
             Não é um analista financeiro explicando teoria pra dono de
