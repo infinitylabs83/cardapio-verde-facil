@@ -59,29 +59,38 @@ Deno.serve(async (req) => {
   const email = extrairEmail(payload);
   const transacao = extrairTransacao(payload);
 
-  if (!email) {
-    console.error("nao achei email do comprador no payload, nada a fazer");
-    return new Response("ok", { status: 200 });
-  }
-
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
+
+  async function logEvento(sucesso: boolean, detalhe: string) {
+    const { error } = await supabase.from("eventos_webhook").insert({ email, evento, sucesso, detalhe });
+    if (error) console.error("erro ao logar evento:", error);
+  }
+
+  if (!email) {
+    console.error("nao achei email do comprador no payload, nada a fazer");
+    await logEvento(false, "email nao encontrado no payload");
+    return new Response("ok", { status: 200 });
+  }
 
   if (EVENTOS_LIBERA.has(evento)) {
     const { error } = await supabase
       .from("licencas")
       .upsert({ email, status: "ativo", origem_transacao: transacao, atualizado_em: new Date().toISOString() });
     if (error) console.error("erro ao liberar licenca:", error);
+    await logEvento(!error, error ? String(error.message) : "acesso liberado");
   } else if (EVENTOS_REVOGA.has(evento)) {
     const { error } = await supabase
       .from("licencas")
       .update({ status: "revogado", atualizado_em: new Date().toISOString() })
       .eq("email", email);
     if (error) console.error("erro ao revogar licenca:", error);
+    await logEvento(!error, error ? String(error.message) : "acesso revogado");
   } else {
     console.log("evento nao mapeado, ignorando:", evento);
+    await logEvento(true, "evento nao mapeado: " + evento);
   }
 
   return new Response("ok", { status: 200 });

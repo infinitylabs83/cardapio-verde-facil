@@ -369,6 +369,7 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
 
 <header class="topo">
   <div class="marca" id="marca-topo"></div>
+  <span id="sync-status" style="font-size:.72rem;font-weight:700;opacity:.85"></span>
   <button class="btn-ajustes" onclick="abrirAjustes()" aria-label="Ajustes">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
   </button>
@@ -959,12 +960,14 @@ function telaAguardandoEmail(){
     <button class="btn fantasma" style="color:#F3EFE0" onclick="telaPedirEmail()">Usar outro e-mail</button>
   `;
 }
+const SUPORTE_WHATSAPP = '5500000000000'; // TROCAR pelo numero real, so digitos com DDI+DDD
 function telaSemAcesso(email){
   $('gate-corpo').innerHTML = `
     <h1>Não encontramos sua compra</h1>
     <p>Não achamos uma compra ativa pra <b>${esc(email)}</b>.</p>
-    <div class="gate-msg erro">Confere se foi o mesmo e-mail usado na hora da compra. Se o problema continuar, chama a gente.</div>
+    <div class="gate-msg erro">Confere se foi o mesmo e-mail usado na hora da compra.</div>
     <button class="btn" onclick="telaPedirEmail()">Tentar outro e-mail</button>
+    <a class="btn secundario" style="margin-top:8px;text-decoration:none;display:flex" href="https://wa.me/${SUPORTE_WHATSAPP}?text=${encodeURIComponent('Oi! Comprei o Cardápio no Verde e não consigo acessar com o e-mail '+email)}" target="_blank" rel="noopener">💬 Falar com o suporte no WhatsApp</a>
   `;
 }
 async function pedirLinkAcesso(){
@@ -993,11 +996,25 @@ async function sincronizarDoServidor(){
     if(data && data.estado_json){ S = Object.assign(S, data.estado_json); normalizar(); }
   }catch(e){ /* sem internet ou erro: segue com o que tem local */ }
 }
+/* avisa visivelmente se a nuvem esta ou nao ao dia, pra ninguem perder dado sem saber */
+function mostrarStatusSync(ok){
+  const el = $('sync-status'); if(!el) return;
+  if(ok){
+    el.textContent = '☁️ salvo'; el.style.color = '#8FD9A8';
+    clearTimeout(mostrarStatusSync._t);
+    mostrarStatusSync._t = setTimeout(()=>{ el.textContent=''; }, 2500);
+  } else {
+    el.textContent = '⚠️ não sincronizou — só neste aparelho por enquanto'; el.style.color = '#F0B37E';
+  }
+}
 /* manda o estado atual pra nuvem, sem travar a interface se falhar */
 function sincronizarParaServidor(){
   if(!sessaoEmail) return;
   sb.from('dados_usuario').upsert({ email:sessaoEmail, estado_json:S, atualizado_em:new Date().toISOString() })
-    .then(({error})=>{ if(error) console.warn('sync falhou, seguindo com o local', error); });
+    .then(({error})=>{
+      if(error) console.warn('sync falhou, seguindo com o local', error);
+      mostrarStatusSync(!error);
+    });
 }
 
 /* ---------- helpers ---------- */
