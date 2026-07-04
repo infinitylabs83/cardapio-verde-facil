@@ -290,18 +290,21 @@ function ProvaCurta() {
   const stories = [
     {
       nome: "Roberto Alencar",
+      negocio: "Sabor Caseiro Marmitaria",
       texto:
-        "Vendia o prato executivo há dois anos sem nunca ter revisado o preço desde o lançamento. Ao calcular o custo real, descobriu que perdia R$ 4,50 em cada unidade vendida. Ajustou o cardápio em uma tarde e recuperou R$ 1.200 de margem já no mês seguinte.",
+        "Vendia meu prato campeão há dois anos sem nunca revisar o preço. Descobri que perdia R$ 4,50 em cada um. Ajustei numa tarde e recuperei R$ 1.200 já no mês seguinte.",
     },
     {
       nome: "Fernanda Costa",
+      negocio: "Point do Açaí",
       texto:
-        "Achava que o problema do restaurante era falta de movimento. Ao revisar os cinco pratos mais vendidos, viu que dois deles saíam abaixo do custo. Corrigiu o preço sem perder cliente e fechou o mês seguinte com R$ 2.100 a mais no caixa.",
+        "Achava que o problema era falta de movimento. Revisei meus 5 mais vendidos e vi que dois saíam no prejuízo. Corrigi o preço, não perdi cliente nenhum, e fechei o mês com R$ 2.100 a mais.",
     },
     {
-      nome: "Diego Martins",
+      nome: "Luís Paulo",
+      negocio: "Zen Burgers",
       texto:
-        "Usava planilha havia um ano e confiava nela. Ao testar o simulador com o prato mais vendido da casa, percebeu que o preço do insumo tinha subido três vezes desde a última atualização. Reajustou o cardápio inteiro em uma hora.",
+        "Usava planilha há um ano e confiava nela. Testei no meu item mais vendido e vi que o insumo tinha subido três vezes sem eu perceber. Ajustei o cardápio inteiro numa hora.",
     },
   ];
   return (
@@ -323,7 +326,9 @@ function ProvaCurta() {
                 {s.texto}
               </p>
               <div className="mt-5 pt-4 border-t border-[color:var(--line)]">
-                <div className="font-extrabold text-leaf">{s.nome}</div>
+                <div className="font-extrabold text-leaf">
+                  {s.nome} <span className="font-normal text-[color:var(--muted-brand)]">— {s.negocio}</span>
+                </div>
                 <div className="text-[11px] uppercase tracking-widest text-[color:var(--muted-brand)] mt-1">
                   Depoimento modelo
                 </div>
@@ -395,7 +400,7 @@ function Metodo() {
         </h2>
         <p className="mt-5 text-[16px] md:text-[17px] leading-relaxed text-[color:var(--muted-brand)]">
           Você digita os ingredientes de um prato e a quantidade de cada um.
-          O simulador calcula o CMV — o custo real daquele prato específico —
+          O simulador calcula quanto aquele prato custa de verdade pra fazer,
           e mostra o resultado em três cores. <strong className="text-tomato">Vermelho</strong> é prato no prejuízo.{" "}
           <strong className="text-[#c99b1a]">Amarelo</strong> é margem apertada, sobrevivendo sem folga.{" "}
           <strong className="text-leaf-2">Verde</strong> é prato saudável, com espaço de lucro real.

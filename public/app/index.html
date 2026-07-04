@@ -250,6 +250,17 @@ input[type=range]{width:100%;accent-color:var(--verde);height:34px}
 .nudge{background:var(--verde-fundo);border:1px dashed #A9CDAF;border-radius:12px;padding:10px 12px;font-size:.88rem;color:var(--verde-esc);margin-top:10px}
 .inp-inline{width:58px;padding:4px 2px;border:1.5px dashed var(--verde);border-radius:8px;text-align:center;font-weight:700;background:#fff;font-size:.95rem}
 
+/* ---------- semaforo de margem (visual, acende ao vivo com o preco) ---------- */
+.semaforo{display:flex;justify-content:center;align-items:center;gap:16px;padding:14px;margin-bottom:14px;background:#1F2B21;border-radius:18px}
+.semaforo .luz{width:28px;height:28px;border-radius:50%;opacity:.28;transition:opacity .15s,transform .15s,box-shadow .15s;transform:scale(.85)}
+.semaforo .luz.vermelho{background:var(--vermelho)}
+.semaforo .luz.amarelo{background:var(--amarelo)}
+.semaforo .luz.verde{background:var(--verde)}
+.semaforo .luz.acesa{opacity:1;transform:scale(1.15)}
+.semaforo .luz.acesa.vermelho{box-shadow:0 0 18px 4px var(--vermelho)}
+.semaforo .luz.acesa.amarelo{box-shadow:0 0 18px 4px var(--amarelo)}
+.semaforo .luz.acesa.verde{box-shadow:0 0 18px 4px var(--verde)}
+
 /* ---------- opções de início de prato ---------- */
 .opcao-inicio{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--linha);border-radius:14px;padding:14px;margin-bottom:10px}
 .opcao-inicio:active{transform:scale(.98)}
@@ -1337,6 +1348,11 @@ function renderPreco(){
   const folga = Math.max(0, a.tetoIng - a.custo);
   $('preco-conteudo').innerHTML = `
     <div id="preco-alerta">${diagnosticoPratoHtml(p,a)}</div>
+    <div class="semaforo" id="semaforo">
+      <div class="luz vermelho ${a.cor==='vermelho'?'acesa':''}" id="luz-vermelho" aria-label="Vermelho: prejuízo"></div>
+      <div class="luz amarelo ${a.cor==='amarelo'?'acesa':''}" id="luz-amarelo" aria-label="Amarelo: margem apertada"></div>
+      <div class="luz verde ${a.cor==='verde'?'acesa':''}" id="luz-verde" aria-label="Verde: lucro saudável"></div>
+    </div>
     <div class="sobrao ${classe}" id="sobra-box">
       <div class="rotulo">Sobra pra voce, por item</div>
       <div class="numero txt-${a.cor}" id="sobra-num">${fmt(a.lucro)}</div>
@@ -1381,6 +1397,11 @@ function mudarVendas(v){
   p.vendasDia = Math.min(999, Math.max(1, parseInt(v)||10));
   salvar(); renderPreco();
 }
+function acenderSemaforo(cor){
+  ['vermelho','amarelo','verde'].forEach(c=>{
+    const luz = $('luz-'+c); if(luz) luz.classList.toggle('acesa', c===cor);
+  });
+}
 /* atualiza os números ao vivo enquanto o dedo arrasta, sem reconstruir o slider */
 function previewPreco(v){
   const p = S.pratos.find(x=>x.id===pratoSel);
@@ -1392,6 +1413,7 @@ function previewPreco(v){
   const tetoIng = tetoIngredientes(preco);
   const excessoIng = Math.max(0, custo - tetoIng);
   const cor = margem>=0.15 ? 'verde' : (margem>=0.05 ? 'amarelo' : 'vermelho');
+  acenderSemaforo(cor);
   $('preco-atual').textContent = fmt(preco);
   const num = $('sobra-num');
   num.textContent = fmt(lucro);
