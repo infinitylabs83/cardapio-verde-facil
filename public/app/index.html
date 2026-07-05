@@ -166,6 +166,8 @@ input[type=range]{width:100%;accent-color:var(--verde);height:34px}
 .item-ing .n{flex:1;font-weight:600;font-size:.95rem}
 .item-ing .c{font-weight:700;font-size:.9rem}
 .item-ing .rm{color:var(--vermelho);font-size:1.3rem;line-height:1;padding:4px 8px}
+.item-ing-editavel{display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer;border-radius:8px}
+.item-ing-editavel:hover,.item-ing-editavel:focus-visible{background:var(--verde-fundo)}
 
 /* ---------- seletor de prato ---------- */
 .sel-prato{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
@@ -564,7 +566,7 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
       </div>
       <div class="dica" id="qtd-peso-dica"></div>
     </div>
-    <button class="btn" onclick="confirmarQtd()">Colocar no item</button>
+    <button class="btn" id="btn-confirmar-qtd" onclick="confirmarQtd()">Colocar no item</button>
   </div>
 </div>
 
@@ -1408,9 +1410,11 @@ function renderEditor(){
       el.innerHTML = editando.itens.map((it,ix)=>{
         const ing = acharIng(it.ing); if(!ing) return '';
         return `<div class="item-ing">
-          <span class="qtd">${rotuloQtd(ing,it.qtd,it.peso)}</span>
-          <span class="n">${esc(ing.n)}</span>
-          <span class="c">${fmt(custoItem(it))}</span>
+          <div class="item-ing-editavel" role="button" tabindex="0" onclick="editarItemFicha(${ix})" onkeydown="if(event.key==='Enter')editarItemFicha(${ix})" aria-label="Editar ${esc(ing.n)}">
+            <span class="qtd">${rotuloQtd(ing,it.qtd,it.peso)}</span>
+            <span class="n">${esc(ing.n)}</span>
+            <span class="c">${fmt(custoItem(it))}</span>
+          </div>
           <button class="rm" onclick="removerItem(${ix})" aria-label="Tirar ${esc(ing.n)}">×</button>
         </div>`;
       }).join('');
@@ -1470,8 +1474,10 @@ function renderPicker(){
     </div></div>`).join('');
   $('picker-grupos').innerHTML = html || `<p style="color:var(--tinta-suave)">Nada com esse nome. Crie o seu logo abaixo. 👇</p>`;
 }
+let editIx = null;
 function escolherIng(id){
   ingEscolhido = acharIng(id); if(!ingEscolhido) return;
+  editIx = null;
   fecharVeu('veu-picker');
   $('qtd-titulo').textContent = 'Quanto vai de '+ingEscolhido.n.toLowerCase()+'?';
   const unLabel = ingEscolhido.un==='un' ? 'unidade' : ingEscolhido.un.toUpperCase();
@@ -1485,6 +1491,28 @@ function escolherIng(id){
   const temCoc = !!(ingEscolhido.coc && ingEscolhido.coc !== 1 && ingEscolhido.un !== 'un');
   $('qtd-peso-wrap').style.display = temCoc ? 'block' : 'none';
   if(temCoc) setPeso('cru');
+  $('btn-confirmar-qtd').textContent = 'Colocar no item';
+  abrirVeu('veu-qtd');
+}
+/* reabre o mesmo modal de quantidade, mas pra editar um ingrediente que ja esta na ficha, em vez de so poder remover e recolocar */
+function editarItemFicha(ix){
+  const it = editando.itens[ix]; if(!it) return;
+  ingEscolhido = acharIng(it.ing); if(!ingEscolhido) return;
+  editIx = ix;
+  $('qtd-titulo').textContent = 'Editar '+ingEscolhido.n.toLowerCase();
+  const unLabel = ingEscolhido.un==='un' ? 'unidade' : ingEscolhido.un.toUpperCase();
+  $('qtd-preco-label').textContent = 'Você paga isso por '+unLabel;
+  $('inp-qtd-preco').value = precoIng(ingEscolhido);
+  const chips = ingEscolhido.un==='un' ? [1,2,3,4,6,12] : (ingEscolhido.un==='l' ? [10,20,50,100,200,300,500] : [10,20,30,50,100,150,200,300,500]);
+  const suf = ingEscolhido.un==='un' ? ' un' : (ingEscolhido.un==='l' ? ' ml' : ' g');
+  qtdEscolhida = chips.includes(it.qtd) ? it.qtd : null;
+  $('qtd-chips').innerHTML = chips.map(c=>`<button class="chip ${c===it.qtd?'marcado':''}" onclick="setQtd(${c},this)">${c}${suf}</button>`).join('');
+  $('qtd-custom-label').textContent = ingEscolhido.un==='un' ? 'Ou digite quantas unidades' : 'Ou digite '+(ingEscolhido.un==='l'?'quantos ml':'quantos gramas');
+  $('inp-qtd-custom').value = qtdEscolhida ? '' : it.qtd;
+  const temCoc = !!(ingEscolhido.coc && ingEscolhido.coc !== 1 && ingEscolhido.un !== 'un');
+  $('qtd-peso-wrap').style.display = temCoc ? 'block' : 'none';
+  if(temCoc) setPeso(it.peso==='pronto' ? 'pronto' : 'cru');
+  $('btn-confirmar-qtd').textContent = 'Salvar alteração';
   abrirVeu('veu-qtd');
 }
 let pesoEscolhido = 'cru';
@@ -1507,7 +1535,8 @@ function confirmarQtd(){
   if(novoPreco>=0 && novoPreco !== precoIng(ingEscolhido)){ mudarPrecoIng(ingEscolhido.id, novoPreco); }
   const item = {ing:ingEscolhido.id, qtd:q};
   if(pesoEscolhido==='pronto' && ingEscolhido.coc && ingEscolhido.coc!==1) item.peso='pronto';
-  editando.itens.push(item);
+  if(editIx !== null){ editando.itens[editIx] = item; editIx = null; }
+  else editando.itens.push(item);
   qtdEscolhida=null; fecharVeu('veu-qtd'); renderEditor();
 }
 function criarIngrediente(){
