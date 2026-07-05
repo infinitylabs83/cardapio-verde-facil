@@ -1546,7 +1546,9 @@ function renderPreco(){
   const folga = Math.max(0, a.tetoIng - a.custo);
   const notaCanal = (!precoUnico() && S.config.deliveryPct>0)
     ? `<div class="aviso verde">🏪 Este preço vale pro balcão/salão. Pro app de entrega você cobra diferente — confira na aba <b>Delivery</b>.</div>` : '';
+  const lembreteCusto = `<div class="aviso verde">Você informou que <b>${esc(p.nome)}</b> custa <b>${fmt(a.custo)}</b> pra ser produzido${ehOlhometro(p)?' <span class="selo-olho">👀 no olhômetro</span>':''}.</div>`;
   $('preco-conteudo').innerHTML = `
+    ${lembreteCusto}
     ${notaCanal}
     <div id="preco-alerta">${diagnosticoPratoHtml(p,a)}</div>
     <div class="semaforo" id="semaforo">
