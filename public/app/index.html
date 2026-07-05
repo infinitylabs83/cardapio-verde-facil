@@ -358,7 +358,7 @@ nav.abas{background:rgba(255,248,234,.96);box-shadow:0 -12px 30px rgba(25,33,21,
 main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{font-weight:600}
 .cartao,.preco-op,.opcao-inicio,.conq{background:rgba(255,248,234,.9);border-color:rgba(82,66,35,.18)}.cartao h3{font-size:1.1rem}
 .btn{border-radius:18px;background:linear-gradient(180deg,#23864F,var(--verde));box-shadow:0 10px 24px rgba(31,109,66,.22);font-weight:800}.btn.secundario{background:#FFF8EA;border:1.5px solid rgba(31,109,66,.38);box-shadow:none}.btn.fantasma{color:var(--tinta-suave);box-shadow:none}
-.chip{background:#FFF8EA;border-color:rgba(82,66,35,.22);border-radius:15px;font-weight:800}.chip.marcado{background:#FFF8EA;border-color:#FFF8EA;color:var(--verde-esc);box-shadow:0 0 0 4px rgba(255,248,234,.16)}
+.chip{background:#FFF8EA;border-color:rgba(82,66,35,.22);border-radius:15px;font-weight:800}.chip.marcado{background:var(--verde-esc);border-color:var(--verde-esc);color:#FFF8EA;box-shadow:0 2px 10px rgba(18,63,43,.28)}
 .campo input,.campo select,.busca-ing input{border-radius:16px;background:#FFFDF6;border-color:rgba(82,66,35,.24);box-shadow:inset 0 0 0 1px rgba(18,63,43,.05)}.campo input:focus,.campo select:focus,.busca-ing input:focus{border-color:var(--verde);box-shadow:0 0 0 4px rgba(31,109,66,.14);outline:none}
 .etiqueta{border-radius:14px 20px 20px 14px;background:#FFF8EA;border-color:rgba(82,66,35,.2);box-shadow:0 10px 26px rgba(25,33,21,.09)}.etiqueta::before{width:9px;border-radius:14px 0 0 14px}.etiqueta::after{display:none}
 .sobrao{background:#E4EEDC;border-color:#CADBBE;box-shadow:var(--sombra)}.sobrao .numero{font-size:3rem}.tres-precos{gap:10px}.preco-op{border-radius:18px;box-shadow:0 8px 22px rgba(25,33,21,.06)}.preco-op.ativa{border-color:var(--verde);background:#E4EEDC;box-shadow:0 0 0 4px rgba(31,109,66,.1)}
@@ -552,6 +552,12 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
       <label for="inp-qtd-preco" id="qtd-preco-label">Você paga isso por unidade</label>
       <div class="prefixo"><span>R$</span><input id="inp-qtd-preco" type="number" inputmode="decimal" min="0" step="0.01"></div>
       <div class="dica">Mudou o preço? Ajusta aqui — vale pra esse item e pra todos os outros que usam esse ingrediente.</div>
+    </div>
+    <div class="campo" id="qtd-unidade-modo-wrap" style="display:none">
+      <div class="chips">
+        <button class="chip marcado" id="chip-modo-un" onclick="setModoQtd('un')">Por unidade</button>
+        <button class="chip" id="chip-modo-peso" onclick="setModoQtd('peso')">Por peso (g)</button>
+      </div>
     </div>
     <div class="chips" id="qtd-chips" style="margin-bottom:16px"></div>
     <div class="campo">
@@ -796,7 +802,8 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
 
 /* ---------- base de ingredientes (preços médios, editáveis) ---------- */
 /* un: kg = quilo | l = litro | un = unidade  ·  p = preço  ·  fc = fator de correção (perda na limpeza)
-   coc = rendimento no preparo: peso pronto = peso cru × coc (arroz rende, carne encolhe). Sem coc = 1. */
+   coc = rendimento no preparo: peso pronto = peso cru × coc (arroz rende, carne encolhe). Sem coc = 1.
+   gUnidade = peso médio (g) de 1 unidade comprada, só em itens vendidos por unidade mas usados aos poucos em gramas (alface, couve) */
 const BASE = [
  // Carnes
  {id:'patinho',n:'Patinho (carne)',cat:'Carnes',un:'kg',p:42,fc:1.05,coc:0.7},
@@ -831,9 +838,9 @@ const BASE = [
  {id:'abobora',n:'Abóbora',cat:'Hortifruti',un:'kg',p:5.5,fc:1.4},
  {id:'repolho',n:'Repolho',cat:'Hortifruti',un:'kg',p:4.5,fc:1.15},
  {id:'pimentao',n:'Pimentão',cat:'Hortifruti',un:'kg',p:9,fc:1.2},
- {id:'alface',n:'Alface (pé)',cat:'Hortifruti',un:'un',p:3.5,fc:1.3},
- {id:'couve',n:'Couve (maço)',cat:'Hortifruti',un:'un',p:4,fc:1.3},
- {id:'cheiroverde',n:'Cheiro-verde (maço)',cat:'Hortifruti',un:'un',p:3,fc:1.2},
+ {id:'alface',n:'Alface (pé)',cat:'Hortifruti',un:'un',p:3.5,fc:1.3,gUnidade:350},
+ {id:'couve',n:'Couve (maço)',cat:'Hortifruti',un:'un',p:4,fc:1.3,gUnidade:250},
+ {id:'cheiroverde',n:'Cheiro-verde (maço)',cat:'Hortifruti',un:'un',p:3,fc:1.2,gUnidade:80},
  {id:'limao',n:'Limão',cat:'Hortifruti',un:'kg',p:7,fc:1.4},
  {id:'banana',n:'Banana',cat:'Hortifruti',un:'kg',p:7,fc:1.4},
  // Mercearia
@@ -1175,7 +1182,8 @@ function setValorMilhar(input, v){ if(input) input.value = v ? Number(v).toLocal
 function todosIngredientes(){ return BASE.concat(S.custom); }
 function acharIng(id){ return todosIngredientes().find(i=>i.id===id); }
 function precoIng(ing){ return S.precos[ing.id] !== undefined ? S.precos[ing.id] : ing.p; }
-function rotuloQtd(ing, qtd, peso){
+function rotuloQtd(ing, qtd, peso, porPeso){
+  if(porPeso) return qtd>=1000 ? (qtd/1000).toLocaleString('pt-BR')+' kg' : qtd+' g';
   const marca = peso==='pronto' ? ' ✓pronto' : '';
   if(ing.un==='kg') return (qtd>=1000 ? (qtd/1000).toLocaleString('pt-BR')+' kg' : qtd+' g') + marca;
   if(ing.un==='l')  return (qtd>=1000 ? (qtd/1000).toLocaleString('pt-BR')+' L'  : qtd+' ml') + marca;
@@ -1188,6 +1196,8 @@ const TAXA_IFOOD = { entrega: 26.5, basico: 15.2 };   // % sobre a venda
 function custoItem(item){
   const ing = acharIng(item.ing); if(!ing) return 0;
   const p = precoIng(ing);
+  /* item vendido por unidade mas usado aos poucos em gramas (alface, couve...): converte pela fracao da unidade */
+  if(item.porPeso && ing.gUnidade) return (item.qtd/ing.gUnidade) * p * ing.fc;
   /* se o dono informou o peso PRONTO (no prato), converte pro peso cru comprado usando o rendimento */
   const qtdCrua = (item.peso==='pronto' && ing.coc) ? item.qtd/ing.coc : item.qtd;
   return ing.un==='un' ? qtdCrua*p*ing.fc : (qtdCrua/1000)*p*ing.fc;
@@ -1411,7 +1421,7 @@ function renderEditor(){
         const ing = acharIng(it.ing); if(!ing) return '';
         return `<div class="item-ing">
           <div class="item-ing-editavel" role="button" tabindex="0" onclick="editarItemFicha(${ix})" onkeydown="if(event.key==='Enter')editarItemFicha(${ix})" aria-label="Editar ${esc(ing.n)}">
-            <span class="qtd">${rotuloQtd(ing,it.qtd,it.peso)}</span>
+            <span class="qtd">${rotuloQtd(ing,it.qtd,it.peso,it.porPeso)}</span>
             <span class="n">${esc(ing.n)}</span>
             <span class="c">${fmt(custoItem(it))}</span>
           </div>
@@ -1475,6 +1485,29 @@ function renderPicker(){
   $('picker-grupos').innerHTML = html || `<p style="color:var(--tinta-suave)">Nada com esse nome. Crie o seu logo abaixo. 👇</p>`;
 }
 let editIx = null;
+let modoQtdAtual = 'un';
+/* monta os chips certos pro modo atual: 'peso' é sempre em gramas (usado por itens vendidos por unidade mas gastos aos poucos, tipo alface) */
+function chipsParaModo(modo){
+  if(modo==='peso') return {chips:[10,20,30,50,100,150], suf:' g', label:'Ou digite quantos gramas'};
+  const un = ingEscolhido.un;
+  const chips = un==='un' ? [1,2,3,4,6,12] : (un==='l' ? [10,20,50,100,200,300,500] : [10,20,30,50,100,150,200,300,500]);
+  const suf = un==='un' ? ' un' : (un==='l' ? ' ml' : ' g');
+  const label = un==='un' ? 'Ou digite quantas unidades' : 'Ou digite '+(un==='l'?'quantos ml':'quantos gramas');
+  return {chips, suf, label};
+}
+function renderChipsQtd(valorAtual){
+  const {chips, suf, label} = chipsParaModo(modoQtdAtual);
+  qtdEscolhida = chips.includes(valorAtual) ? valorAtual : null;
+  $('qtd-chips').innerHTML = chips.map(c=>`<button class="chip ${c===valorAtual?'marcado':''}" onclick="setQtd(${c},this)">${c}${suf}</button>`).join('');
+  $('qtd-custom-label').textContent = label;
+  $('inp-qtd-custom').value = (valorAtual!==undefined && qtdEscolhida===null) ? valorAtual : '';
+}
+function setModoQtd(v){
+  modoQtdAtual = v;
+  $('chip-modo-un').classList.toggle('marcado', v==='un');
+  $('chip-modo-peso').classList.toggle('marcado', v==='peso');
+  renderChipsQtd();
+}
 function escolherIng(id){
   ingEscolhido = acharIng(id); if(!ingEscolhido) return;
   editIx = null;
@@ -1483,11 +1516,11 @@ function escolherIng(id){
   const unLabel = ingEscolhido.un==='un' ? 'unidade' : ingEscolhido.un.toUpperCase();
   $('qtd-preco-label').textContent = 'Você paga isso por '+unLabel;
   $('inp-qtd-preco').value = precoIng(ingEscolhido);
-  const chips = ingEscolhido.un==='un' ? [1,2,3,4,6,12] : (ingEscolhido.un==='l' ? [10,20,50,100,200,300,500] : [10,20,30,50,100,150,200,300,500]);
-  const suf = ingEscolhido.un==='un' ? ' un' : (ingEscolhido.un==='l' ? ' ml' : ' g');
-  $('qtd-chips').innerHTML = chips.map(c=>`<button class="chip" onclick="setQtd(${c},this)">${c}${suf}</button>`).join('');
-  $('qtd-custom-label').textContent = ingEscolhido.un==='un' ? 'Ou digite quantas unidades' : 'Ou digite '+(ingEscolhido.un==='l'?'quantos ml':'quantos gramas');
-  $('inp-qtd-custom').value='';
+  const temPesoAlt = ingEscolhido.un==='un' && !!ingEscolhido.gUnidade;
+  $('qtd-unidade-modo-wrap').style.display = temPesoAlt ? 'block' : 'none';
+  modoQtdAtual = 'un';
+  $('chip-modo-un').classList.add('marcado'); $('chip-modo-peso').classList.remove('marcado');
+  renderChipsQtd();
   const temCoc = !!(ingEscolhido.coc && ingEscolhido.coc !== 1 && ingEscolhido.un !== 'un');
   $('qtd-peso-wrap').style.display = temCoc ? 'block' : 'none';
   if(temCoc) setPeso('cru');
@@ -1503,12 +1536,12 @@ function editarItemFicha(ix){
   const unLabel = ingEscolhido.un==='un' ? 'unidade' : ingEscolhido.un.toUpperCase();
   $('qtd-preco-label').textContent = 'Você paga isso por '+unLabel;
   $('inp-qtd-preco').value = precoIng(ingEscolhido);
-  const chips = ingEscolhido.un==='un' ? [1,2,3,4,6,12] : (ingEscolhido.un==='l' ? [10,20,50,100,200,300,500] : [10,20,30,50,100,150,200,300,500]);
-  const suf = ingEscolhido.un==='un' ? ' un' : (ingEscolhido.un==='l' ? ' ml' : ' g');
-  qtdEscolhida = chips.includes(it.qtd) ? it.qtd : null;
-  $('qtd-chips').innerHTML = chips.map(c=>`<button class="chip ${c===it.qtd?'marcado':''}" onclick="setQtd(${c},this)">${c}${suf}</button>`).join('');
-  $('qtd-custom-label').textContent = ingEscolhido.un==='un' ? 'Ou digite quantas unidades' : 'Ou digite '+(ingEscolhido.un==='l'?'quantos ml':'quantos gramas');
-  $('inp-qtd-custom').value = qtdEscolhida ? '' : it.qtd;
+  const temPesoAlt = ingEscolhido.un==='un' && !!ingEscolhido.gUnidade;
+  $('qtd-unidade-modo-wrap').style.display = temPesoAlt ? 'block' : 'none';
+  modoQtdAtual = it.porPeso ? 'peso' : 'un';
+  $('chip-modo-un').classList.toggle('marcado', modoQtdAtual==='un');
+  $('chip-modo-peso').classList.toggle('marcado', modoQtdAtual==='peso');
+  renderChipsQtd(it.qtd);
   const temCoc = !!(ingEscolhido.coc && ingEscolhido.coc !== 1 && ingEscolhido.un !== 'un');
   $('qtd-peso-wrap').style.display = temCoc ? 'block' : 'none';
   if(temCoc) setPeso(it.peso==='pronto' ? 'pronto' : 'cru');
@@ -1534,6 +1567,7 @@ function confirmarQtd(){
   const novoPreco = parseFloat(String($('inp-qtd-preco').value).replace(',','.'));
   if(novoPreco>=0 && novoPreco !== precoIng(ingEscolhido)){ mudarPrecoIng(ingEscolhido.id, novoPreco); }
   const item = {ing:ingEscolhido.id, qtd:q};
+  if(modoQtdAtual==='peso' && ingEscolhido.gUnidade) item.porPeso = true;
   if(pesoEscolhido==='pronto' && ingEscolhido.coc && ingEscolhido.coc!==1) item.peso='pronto';
   if(editIx !== null){ editando.itens[editIx] = item; editIx = null; }
   else editando.itens.push(item);
@@ -1699,12 +1733,13 @@ function renderDelivery(){
   const linhas = canais().map(cn=>{
     const extra = cn.extra(p);
     const sugerido = precoPara(alvo, a.custo+extra, cn.pct);
+    const margemCanal = sugerido>0 ? alvo/sugerido : 0;
     const mesmoPreco = lucroCom(a.preco, a.custo+extra, cn.pct);
     const cor = corMargem(a.preco>0 ? mesmoPreco/a.preco : 0);
     return `<div class="cartao canal">
       <div class="cab"><span class="nome-canal">${cn.nome}</span><span class="taxa">${cn.taxa}</span></div>
       <div class="grade">
-        <div class="celula"><div class="r">Cobre no app</div><div class="v txt-verde">${fmt(sugerido)}</div></div>
+        <div class="celula"><div class="r">Cobre no app</div><div class="v txt-verde">${fmt(sugerido)}</div><div style="font-size:.72rem;color:var(--tinta-suave)">${Math.round(margemCanal*100)}% de lucro</div></div>
         <div class="celula"><div class="r">Se cobrar ${fmt(a.preco)}</div><div class="v txt-${cor}">${mesmoPreco>=0?'sobra ':'perde '}${fmt(Math.abs(mesmoPreco))}</div></div>
       </div>
     </div>`;
@@ -1716,7 +1751,7 @@ function renderDelivery(){
       </div>
       ${embalagemNaFicha(p)?'<div class="dica">🧾 A embalagem já está na ficha deste item, então eu não somo esse valor de novo nos canais abaixo.</div>':''}
     </div>
-    <div class="aviso verde">💡 "Cobre no app" é o preço que mantém em cada canal <b>a mesma sobra</b> que esse item já te dá hoje (${fmt(alvo)} por item). Cobrar mais caro no app é normal — todo mundo faz. Se é o cliente quem paga a taxa de entrega, deixe o custo do motoboy em R$ 0 nos ⚙️ Ajustes.</div>
+    <div class="aviso verde">💡 "Cobre no app" mantém a mesma sobra de hoje em cada canal: ${fmt(alvo)} por item (${Math.round(a.margem*100)}% de lucro). Cobrar mais caro no app é normal. Se o cliente paga a entrega, zere o motoboy nos ⚙️ Ajustes.</div>
     ${linhas}`;
 }
 function mudarEmb(v){
@@ -1844,7 +1879,7 @@ function renderMagico(v){
   const M = 1/espacoIngredientes;
   const Mtxt = M.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   $('mg-num').textContent = Mtxt;
-  $('mg-frase').innerHTML = `Multiplique os ingredientes por <b>${Mtxt}</b>. Assim ${Math.round(base*100)}% paga contas/taxas, <b>${pct}%</b> vira lucro e ${Math.round(espacoIngredientes*100)}% fica para o CMV.`;
+  $('mg-frase').innerHTML = `Multiplique o custo dos ingredientes por <b>${Mtxt}</b> pra achar seu preço de venda. Já desconta contas, impostos e taxas que você nos contou — sobra <b>${pct}%</b> de lucro pra você.`;
   const custo = parseFloat(String($('mg-custo').value).replace(',','.'));
   $('mg-resultado').innerHTML = custo>0
     ? `<div class="aviso verde" style="margin-bottom:8px">Cobre <b>${fmt(custo*M)}</b>. Para essa meta, ingredientes ate <b>${fmt(custo)}</b> cabem na conta e o lucro estimado fica em <b>${fmt(custo*M*pct/100)}</b>.</div>
