@@ -371,6 +371,21 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
   #wizard.aberto,#gate.aberto{display:flex;justify-content:center}
   .wiz-conteudo,.gate-conteudo{max-width:520px}
 }
+@media(min-width:900px){
+  header.topo{max-width:none;margin:0;box-shadow:none}
+  nav.abas{
+    top:65px;bottom:0;left:0;right:auto;transform:none;
+    width:212px;max-width:212px;
+    display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;
+    padding:18px 10px;gap:2px;
+    border-top:none;border-right:1px solid var(--linha);
+    box-shadow:2px 0 16px rgba(25,33,21,.06);
+  }
+  nav.abas button{flex-direction:row;justify-content:flex-start;gap:12px;padding:11px 14px;font-size:.92rem;border-radius:12px}
+  nav.abas button svg{width:20px;height:20px}
+  main{max-width:900px;margin:0 0 0 212px;padding:26px 34px 40px}
+  #lista-pratos,.grade-itens{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+}
 </style>
 <!-- Meta Pixel Code -->
 <script>
@@ -1718,12 +1733,12 @@ function renderCardapio(){
     </div>
     ${coerencia}
     ${missao}
-    ${analises.map(({p,a})=>`
+    <div class="grade-itens">${analises.map(({p,a})=>`
       <div class="etiqueta cor-${a.cor}" role="button" tabindex="0" onclick="pratoSel='${p.id}';irPara('preco')" onkeydown="if(event.key==='Enter'){pratoSel='${p.id}';irPara('preco')}">
         <div class="info"><div class="nome">${esc(p.nome)}</div>
         <div class="linha2">vende a ${fmt(a.preco)} · sobra ${(a.margem*100).toFixed(0)}% da venda</div></div>
         <div class="valor"><b class="txt-${a.cor}">${fmt(a.lucro)}</b><small class="txt-${a.cor}">por item</small></div>
-      </div>`).join('')}
+      </div>`).join('')}</div>
     <button class="btn secundario" style="margin-top:6px" onclick="abrirInsumos()">📈 Preço de insumo mudou</button>
     <button class="btn secundario" style="margin-top:8px" onclick="abrirFechamento()">📅 Fechar o mês — conferir com a realidade</button>
     <h3 style="margin:18px 0 8px;font-size:1rem">Suas conquistas</h3>
