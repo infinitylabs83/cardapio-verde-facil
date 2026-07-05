@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cardápio no Verde — Seu cardápio no lucro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -251,15 +251,17 @@ input[type=range]{width:100%;accent-color:var(--verde);height:34px}
 .inp-inline{width:58px;padding:4px 2px;border:1.5px dashed var(--verde);border-radius:8px;text-align:center;font-weight:700;background:#fff;font-size:.95rem}
 
 /* ---------- semaforo de margem (visual, acende ao vivo com o preco) ---------- */
-.semaforo{display:flex;justify-content:center;align-items:center;gap:16px;padding:14px;margin-bottom:14px;background:#1F2B21;border-radius:18px}
-.semaforo .luz{width:28px;height:28px;border-radius:50%;opacity:.28;transition:opacity .15s,transform .15s,box-shadow .15s;transform:scale(.85)}
+.semaforo{display:flex;justify-content:center;align-items:flex-end;gap:20px;padding:24px 16px 16px;margin-bottom:14px;background:#1F2B21;border-radius:18px}
+.semaforo .luzwrap{position:relative}
+.semaforo .hood{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:42px;height:13px;background:#141F17;border-radius:14px 14px 0 0}
+.semaforo .luz{width:30px;height:30px;border-radius:50%;filter:brightness(.55) saturate(.7);transform:scale(.88);transition:filter .2s ease,transform .2s ease,box-shadow .2s ease,background .2s ease}
 .semaforo .luz.vermelho{background:var(--vermelho)}
 .semaforo .luz.amarelo{background:var(--amarelo)}
 .semaforo .luz.verde{background:var(--verde)}
-.semaforo .luz.acesa{opacity:1;transform:scale(1.15)}
-.semaforo .luz.acesa.vermelho{box-shadow:0 0 18px 4px var(--vermelho)}
-.semaforo .luz.acesa.amarelo{box-shadow:0 0 18px 4px var(--amarelo)}
-.semaforo .luz.acesa.verde{box-shadow:0 0 18px 4px var(--verde)}
+.semaforo .luz.acesa{filter:none;transform:scale(1.22)}
+.semaforo .luz.acesa.vermelho{background:radial-gradient(circle at 32% 28%,#fff,var(--vermelho) 55%,var(--vermelho));box-shadow:0 0 0 3px rgba(255,255,255,.06),0 0 46px 16px var(--vermelho)}
+.semaforo .luz.acesa.amarelo{background:radial-gradient(circle at 32% 28%,#fff,var(--amarelo) 55%,var(--amarelo));box-shadow:0 0 0 3px rgba(255,255,255,.06),0 0 46px 16px var(--amarelo)}
+.semaforo .luz.acesa.verde{background:radial-gradient(circle at 32% 28%,#fff,var(--verde) 55%,var(--verde));box-shadow:0 0 0 3px rgba(255,255,255,.06),0 0 46px 16px var(--verde)}
 
 /* ---------- opções de início de prato ---------- */
 .opcao-inicio{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--linha);border-radius:14px;padding:14px;margin-bottom:10px}
@@ -501,6 +503,7 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
       <button class="fechar" onclick="fecharVeu('veu-picker')" aria-label="Fechar">×</button>
     </div>
     <div class="busca-ing"><input id="inp-busca-ing" type="text" placeholder="Procurar: frango, arroz, queijo..." oninput="renderPicker()"></div>
+    <p style="font-size:.78rem;color:var(--tinta-suave);margin:0 0 8px">Os valores são preços médios de referência — na próxima tela você confirma o preço que <b>você</b> paga.</p>
     <div id="picker-grupos"></div>
     <div class="cartao" style="margin-top:14px">
       <h3>Não achou? Crie o seu</h3>
@@ -531,6 +534,14 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
     <div class="campo">
       <label for="inp-qtd-custom" id="qtd-custom-label">Ou digite a quantidade</label>
       <input id="inp-qtd-custom" type="number" inputmode="decimal" min="0" placeholder="Ex.: 150">
+    </div>
+    <div class="campo" id="qtd-peso-wrap" style="display:none">
+      <label>Esse peso é de antes ou depois do preparo?</label>
+      <div class="chips">
+        <button class="chip marcado" id="chip-peso-cru" onclick="setPeso('cru')">Cru — como eu compro</button>
+        <button class="chip" id="chip-peso-pronto" onclick="setPeso('pronto')">Pronto — como vai no prato</button>
+      </div>
+      <div class="dica" id="qtd-peso-dica"></div>
     </div>
     <button class="btn" onclick="confirmarQtd()">Colocar no item</button>
   </div>
@@ -598,6 +609,28 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
   </div>
 </div>
 
+<!-- ============ MODAL: FECHAMENTO DO MÊS ============ -->
+<div class="veu" id="veu-fechamento">
+  <div class="folha">
+    <div class="folha-cabeca"><h2>📅 Fechar o mês</h2><button class="fechar" onclick="fecharVeu('veu-fechamento')" aria-label="Fechar">×</button></div>
+    <p class="sub-tela">O app faz previsão; seu caixa conta a verdade. Uma vez por mês, compare os dois — eu me corrijo sozinho.</p>
+    <div class="cartao">
+      <div class="campo"><label for="fech-vendas">Quanto entrou no caixa esse mês? (tudo: balcão + apps)</label>
+        <div class="prefixo"><span>R$</span><input id="fech-vendas" type="number" inputmode="numeric" min="0" placeholder="Ex.: 22.000"></div>
+      </div>
+      <div class="campo"><label for="fech-compras">Quanto você gastou comprando ingredientes e embalagens?</label>
+        <div class="prefixo"><span>R$</span><input id="fech-compras" type="number" inputmode="numeric" min="0" placeholder="Ex.: 7.500"></div>
+        <div class="dica">Some as notas do fornecedor, mercado e atacadão do mês.</div>
+      </div>
+      <div class="campo" style="margin-bottom:0"><label for="fech-contas">Quanto pagou de contas do mês? (aluguel, salários, luz, o que você tira)</label>
+        <div class="prefixo"><span>R$</span><input id="fech-contas" type="number" inputmode="numeric" min="0" placeholder="Ex.: 8.000"></div>
+      </div>
+    </div>
+    <button class="btn" onclick="calcularFechamento()">Comparar com o app</button>
+    <div id="fech-resultado" style="margin-top:14px"></div>
+  </div>
+</div>
+
 <!-- ============ MODAL: AJUSTES ============ -->
 <div class="veu" id="veu-ajustes">
   <div class="folha">
@@ -609,10 +642,14 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
       <div class="linha-config"><label>Impostos (% da venda) <small style="color:var(--tinta-suave);font-weight:500">— eu chuto pelo seu faturamento, mas pode corrigir</small></label><input id="cfg-impostos" type="number" inputmode="decimal" min="0" max="30" step="0.5"></div>
       <div class="linha-config"><label>Vendas que saem por entrega (%)</label><input id="cfg-deliverypct" type="number" inputmode="numeric" min="0" max="100" step="5"></div>
       <div class="linha-config"><label>Por onde entrega mais</label><select id="cfg-appentrega" style="width:150px;padding:10px;border:1.5px solid var(--linha);border-radius:10px;background:#fff"><option value="ifood">iFood</option><option value="outro">Outro app</option><option value="whats">Entrega minha</option><option value="nenhum">Não entrego</option></select></div>
-      <div class="linha-config"><label>Taxa do cartão (%)</label><input id="cfg-cartao" type="number" inputmode="decimal" min="0" max="10" step="0.1"></div>
+      <div class="linha-config"><label>Plano do iFood</label><select id="cfg-ifoodplano" style="width:150px;padding:10px;border:1.5px solid var(--linha);border-radius:10px;background:#fff" onchange="document.getElementById('cfg-ifoodtaxa').value=this.value==='basico'?15.2:26.5"><option value="entrega">Entrega (26,5%)</option><option value="basico">Básico (15,2%)</option></select></div>
+      <div class="linha-config"><label>Taxa do iFood (%) <small style="color:var(--tinta-suave);font-weight:500">— confira no seu contrato, ela muda</small></label><input id="cfg-ifoodtaxa" type="number" inputmode="decimal" min="0" max="40" step="0.1"></div>
+      <div class="linha-config"><label>Preço no app de entrega <small style="color:var(--tinta-suave);font-weight:500">— cobra igual ao balcão ou mais caro?</small></label><select id="cfg-precounico" style="width:150px;padding:10px;border:1.5px solid var(--linha);border-radius:10px;background:#fff"><option value="unico">Mesmo do balcão</option><option value="dif">Mais caro no app</option></select></div>
+      <div class="linha-config"><label>Taxa do cartão (%) <small style="color:var(--tinta-suave);font-weight:500">— se metade das vendas é PIX/dinheiro, ponha metade da taxa</small></label><input id="cfg-cartao" type="number" inputmode="decimal" min="0" max="10" step="0.1"></div>
       <div class="linha-config"><label>Custo de cada entrega sua (motoboy)</label><div class="prefixo" style="width:130px"><span>R$</span><input id="cfg-entrega" type="number" inputmode="decimal" min="0" step="0.5" style="width:130px;padding-left:38px"></div></div>
       <div class="linha-config"><label>Outro app de entrega (% total)</label><input id="cfg-outroapp" type="number" inputmode="decimal" min="0" max="40" step="0.5"></div>
       <div class="linha-config"><label>Meta de lucro por venda (%) 🪄</label><input id="cfg-margem" type="number" inputmode="numeric" min="0" max="40" step="1"></div>
+      <div class="linha-config"><label>Dias abertos no mês <small style="color:var(--tinta-suave);font-weight:500">— usado nas projeções</small></label><input id="cfg-diasmes" type="number" inputmode="numeric" min="1" max="31" step="1"></div>
     </div>
     <div class="cartao">
       <h3>Seu restaurante</h3>
@@ -631,7 +668,8 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
     <button class="btn fantasma" onclick="fecharVeu('veu-ajustes');abrirWizard(true)">Refazer as perguntas do começo</button>
     <div class="cartao" style="margin-top:8px">
       <h3>Seus dados</h3>
-      <p style="font-size:.88rem;color:var(--tinta-suave);margin-bottom:12px">Tudo fica salvo neste aparelho. Para trocar de celular ou evitar perda, guarde uma copia no Drive, iCloud, WhatsApp ou app Arquivos.</p>
+      <p style="font-size:.88rem;color:var(--tinta-suave);margin-bottom:12px">Tudo fica salvo neste aparelho e na sua conta. Para trocar de celular ou evitar perda, guarde uma copia no Drive, iCloud, WhatsApp ou app Arquivos.</p>
+      <p style="font-size:.8rem;color:var(--tinta-suave);margin-bottom:12px">Privacidade: os números do seu cardápio não são compartilhados com ninguém. Usamos o Pixel da Meta apenas pra medir visitas ao app.</p>
       <button class="btn secundario" onclick="exportarBackup()" style="margin-bottom:8px">Guardar minha copia</button>
       <input type="file" id="inp-importar" accept=".pnv,.json,application/json" style="display:none" onchange="importarBackup(event)">
       <button class="btn fantasma" onclick="document.getElementById('inp-importar').click()">Restaurar minha copia</button>
@@ -665,7 +703,7 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
 
     <div class="wiz-passo" id="wiz-1">
       <div class="wiz-pergunta">Numa média de mês, quanto seu negócio costuma vender?</div>
-      <div class="wiz-apoio">Tem mês melhor e mês pior — pensa numa média geral, tudo que entra no caixa. Pode ser um chute — dá pra ajustar depois.</div>
+      <div class="wiz-apoio">Tem mês melhor e mês pior — pensa numa média geral, tudo que entra no caixa. Na dúvida, use o valor dos seus meses mais fracos: o preço calculado pelo mês fraco te protege o ano inteiro.</div>
       <div class="chips" id="wiz-fat-chips"></div>
       <div class="campo" style="margin-top:16px">
         <label for="wiz-fat-custom" style="color:#F3EFE0">Ou digite o valor</label>
@@ -734,30 +772,31 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
 ===================================================== */
 
 /* ---------- base de ingredientes (preços médios, editáveis) ---------- */
-/* un: kg = quilo | l = litro | un = unidade  ·  p = preço  ·  fc = fator de correção (perda na limpeza) */
+/* un: kg = quilo | l = litro | un = unidade  ·  p = preço  ·  fc = fator de correção (perda na limpeza)
+   coc = rendimento no preparo: peso pronto = peso cru × coc (arroz rende, carne encolhe). Sem coc = 1. */
 const BASE = [
  // Carnes
- {id:'patinho',n:'Patinho (carne)',cat:'Carnes',un:'kg',p:42,fc:1.05},
- {id:'acem',n:'Acém',cat:'Carnes',un:'kg',p:36,fc:1.08},
- {id:'coxaomole',n:'Coxão mole',cat:'Carnes',un:'kg',p:44,fc:1.05},
- {id:'alcatra',n:'Alcatra',cat:'Carnes',un:'kg',p:55,fc:1.05},
- {id:'contrafile',n:'Contrafilé',cat:'Carnes',un:'kg',p:58,fc:1.08},
- {id:'costela',n:'Costela bovina',cat:'Carnes',un:'kg',p:32,fc:1.15},
- {id:'moida',n:'Carne moída',cat:'Carnes',un:'kg',p:38,fc:1},
- {id:'porco',n:'Pernil / carne de porco',cat:'Carnes',un:'kg',p:22,fc:1.1},
- {id:'linguica',n:'Linguiça toscana',cat:'Carnes',un:'kg',p:28,fc:1},
- {id:'calabresa',n:'Calabresa',cat:'Carnes',un:'kg',p:26,fc:1},
- {id:'bacon',n:'Bacon',cat:'Carnes',un:'kg',p:45,fc:1},
- {id:'charque',n:'Charque / carne de sol',cat:'Carnes',un:'kg',p:42,fc:1.1},
+ {id:'patinho',n:'Patinho (carne)',cat:'Carnes',un:'kg',p:42,fc:1.05,coc:0.7},
+ {id:'acem',n:'Acém',cat:'Carnes',un:'kg',p:36,fc:1.08,coc:0.65},
+ {id:'coxaomole',n:'Coxão mole',cat:'Carnes',un:'kg',p:44,fc:1.05,coc:0.7},
+ {id:'alcatra',n:'Alcatra',cat:'Carnes',un:'kg',p:55,fc:1.05,coc:0.75},
+ {id:'contrafile',n:'Contrafilé',cat:'Carnes',un:'kg',p:58,fc:1.08,coc:0.75},
+ {id:'costela',n:'Costela bovina',cat:'Carnes',un:'kg',p:32,fc:1.15,coc:0.6},
+ {id:'moida',n:'Carne moída',cat:'Carnes',un:'kg',p:38,fc:1,coc:0.75},
+ {id:'porco',n:'Pernil / carne de porco',cat:'Carnes',un:'kg',p:22,fc:1.1,coc:0.7},
+ {id:'linguica',n:'Linguiça toscana',cat:'Carnes',un:'kg',p:28,fc:1,coc:0.8},
+ {id:'calabresa',n:'Calabresa',cat:'Carnes',un:'kg',p:26,fc:1,coc:0.85},
+ {id:'bacon',n:'Bacon',cat:'Carnes',un:'kg',p:45,fc:1,coc:0.65},
+ {id:'charque',n:'Charque / carne de sol',cat:'Carnes',un:'kg',p:42,fc:1.1,coc:0.8},
  // Frango & Ovos
- {id:'peito',n:'Peito de frango',cat:'Frango & Ovos',un:'kg',p:22,fc:1.05},
- {id:'coxa',n:'Coxa e sobrecoxa',cat:'Frango & Ovos',un:'kg',p:14,fc:1.1},
- {id:'frangointeiro',n:'Frango inteiro',cat:'Frango & Ovos',un:'kg',p:12,fc:1.25},
+ {id:'peito',n:'Peito de frango',cat:'Frango & Ovos',un:'kg',p:22,fc:1.05,coc:0.75},
+ {id:'coxa',n:'Coxa e sobrecoxa',cat:'Frango & Ovos',un:'kg',p:14,fc:1.1,coc:0.7},
+ {id:'frangointeiro',n:'Frango inteiro',cat:'Frango & Ovos',un:'kg',p:12,fc:1.25,coc:0.65},
  {id:'ovo',n:'Ovo',cat:'Frango & Ovos',un:'un',p:0.9,fc:1},
  // Peixes
- {id:'tilapia',n:'Filé de tilápia',cat:'Peixes & Camarão',un:'kg',p:48,fc:1.05},
- {id:'pescada',n:'Pescada / peixe branco',cat:'Peixes & Camarão',un:'kg',p:35,fc:1.15},
- {id:'camarao',n:'Camarão limpo',cat:'Peixes & Camarão',un:'kg',p:70,fc:1},
+ {id:'tilapia',n:'Filé de tilápia',cat:'Peixes & Camarão',un:'kg',p:48,fc:1.05,coc:0.8},
+ {id:'pescada',n:'Pescada / peixe branco',cat:'Peixes & Camarão',un:'kg',p:35,fc:1.15,coc:0.8},
+ {id:'camarao',n:'Camarão limpo',cat:'Peixes & Camarão',un:'kg',p:70,fc:1,coc:0.85},
  // Hortifruti
  {id:'tomate',n:'Tomate',cat:'Hortifruti',un:'kg',p:8,fc:1.15},
  {id:'cebola',n:'Cebola',cat:'Hortifruti',un:'kg',p:6,fc:1.15},
@@ -775,9 +814,9 @@ const BASE = [
  {id:'limao',n:'Limão',cat:'Hortifruti',un:'kg',p:7,fc:1.4},
  {id:'banana',n:'Banana',cat:'Hortifruti',un:'kg',p:7,fc:1.4},
  // Mercearia
- {id:'arroz',n:'Arroz',cat:'Mercearia',un:'kg',p:6.5,fc:1},
- {id:'feijaocarioca',n:'Feijão carioca',cat:'Mercearia',un:'kg',p:8.5,fc:1},
- {id:'feijaopreto',n:'Feijão preto',cat:'Mercearia',un:'kg',p:9,fc:1},
+ {id:'arroz',n:'Arroz',cat:'Mercearia',un:'kg',p:6.5,fc:1,coc:2.5},
+ {id:'feijaocarioca',n:'Feijão carioca',cat:'Mercearia',un:'kg',p:8.5,fc:1,coc:2.5},
+ {id:'feijaopreto',n:'Feijão preto',cat:'Mercearia',un:'kg',p:9,fc:1,coc:2.5},
  {id:'farinhatrigo',n:'Farinha de trigo',cat:'Mercearia',un:'kg',p:5.5,fc:1},
  {id:'farinhamandioca',n:'Farinha de mandioca',cat:'Mercearia',un:'kg',p:9,fc:1},
  {id:'farofapronta',n:'Farofa pronta',cat:'Mercearia',un:'kg',p:12,fc:1},
@@ -787,8 +826,8 @@ const BASE = [
  {id:'acucar',n:'Açúcar',cat:'Mercearia',un:'kg',p:5.5,fc:1},
  {id:'leitecoco',n:'Leite de coco',cat:'Mercearia',un:'l',p:18,fc:1},
  // Massas & Pães
- {id:'macarrao',n:'Macarrão',cat:'Massas & Pães',un:'kg',p:8,fc:1},
- {id:'lasanha',n:'Massa de lasanha',cat:'Massas & Pães',un:'kg',p:14,fc:1},
+ {id:'macarrao',n:'Macarrão',cat:'Massas & Pães',un:'kg',p:8,fc:1,coc:2.2},
+ {id:'lasanha',n:'Massa de lasanha',cat:'Massas & Pães',un:'kg',p:14,fc:1,coc:2},
  {id:'paofrances',n:'Pão francês',cat:'Massas & Pães',un:'kg',p:16,fc:1},
  {id:'paohamburguer',n:'Pão de hambúrguer',cat:'Massas & Pães',un:'un',p:1.6,fc:1},
  {id:'paosub',n:'Pão tipo sub / baguete',cat:'Massas & Pães',un:'un',p:2.5,fc:1},
@@ -850,10 +889,10 @@ const NICHOS = [
  {id:'marmitaria', nome:'Marmitaria / Self-service', emoji:'🍱',
   destaque:['peito','acem','moida','porco','arroz','feijaocarioca','feijaopreto','macarrao','batata','tomate','cebola','alho','oleo','farofapronta','marmitaisopor','kittalher','sacola'],
   templates:[
-   {n:'Marmita executiva de frango', emb:1.5, itens:[['peito',150],['arroz',180],['feijaocarioca',120],['batata',100],['tomate',40],['alface',0.2],['oleo',15],['temperopronto',5],['marmitaisopor',1],['kittalher',1],['sacola',1]]},
-   {n:'Marmita de carne', emb:1.5, itens:[['acem',150],['arroz',180],['feijaocarioca',120],['macarrao',80],['farofapronta',25],['oleo',15],['marmitaisopor',1],['kittalher',1],['sacola',1]]},
-   {n:'Feijoada (marmita)', emb:1.5, itens:[['feijaopreto',180],['porco',80],['linguica',60],['charque',60],['arroz',150],['couve',0.25],['farinhamandioca',30],['marmitaisopor',1],['sacola',1]]},
-   {n:'Strogonoff de frango', emb:1.5, itens:[['peito',140],['cremeleite',60],['extrato',20],['arroz',180],['batatapalha',30],['marmitaisopor',1],['sacola',1]]},
+   {n:'Marmita executiva de frango', emb:1.5, itens:[['peito',150],['arroz',80],['feijaocarioca',60],['batata',100],['tomate',40],['alface',0.2],['oleo',15],['temperopronto',5],['marmitaisopor',1],['kittalher',1],['sacola',1]]},
+   {n:'Marmita de carne', emb:1.5, itens:[['acem',150],['arroz',80],['feijaocarioca',60],['macarrao',60],['farofapronta',25],['oleo',15],['marmitaisopor',1],['kittalher',1],['sacola',1]]},
+   {n:'Feijoada (marmita)', emb:1.5, itens:[['feijaopreto',150],['porco',80],['linguica',60],['charque',60],['arroz',70],['couve',0.25],['farinhamandioca',30],['marmitaisopor',1],['sacola',1]]},
+   {n:'Strogonoff de frango', emb:1.5, itens:[['peito',140],['cremeleite',60],['extrato',20],['arroz',80],['batatapalha',30],['marmitaisopor',1],['sacola',1]]},
   ]},
  {id:'hamburgueria', nome:'Hamburgueria', emoji:'🍔',
   destaque:['paohamburguer','moida','bacon','mussarela','prato','presunto','ovo','alface','tomate','cebola','maionese','ketchup','mostarda','batata','caixaburger','refri'],
@@ -906,7 +945,7 @@ const NICHOS = [
  {id:'outro', nome:'Outro tipo de negócio', emoji:'🍴',
   destaque:[],
   templates:[
-   {n:'Marmita executiva de frango', emb:1.5, itens:[['peito',150],['arroz',180],['feijaocarioca',120],['batata',100],['oleo',15],['marmitaisopor',1],['sacola',1]]},
+   {n:'Marmita executiva de frango', emb:1.5, itens:[['peito',150],['arroz',80],['feijaocarioca',60],['batata',100],['oleo',15],['marmitaisopor',1],['sacola',1]]},
    {n:'X-Burger', emb:1.2, itens:[['paohamburguer',1],['moida',130],['prato',25],['maionese',20],['alface',0.1],['tomate',30],['caixaburger',1]]},
    {n:'Espetinho de carne', emb:0.3, itens:[['patinho',110],['espeto',1],['carvao',100],['farofapronta',20]]},
   ]},
@@ -929,18 +968,28 @@ let S = {
 };
 let checandoConq = false;
 function salvar(){
+  S.atualizadoEm = new Date().toISOString();   // carimbo usado pra decidir quem vence no sync local x nuvem
   cofre.set('pnv', JSON.stringify(S));
   if(!checandoConq){ checandoConq = true; try{ verificarConquistas(); } finally{ checandoConq = false; } }
   if(typeof sincronizarParaServidor === 'function') sincronizarParaServidor();
 }
 function normalizar(){
-  S.conquistas = S.conquistas || {};
-  S.precos = S.precos || {}; S.custom = S.custom || []; S.pratos = S.pratos || [];
+  S.conquistas = (S.conquistas && typeof S.conquistas==='object') ? S.conquistas : {};
+  S.precos = (S.precos && typeof S.precos==='object') ? S.precos : {};
+  if(!Array.isArray(S.custom)) S.custom = [];
+  if(!Array.isArray(S.pratos)) S.pratos = [];
+  if(!Array.isArray(S.fechamentos)) S.fechamentos = [];
   if(S.config){
     if(S.config.margemAlvo === undefined) S.config.margemAlvo = 0.15;
     if(!S.config.nicho) S.config.nicho = 'outro';
     if(S.config.deliveryPct === undefined) S.config.deliveryPct = 0;
     if(!S.config.appEntrega) S.config.appEntrega = 'nenhum';
+    if(S.config.precoUnico === undefined) S.config.precoUnico = true;
+    if(!S.config.ifoodPlano) S.config.ifoodPlano = 'entrega';
+    if(!(S.config.ifoodTaxa > 0)) S.config.ifoodTaxa = S.config.ifoodPlano==='basico' ? TAXA_IFOOD.basico : TAXA_IFOOD.entrega;
+    if(!(S.config.diasMes > 0)) S.config.diasMes = 26;
+    /* logo so entra se for imagem data-url de verdade (protege contra backup importado adulterado) */
+    if(S.config.logo && !/^data:image\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+$/i.test(S.config.logo)) S.config.logo = null;
   }
 }
 function carregar(){
@@ -954,8 +1003,30 @@ function carregar(){
 ===================================================== */
 const SUPA_URL = 'https://dnkizipqqyhkfeivnisj.supabase.co';
 const SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRua2l6aXBxcXloa2ZlaXZuaXNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTk1OTUsImV4cCI6MjA5ODY5NTU5NX0.3FEGjpVqPQW_KX5Fx8LhQmYp7-lkiL55oZMmAGf1O7A';
-const sb = window.supabase.createClient(SUPA_URL, SUPA_ANON);
+let sb = null;
+try{ sb = window.supabase ? window.supabase.createClient(SUPA_URL, SUPA_ANON) : null; }
+catch(e){ sb = null; }
 let sessaoEmail = null;
+
+/* licenca lembrada neste aparelho: quem ja validou a compra nao fica trancado quando a internet falha */
+const LICENCA_DIAS_OFFLINE = 7;
+function licencaCacheValida(){
+  try{
+    const raw = cofre.get('pnv_lic'); if(!raw) return false;
+    const l = JSON.parse(raw);
+    if(!l || !l.ok) return false;
+    if(l.email && !sessaoEmail) sessaoEmail = l.email;
+    return (Date.now() - l.ts) < LICENCA_DIAS_OFFLINE*24*3600*1000;
+  }catch(e){ return false; }
+}
+function telaOffline(){
+  $('gate-corpo').innerHTML = `
+    <h1>Sem internet agora</h1>
+    <p>Não consegui confirmar seu acesso porque a conexão falhou. Calma: seus dados estão seguros neste aparelho.</p>
+    <div class="gate-msg">Assim que a internet voltar, toque no botão abaixo.</div>
+    <button class="btn" onclick="location.reload()">Tentar de novo</button>
+  `;
+}
 
 function abrirGate(){ $('gate').classList.add('aberto'); }
 function fecharGate(){ $('gate').classList.remove('aberto'); }
@@ -988,6 +1059,7 @@ function telaSemAcesso(email){
   `;
 }
 async function pedirLinkAcesso(){
+  if(!sb){ telaOffline(); return; }
   const email = $('gate-email').value.trim();
   if(!email){ telaPedirEmail('Digita um e-mail válido.'); return; }
   const { error } = await sb.auth.signInWithOtp({ email, options:{ emailRedirectTo: window.location.href } });
@@ -997,20 +1069,43 @@ async function pedirLinkAcesso(){
 
 /* checa sessao ativa + licenca; retorna true se pode liberar o app */
 async function checarAcesso(){
-  const { data:{ session } } = await sb.auth.getSession();
-  if(!session){ telaPedirEmail(); abrirGate(); return false; }
+  if(!sb){   // CDN do Supabase nao carregou (sem internet): quem ja validou antes continua trabalhando
+    if(licencaCacheValida()){ fecharGate(); return true; }
+    telaOffline(); abrirGate(); return false;
+  }
+  let session = null;
+  try{ session = (await sb.auth.getSession()).data.session; }catch(e){}
+  if(!session){
+    if(licencaCacheValida()){ fecharGate(); return true; }
+    telaPedirEmail(); abrirGate(); return false;
+  }
   sessaoEmail = session.user.email;
-  const { data: licenca } = await sb.from('licencas').select('status').eq('email', sessaoEmail).maybeSingle();
-  if(!licenca || licenca.status !== 'ativo'){ telaSemAcesso(sessaoEmail); abrirGate(); return false; }
+  const { data: licenca, error } = await sb.from('licencas').select('status').eq('email', sessaoEmail).maybeSingle();
+  if(error){
+    /* rede caiu ou servidor fora do ar: a culpa nao e do cliente. Se validou nos ultimos dias, libera */
+    if(licencaCacheValida()){ fecharGate(); return true; }
+    telaOffline(); abrirGate(); return false;
+  }
+  if(!licenca || licenca.status !== 'ativo'){ cofre.set('pnv_lic',''); telaSemAcesso(sessaoEmail); abrirGate(); return false; }
+  cofre.set('pnv_lic', JSON.stringify({ok:true, email:sessaoEmail, ts:Date.now()}));
   fecharGate();
   await sincronizarDoServidor();
   return true;
 }
-/* traz o estado salvo na nuvem (se tiver) antes de renderizar o app */
+/* traz o estado da nuvem e decide quem vence pelo carimbo de data — o mais novo ganha, ninguem perde trabalho */
 async function sincronizarDoServidor(){
   try{
-    const { data } = await sb.from('dados_usuario').select('estado_json').eq('email', sessaoEmail).maybeSingle();
-    if(data && data.estado_json){ S = Object.assign(S, data.estado_json); normalizar(); }
+    const { data } = await sb.from('dados_usuario').select('estado_json, atualizado_em').eq('email', sessaoEmail).maybeSingle();
+    if(data && data.estado_json){
+      const tsNuvem = Date.parse(data.estado_json.atualizadoEm || data.atualizado_em || '') || 0;
+      const tsLocal = Date.parse(S.atualizadoEm || '') || 0;
+      if(!S.config || tsNuvem > tsLocal){
+        S = Object.assign(S, data.estado_json); normalizar();
+        cofre.set('pnv', JSON.stringify(S));
+      } else if(tsLocal > tsNuvem){
+        sincronizarParaServidor();   // este aparelho tem a versao mais nova: sobe pra nuvem
+      }
+    }
   }catch(e){ /* sem internet ou erro: segue com o que tem local */ }
 }
 /* avisa visivelmente se a nuvem esta ou nao ao dia, pra ninguem perder dado sem saber */
@@ -1026,7 +1121,7 @@ function mostrarStatusSync(ok){
 }
 /* manda o estado atual pra nuvem, sem travar a interface se falhar */
 function sincronizarParaServidor(){
-  if(!sessaoEmail) return;
+  if(!sb || !sessaoEmail) return;
   sb.from('dados_usuario').upsert({ email:sessaoEmail, estado_json:S, atualizado_em:new Date().toISOString() })
     .then(({error})=>{
       if(error) console.warn('sync falhou, seguindo com o local', error);
@@ -1057,20 +1152,27 @@ function setValorMilhar(input, v){ if(input) input.value = v ? Number(v).toLocal
 function todosIngredientes(){ return BASE.concat(S.custom); }
 function acharIng(id){ return todosIngredientes().find(i=>i.id===id); }
 function precoIng(ing){ return S.precos[ing.id] !== undefined ? S.precos[ing.id] : ing.p; }
-function rotuloQtd(ing, qtd){
-  if(ing.un==='kg') return qtd>=1000 ? (qtd/1000).toLocaleString('pt-BR')+' kg' : qtd+' g';
-  if(ing.un==='l')  return qtd>=1000 ? (qtd/1000).toLocaleString('pt-BR')+' L'  : qtd+' ml';
+function rotuloQtd(ing, qtd, peso){
+  const marca = peso==='pronto' ? ' ✓pronto' : '';
+  if(ing.un==='kg') return (qtd>=1000 ? (qtd/1000).toLocaleString('pt-BR')+' kg' : qtd+' g') + marca;
+  if(ing.un==='l')  return (qtd>=1000 ? (qtd/1000).toLocaleString('pt-BR')+' L'  : qtd+' ml') + marca;
   return qtd+' un';
 }
 
 /* ---------- cálculos ---------- */
+/* taxas dos apps de entrega num lugar so (mude aqui quando o iFood mudar a tabela; editavel nos Ajustes) */
+const TAXA_IFOOD = { entrega: 26.5, basico: 15.2 };   // % sobre a venda
 function custoItem(item){
   const ing = acharIng(item.ing); if(!ing) return 0;
   const p = precoIng(ing);
-  return ing.un==='un' ? item.qtd*p*ing.fc : (item.qtd/1000)*p*ing.fc;
+  /* se o dono informou o peso PRONTO (no prato), converte pro peso cru comprado usando o rendimento */
+  const qtdCrua = (item.peso==='pronto' && ing.coc) ? item.qtd/ing.coc : item.qtd;
+  return ing.un==='un' ? qtdCrua*p*ing.fc : (qtdCrua/1000)*p*ing.fc;
 }
 function custoPrato(p){ return p.itens.length ? p.itens.reduce((t,i)=>t+custoItem(i),0) : (p.custoDireto||0); }
 function ehOlhometro(p){ return !p.itens.length; }   // custo chutado pelo dono, sem ficha
+function embalagemNaFicha(p){ return (p.itens||[]).some(it=>{ const ing=acharIng(it.ing); return ing && ing.cat==='Embalagens'; }); }
+function diasMes(){ return (S.config && S.config.diasMes>0) ? S.config.diasMes : 26; }
 function pctBase(){ return S.config.fixoPct + S.config.impostos/100; }        // fixos + impostos
 function pctSalao(){ return pctBase() + S.config.cartao/100; }                // + cartao
 /* imposto estimado pelo faturamento (Simples/MEI, por cima) - editavel nos Ajustes */
@@ -1081,12 +1183,29 @@ function impostosAuto(fat){
   if(fat<=60000) return 7;
   return 8.5;
 }
+/* taxa do iFood conforme o plano (editavel nos Ajustes) */
+function taxaIfood(){
+  const c = S.config;
+  const t = c && parseFloat(c.ifoodTaxa);
+  if(t > 0) return t/100;
+  return (c && c.ifoodPlano==='basico' ? TAXA_IFOOD.basico : TAXA_IFOOD.entrega)/100;
+}
+/* o dono cobra o mesmo preco no balcao e no app? (se nao, o preco desta aba e so do balcao) */
+function precoUnico(){ return !S.config || S.config.precoUnico !== false; }
 /* fatia media que os apps de entrega comem, pesada por quanto da venda sai por entrega */
 function taxaEntregaPct(){
   const c = S.config;
-  if(!c || !c.deliveryPct) return 0;
-  const t = c.appEntrega==='ifood' ? 0.265 : (c.appEntrega==='outro' ? c.outroapp/100 : 0);
+  if(!c || !c.deliveryPct || !precoUnico()) return 0;
+  const t = c.appEntrega==='ifood' ? taxaIfood() : (c.appEntrega==='outro' ? c.outroapp/100 : 0);
   return c.deliveryPct * t;
+}
+/* custo medio de entrega propria (motoboy) por item vendido, quando o preco e unico:
+   entrega propria = WhatsApp/entrega sua, ou iFood Plano Basico (que nao inclui entregador) */
+function entregaMedia(){
+  const c = S.config;
+  if(!c || !c.deliveryPct || !precoUnico()) return 0;
+  const propria = c.appEntrega==='whats' || (c.appEntrega==='ifood' && c.ifoodPlano==='basico');
+  return propria ? c.deliveryPct * (c.entrega||0) : 0;
 }
 /* fatia total da venda que ja tem dono, sem esconder operacao inviavel */
 function pctGeral(){ return pctSalao() + taxaEntregaPct(); }
@@ -1100,7 +1219,7 @@ function margemDisponivelParaIngredientes(lucroPct=margemAlvo()){
   return 1 - pctGeral() - lucroPct;
 }
 function tetoIngredientes(preco, lucroPct=margemAlvo()){
-  return Math.max(0, preco * margemDisponivelParaIngredientes(lucroPct));
+  return Math.max(0, preco * margemDisponivelParaIngredientes(lucroPct) - entregaMedia());
 }
 function precoSeguro(custo, lucroPct){
   const denom = 1 - pctGeral() - lucroPct;
@@ -1114,16 +1233,25 @@ function precosSugeridos(custo){
     top:  precoSeguro(custo, meta + 0.10)
   };
 }
+/* cor do semaforo pela META do dono, nao por um numero fixo:
+   vermelho = prejuizo ou margem raspando · amarelo = lucra mas abaixo da meta · verde = meta batida */
+function corMargem(m){
+  const meta = margemAlvo();
+  if(m < 0.05) return 'vermelho';
+  if(m < meta - 0.0001) return 'amarelo';
+  return 'verde';
+}
 function analisar(p){
   const custo = custoPrato(p);
-  const sug = precosSugeridos(custo);
+  const extra = entregaMedia();                 // motoboy proprio, media por item (se preco unico)
+  const sug = precosSugeridos(custo + extra);
   const preco = p.preco || sug.ideal || sug.min || custo;
-  const lucro = lucroCom(preco, custo, pctGeral());
+  const lucro = lucroCom(preco, custo + extra, pctGeral());
   const margem = preco>0 ? lucro/preco : 0;
   const tetoIng = tetoIngredientes(preco);
   const excessoIng = Math.max(0, custo - tetoIng);
-  const cor = margem>=0.15 ? 'verde' : (margem>=0.05 ? 'amarelo' : 'vermelho');
-  return {custo, sug, preco, lucro, margem, cor, tetoIng, excessoIng};
+  const cor = corMargem(margem);
+  return {custo, extra, sug, preco, lucro, margem, cor, tetoIng, excessoIng};
 }
 function avisoHtml(tipo, texto){ return `<div class="aviso ${tipo}">${texto}</div>`; }
 function avisosOperacaoHtml(){
@@ -1259,7 +1387,7 @@ function renderEditor(){
       el.innerHTML = editando.itens.map((it,ix)=>{
         const ing = acharIng(it.ing); if(!ing) return '';
         return `<div class="item-ing">
-          <span class="qtd">${rotuloQtd(ing,it.qtd)}</span>
+          <span class="qtd">${rotuloQtd(ing,it.qtd,it.peso)}</span>
           <span class="n">${esc(ing.n)}</span>
           <span class="c">${fmt(custoItem(it))}</span>
           <button class="rm" onclick="removerItem(${ix})" aria-label="Tirar ${esc(ing.n)}">×</button>
@@ -1285,7 +1413,7 @@ function salvarPrato(){
   }
   editando.nome = nome;
   editando.vendasDia = Math.max(1, parseInt(editando.vendasDia)||10);
-  if(!editando.preco){ const ps = precosSugeridos(custoPrato(editando)); editando.preco = Math.ceil(((ps.ideal || ps.min || custoPrato(editando)*3 || 10))*2)/2; }
+  if(!editando.preco){ const ps = precosSugeridos(custoPrato(editando)+entregaMedia()); editando.preco = Math.ceil(((ps.ideal || ps.min || custoPrato(editando)*3 || 10))*2)/2; }
   if(editando.id){
     const ix = S.pratos.findIndex(p=>p.id===editando.id); S.pratos[ix]=editando;
   } else {
@@ -1333,7 +1461,20 @@ function escolherIng(id){
   $('qtd-chips').innerHTML = chips.map(c=>`<button class="chip" onclick="setQtd(${c},this)">${c}${suf}</button>`).join('');
   $('qtd-custom-label').textContent = ingEscolhido.un==='un' ? 'Ou digite quantas unidades' : 'Ou digite '+(ingEscolhido.un==='l'?'quantos ml':'quantos gramas');
   $('inp-qtd-custom').value='';
+  const temCoc = !!(ingEscolhido.coc && ingEscolhido.coc !== 1 && ingEscolhido.un !== 'un');
+  $('qtd-peso-wrap').style.display = temCoc ? 'block' : 'none';
+  if(temCoc) setPeso('cru');
   abrirVeu('veu-qtd');
+}
+let pesoEscolhido = 'cru';
+function setPeso(v){
+  pesoEscolhido = v;
+  $('chip-peso-cru').classList.toggle('marcado', v==='cru');
+  $('chip-peso-pronto').classList.toggle('marcado', v==='pronto');
+  const rende = ingEscolhido && ingEscolhido.coc > 1;
+  $('qtd-peso-dica').textContent = v==='pronto'
+    ? (rende ? 'Esse ingrediente rende no preparo. Eu converto pro peso cru na hora de calcular o custo.' : 'Esse ingrediente encolhe no preparo. Eu converto pro peso cru na hora de calcular o custo.')
+    : 'Peso do jeito que você compra. Se preferir pensar no prato pronto, toque na outra opção.';
 }
 let qtdEscolhida = null;
 function setQtd(v,btn){ qtdEscolhida=v; document.querySelectorAll('#qtd-chips .chip').forEach(c=>c.classList.remove('marcado')); btn.classList.add('marcado'); $('inp-qtd-custom').value=''; }
@@ -1343,7 +1484,9 @@ function confirmarQtd(){
   if(!q){ alert('Escolha ou digite a quantidade.'); return; }
   const novoPreco = parseFloat(String($('inp-qtd-preco').value).replace(',','.'));
   if(novoPreco>=0 && novoPreco !== precoIng(ingEscolhido)){ mudarPrecoIng(ingEscolhido.id, novoPreco); }
-  editando.itens.push({ing:ingEscolhido.id, qtd:q});
+  const item = {ing:ingEscolhido.id, qtd:q};
+  if(pesoEscolhido==='pronto' && ingEscolhido.coc && ingEscolhido.coc!==1) item.peso='pronto';
+  editando.itens.push(item);
   qtdEscolhida=null; fecharVeu('veu-qtd'); renderEditor();
 }
 function criarIngrediente(){
@@ -1380,12 +1523,15 @@ function renderPreco(){
   const classe = a.cor==='verde' ? '' : (a.cor==='amarelo' ? 'meio' : 'neg');
   const meta = Math.round(margemAlvo()*100);
   const folga = Math.max(0, a.tetoIng - a.custo);
+  const notaCanal = (!precoUnico() && S.config.deliveryPct>0)
+    ? `<div class="aviso verde">🏪 Este preço vale pro balcão/salão. Pro app de entrega você cobra diferente — confira na aba <b>Delivery</b>.</div>` : '';
   $('preco-conteudo').innerHTML = `
+    ${notaCanal}
     <div id="preco-alerta">${diagnosticoPratoHtml(p,a)}</div>
     <div class="semaforo" id="semaforo">
-      <div class="luz vermelho ${a.cor==='vermelho'?'acesa':''}" id="luz-vermelho" aria-label="Vermelho: prejuízo"></div>
-      <div class="luz amarelo ${a.cor==='amarelo'?'acesa':''}" id="luz-amarelo" aria-label="Amarelo: margem apertada"></div>
-      <div class="luz verde ${a.cor==='verde'?'acesa':''}" id="luz-verde" aria-label="Verde: lucro saudável"></div>
+      <div class="luzwrap"><div class="hood"></div><div class="luz vermelho ${a.cor==='vermelho'?'acesa':''}" id="luz-vermelho" aria-label="Vermelho: prejuízo"></div></div>
+      <div class="luzwrap"><div class="hood"></div><div class="luz amarelo ${a.cor==='amarelo'?'acesa':''}" id="luz-amarelo" aria-label="Amarelo: margem apertada"></div></div>
+      <div class="luzwrap"><div class="hood"></div><div class="luz verde ${a.cor==='verde'?'acesa':''}" id="luz-verde" aria-label="Verde: lucro saudável"></div></div>
     </div>
     <div class="sobrao ${classe}" id="sobra-box">
       <div class="rotulo">Sobra pra voce, por item</div>
@@ -1417,13 +1563,14 @@ function renderPreco(){
       <div class="item-ing"><span class="n">Contas do mes (fatia do item)</span><span class="c" id="bd-fixos">${fmt(a.preco*S.config.fixoPct)}</span></div>
       <div class="item-ing"><span class="n">Impostos e cartao</span><span class="c" id="bd-taxas">${fmt(a.preco*(S.config.impostos+S.config.cartao)/100)}</span></div>
       ${taxaEntregaPct()>0?`<div class="item-ing"><span class="n">Apps de entrega (sua fatia)</span><span class="c" id="bd-apps">${fmt(a.preco*taxaEntregaPct())}</span></div>`:''}
+      ${a.extra>0?`<div class="item-ing"><span class="n">Entrega sua (média por item)</span><span class="c" id="bd-entrega">${fmt(a.extra)}</span></div>`:''}
       <div class="item-ing"><span class="n"><b>Lucro real</b></span><span class="c" id="bd-lucro"><b>${fmt(a.lucro)}</b></span></div>
     </div>`;
 }
 /* frase da projeção do mês, com o "quantos por dia" editável ali mesmo — é um "se", não uma cobrança */
 function frasePreco(lucro, vendasDia){
   if(lucro < 0) return `Nesse preço, <b>você paga ${fmt(Math.abs(lucro))} do próprio bolso</b> a cada item vendido.`;
-  const mes = lucro * vendasDia * 26;
+  const mes = lucro * vendasDia * diasMes();
   return `Se vender <input class="inp-inline" type="number" inputmode="numeric" min="1" max="999" value="${vendasDia}" onchange="mudarVendas(this.value)" aria-label="Vendas por dia"> por dia, sobram <b>${fmt(mes)}</b> no mês pra você.`;
 }
 function mudarVendas(v){
@@ -1441,12 +1588,13 @@ function previewPreco(v){
   const p = S.pratos.find(x=>x.id===pratoSel);
   const preco = parseFloat(v);
   const custo = custoPrato(p);
-  const sug = precosSugeridos(custo);
-  const lucro = lucroCom(preco, custo, pctGeral());
+  const extra = entregaMedia();
+  const sug = precosSugeridos(custo + extra);
+  const lucro = lucroCom(preco, custo + extra, pctGeral());
   const margem = preco>0 ? lucro/preco : 0;
   const tetoIng = tetoIngredientes(preco);
   const excessoIng = Math.max(0, custo - tetoIng);
-  const cor = margem>=0.15 ? 'verde' : (margem>=0.05 ? 'amarelo' : 'vermelho');
+  const cor = corMargem(margem);
   acenderSemaforo(cor);
   $('preco-atual').textContent = fmt(preco);
   const num = $('sobra-num');
@@ -1456,7 +1604,7 @@ function previewPreco(v){
   const vdInline = document.querySelector('#sobra-frase .inp-inline');
   const vd = vdInline ? (parseInt(vdInline.value)||p.vendasDia) : p.vendasDia;
   $('sobra-frase').innerHTML = frasePreco(lucro, vd);
-  $('preco-alerta').innerHTML = diagnosticoPratoHtml(p,{custo, sug, preco, lucro, margem, cor, tetoIng, excessoIng});
+  $('preco-alerta').innerHTML = diagnosticoPratoHtml(p,{custo, extra, sug, preco, lucro, margem, cor, tetoIng, excessoIng});
   const tetoEl = $('bd-teto-ing'); if(tetoEl) tetoEl.textContent = fmt(tetoIng);
   const custoEl = $('bd-custo-ing'); if(custoEl) custoEl.textContent = fmt(custo);
   const folgaLabel = $('bd-folga-label'); if(folgaLabel) folgaLabel.textContent = excessoIng>0.01 ? 'Estourou o teto' : 'Folga para ingredientes';
@@ -1472,18 +1620,23 @@ function mudarPreco(v){
 }
 function aplicarPreco(v){
   const p = S.pratos.find(x=>x.id===pratoSel);
-  p.preco = Math.round(v*2)/2; salvar(); renderPreco();
+  p.preco = Math.ceil(v*2)/2; salvar(); renderPreco();
 }
 
 /* ---------- TELA: Delivery ---------- */
 function canais(){
   const c = S.config;
+  const txB = (c.appEntrega==='ifood' && c.ifoodPlano==='basico') ? taxaIfood()*100 : TAXA_IFOOD.basico;
+  const txE = (c.appEntrega==='ifood' && c.ifoodPlano!=='basico') ? taxaIfood()*100 : TAXA_IFOOD.entrega;
+  const pctTxt = v => v.toLocaleString('pt-BR',{maximumFractionDigits:1});
+  /* se a embalagem ja esta dentro da ficha do item, nao soma de novo aqui (senao contaria duas vezes) */
+  const emb = p => embalagemNaFicha(p) ? 0 : p.emb;
   return [
     {id:'salao', nome:'No salão / balcão', taxa:'sem taxa de app', pct:pctSalao(), extra:p=>0},
-    {id:'ib', nome:'iFood — Plano Básico', taxa:'15,2% + sua entrega', pct:pctBase()+0.152, extra:p=>p.emb + c.entrega},
-    {id:'ie', nome:'iFood — Plano Entrega', taxa:'26,5%', pct:pctBase()+0.265, extra:p=>p.emb},
-    {id:'oa', nome:'Outro app', taxa:c.outroapp.toLocaleString('pt-BR')+'% (mude nos Ajustes)', pct:pctBase()+c.outroapp/100, extra:p=>p.emb},
-    {id:'wz', nome:'WhatsApp / entrega sua', taxa:'sem taxa de app', pct:pctSalao(), extra:p=>p.emb + c.entrega},
+    {id:'ib', nome:'iFood — Plano Básico', taxa:pctTxt(txB)+'% + sua entrega', pct:pctBase()+txB/100, extra:p=>emb(p) + c.entrega},
+    {id:'ie', nome:'iFood — Plano Entrega', taxa:pctTxt(txE)+'%', pct:pctBase()+txE/100, extra:p=>emb(p)},
+    {id:'oa', nome:'Outro app', taxa:c.outroapp.toLocaleString('pt-BR')+'% (mude nos Ajustes)', pct:pctBase()+c.outroapp/100, extra:p=>emb(p)},
+    {id:'wz', nome:'WhatsApp / entrega sua', taxa:'sem taxa de app', pct:pctSalao(), extra:p=>emb(p) + c.entrega},
   ];
 }
 function renderDelivery(){
@@ -1495,7 +1648,7 @@ function renderDelivery(){
     const extra = cn.extra(p);
     const sugerido = precoPara(alvo, a.custo+extra, cn.pct);
     const mesmoPreco = lucroCom(a.preco, a.custo+extra, cn.pct);
-    const cor = mesmoPreco/a.preco>=0.15?'verde':(mesmoPreco/a.preco>=0.05?'amarelo':'vermelho');
+    const cor = corMargem(a.preco>0 ? mesmoPreco/a.preco : 0);
     return `<div class="cartao canal">
       <div class="cab"><span class="nome-canal">${cn.nome}</span><span class="taxa">${cn.taxa}</span></div>
       <div class="grade">
@@ -1509,6 +1662,7 @@ function renderDelivery(){
       <div class="linha-config"><label>Embalagem deste item (marmita, sacola...)</label>
         <div class="prefixo" style="width:110px"><span>R$</span><input type="number" inputmode="decimal" min="0" step="0.1" value="${p.emb}" style="width:110px;padding-left:38px" onchange="mudarEmb(this.value)"></div>
       </div>
+      ${embalagemNaFicha(p)?'<div class="dica">🧾 A embalagem já está na ficha deste item, então eu não somo esse valor de novo nos canais abaixo.</div>':''}
     </div>
     <div class="aviso verde">💡 "Cobre no app" é o preço que mantém em cada canal <b>a mesma sobra</b> que esse item já te dá hoje (${fmt(alvo)} por item). Cobrar mais caro no app é normal — todo mundo faz. Se é o cliente quem paga a taxa de entrega, deixe o custo do motoboy em R$ 0 nos ⚙️ Ajustes.</div>
     ${linhas}`;
@@ -1526,7 +1680,16 @@ function renderCardapio(){
   const nv = analises.filter(x=>x.a.cor==='verde').length;
   const na = analises.filter(x=>x.a.cor==='amarelo').length;
   const nr = analises.filter(x=>x.a.cor==='vermelho').length;
-  const mes = analises.reduce((t,x)=>t + x.a.lucro*x.p.vendasDia*26, 0);
+  const mes = analises.reduce((t,x)=>t + x.a.lucro*x.p.vendasDia*diasMes(), 0);
+  /* checagem de coerencia: a projecao dos itens conversa com o faturamento declarado?
+     se nao conversa, a fatia das contas fixas em cada item esta errada — melhor avisar do que fingir precisao */
+  const projVendas = S.pratos.reduce((t,p)=>t+(p.preco||0)*(p.vendasDia||0)*diasMes(),0);
+  let coerencia = '';
+  if(S.pratos.length>=3 && S.config.faturamento>0 && projVendas>0){
+    const r = projVendas/S.config.faturamento;
+    if(r>1.6) coerencia = avisoHtml('amarelo', `⚖️ Seus itens projetam ${fmt(projVendas)} de venda no mês — bem acima dos ${fmt(S.config.faturamento)} que você declarou nos Ajustes. Se a venda real for menor que a projeção, as contas fixas pesam mais do que estou contando em cada item. Ajuste o "quantos por dia" dos itens ou o faturamento nos ⚙️ Ajustes.`);
+    else if(r<0.6) coerencia = avisoHtml('amarelo', `⚖️ Seus itens projetam ${fmt(projVendas)} de venda no mês — bem abaixo dos ${fmt(S.config.faturamento)} declarados nos Ajustes. Ou o chute de vendas por dia está baixo, ou o faturamento está alto — e aí a fatia das contas fixas em cada item seria maior do que estou calculando.`);
+  }
   const ordem = {vermelho:0, amarelo:1, verde:2};
   analises.sort((x,y)=>ordem[x.a.cor]-ordem[y.a.cor]);
   const missao = nr>0 ? `<div class="aviso vermelho">🎯 Sua missão: colocar ${nr===1?'1 item que está':nr+' itens que estão'} no vermelho de volta no verde. Toque no item pra ajustar o preço.</div>`
@@ -1545,8 +1708,9 @@ function renderCardapio(){
     <div class="sobrao ${mes>=0?'':'neg'}" style="padding:16px">
       <div class="rotulo">Se as vendas baterem o esperado, seu lucro no mês seria</div>
       <div class="numero" style="font-size:2.1rem">${fmt(mes)}</div>
-      <div class="frase" style="font-size:.88rem;font-weight:700;color:var(--verde-esc)">📊 Esse número usa um chute de vendas por dia pra cada item — ninguém confirmou isso ainda. Ajuste o chute de cada item na aba Preço pra deixar mais real.</div>
+      <div class="frase" style="font-size:.88rem;font-weight:700;color:var(--verde-esc)">📊 Esse número usa um chute de vendas por dia pra cada item — ninguém confirmou isso ainda. Ajuste o chute de cada item na aba Preço, e no fim do mês toque em "Fechar o mês" pra conferir com a realidade.</div>
     </div>
+    ${coerencia}
     ${missao}
     ${analises.map(({p,a})=>`
       <div class="etiqueta cor-${a.cor}" role="button" tabindex="0" onclick="pratoSel='${p.id}';irPara('preco')" onkeydown="if(event.key==='Enter'){pratoSel='${p.id}';irPara('preco')}">
@@ -1555,6 +1719,7 @@ function renderCardapio(){
         <div class="valor"><b class="txt-${a.cor}">${fmt(a.lucro)}</b><small class="txt-${a.cor}">por item</small></div>
       </div>`).join('')}
     <button class="btn secundario" style="margin-top:6px" onclick="abrirInsumos()">📈 Preço de insumo mudou</button>
+    <button class="btn secundario" style="margin-top:8px" onclick="abrirFechamento()">📅 Fechar o mês — conferir com a realidade</button>
     <h3 style="margin:18px 0 8px;font-size:1rem">Suas conquistas</h3>
     <div class="conquistas">${CONQUISTAS.map(c=>`
       <div class="conq ${S.conquistas[c.id]?'':'trancada'}"><div class="e">${c.e}</div><div class="t">${c.t}</div></div>`).join('')}
@@ -1568,6 +1733,7 @@ const CONQUISTAS = [
  {id:'ficha1',     e:'🧾', t:'Primeira ficha completa',    cond:()=>S.pratos.some(p=>p.itens.length>=3)},
  {id:'cinco',      e:'🖐️', t:'5 itens no cardápio',        cond:()=>S.pratos.length>=5},
  {id:'magico',     e:'🪄', t:'Número Mágico definido',     cond:()=>!!(S.config&&S.config.usouMagico)},
+ {id:'fech1',      e:'📅', t:'Primeiro mês fechado',       cond:()=>(S.fechamentos||[]).length>=1},
  {id:'verdetotal', e:'🏆', t:'Cardápio 100% verde',        cond:()=>S.pratos.length>=3 && S.pratos.every(p=>analisar(p).cor==='verde')},
 ];
 function verificarConquistas(){
@@ -1709,14 +1875,77 @@ function salvarPrecosInsumos(){
   renderTudo();
 }
 
+/* ---------- fechamento do mês: a previsão encontra a realidade ---------- */
+let fechTmp = null;
+function abrirFechamento(){
+  ['fech-vendas','fech-compras','fech-contas'].forEach(id=>{ $(id).value=''; });
+  $('fech-resultado').innerHTML=''; fechTmp = null;
+  abrirVeu('veu-fechamento');
+}
+function calcularFechamento(){
+  const vendas = valorMilhar($('fech-vendas'));
+  const compras = valorMilhar($('fech-compras'));
+  const contas = valorMilhar($('fech-contas'));
+  if(!(vendas>0)){ alert('Digita quanto entrou no caixa.'); return; }
+  const c = S.config;
+  const linhas = [];
+  /* CMV real (caixa) x CMV teorico (fichas, no mix de vendas estimado) */
+  const cmvReal = compras/vendas;
+  const somaPV = S.pratos.reduce((t,p)=>t+(p.preco||0)*(p.vendasDia||0),0);
+  const somaCV = S.pratos.reduce((t,p)=>t+custoPrato(p)*(p.vendasDia||0),0);
+  if(compras>0 && somaPV>0){
+    const cmvTeo = somaCV/somaPV;
+    const dif = cmvReal - cmvTeo;
+    linhas.push(`<div class="item-ing"><span class="n">Ingredientes: pelas suas fichas</span><span class="c">${Math.round(cmvTeo*100)}% da venda</span></div>`);
+    linhas.push(`<div class="item-ing"><span class="n">Ingredientes: pelo seu caixa</span><span class="c">${Math.round(cmvReal*100)}% da venda</span></div>`);
+    if(dif > 0.02) linhas.push(avisoHtml('amarelo', `Saíram ${fmt(dif*vendas)} a mais de insumo do que as fichas dizem. Isso costuma ser desperdício, porção saindo maior, ou preço de insumo desatualizado aqui no app.`));
+    else if(dif < -0.02) linhas.push(avisoHtml('verde', `Você gastou menos de insumo do que as fichas previam — ou sobrou estoque pro mês que vem, ou suas fichas estão com custo por cima (que é o lado seguro).`));
+    else linhas.push(avisoHtml('verde', `Fichas e caixa batendo. É isso.`));
+  }
+  /* contas fixas: o que o app contava x realidade */
+  const fixoReal = contas/vendas;
+  linhas.push(`<div class="item-ing"><span class="n">Contas do mês: o app contava</span><span class="c">${Math.round(c.fixoPct*100)}% da venda</span></div>`);
+  linhas.push(`<div class="item-ing"><span class="n">Contas do mês: na realidade</span><span class="c">${Math.round(fixoReal*100)}% da venda</span></div>`);
+  /* sobra real estimada x o que o app projetava */
+  const taxaApps = (c.deliveryPct||0) * (c.appEntrega==='ifood' ? taxaIfood() : (c.appEntrega==='outro' ? c.outroapp/100 : 0));
+  const lucroReal = vendas - compras - contas - vendas*(c.impostos+c.cartao)/100 - vendas*taxaApps;
+  const lucroPrevisto = S.pratos.reduce((t,p)=>t+analisar(p).lucro*(p.vendasDia||0)*diasMes(),0);
+  linhas.push(`<div class="item-ing"><span class="n"><b>Sobra real do mês (estimada)</b></span><span class="c"><b>${fmt(lucroReal)}</b></span></div>`);
+  if(S.pratos.length) linhas.push(`<div class="item-ing"><span class="n">O app projetava</span><span class="c">${fmt(lucroPrevisto)}</span></div>`);
+  if(contas>=vendas) linhas.push(avisoHtml('vermelho','Suas contas foram maiores que a venda do mês. Mês no vermelho — antes de mexer em preço, essa operação precisa de revisão.'));
+  fechTmp = {vendas, compras, contas};
+  $('fech-resultado').innerHTML = `
+    <div class="cartao">${linhas.join('')}</div>
+    <div class="aviso verde">Se esse foi um mês normal (nem o melhor, nem o pior), use esses números daqui pra frente — a conta de todos os itens se corrige sozinha.</div>
+    ${contas<vendas?'<button class="btn" onclick="aplicarFechamento()">Usar esses números daqui pra frente</button>':''}
+    <button class="btn fantasma" onclick="fecharVeu('veu-fechamento')">Agora não</button>`;
+}
+function aplicarFechamento(){
+  if(!fechTmp) return;
+  const c = S.config;
+  c.faturamento = fechTmp.vendas;
+  c.fixos = fechTmp.contas;
+  c.fixoPct = fechTmp.contas / fechTmp.vendas;
+  c.estimado = false;
+  S.fechamentos = S.fechamentos || [];
+  S.fechamentos.push(Object.assign({ts:new Date().toISOString()}, fechTmp));
+  salvar(); fecharVeu('veu-fechamento'); renderTudo();
+  celebrar('📅','Mês fechado!','Sua conta agora usa números reais, não chute.');
+}
+
 /* ---------- ajustes ---------- */
 function abrirAjustes(){
   const c = S.config;
   setValorMilhar($('cfg-faturamento'), c.faturamento); setValorMilhar($('cfg-fixos'), c.fixos);
+  $('cfg-fixos').placeholder = c.estimado ? 'média do setor: 28%' : '';
   $('cfg-impostos').value=c.impostos; $('cfg-cartao').value=c.cartao;
   $('cfg-entrega').value=c.entrega; $('cfg-outroapp').value=c.outroapp;
   $('cfg-deliverypct').value = Math.round((c.deliveryPct||0)*100);
   $('cfg-appentrega').value = c.appEntrega || 'nenhum';
+  $('cfg-ifoodplano').value = c.ifoodPlano || 'entrega';
+  $('cfg-ifoodtaxa').value = (c.ifoodTaxa>0) ? c.ifoodTaxa : (c.ifoodPlano==='basico'?TAXA_IFOOD.basico:TAXA_IFOOD.entrega);
+  $('cfg-precounico').value = (c.precoUnico===false) ? 'dif' : 'unico';
+  $('cfg-diasmes').value = diasMes();
   $('cfg-margem').value = Math.round(margemAlvo()*100);
   $('cfg-nome-rest').value = c.nomeRest || '';
   const pv = $('prev-logo');
@@ -1726,10 +1955,15 @@ function abrirAjustes(){
 function salvarAjustes(){
   const c = S.config;
   c.faturamento = Math.max(1000, valorMilhar($('cfg-faturamento'))||c.faturamento);
-  c.fixos = Math.max(0, valorMilhar($('cfg-fixos')));
-  if(c.fixos > c.faturamento){ alert('Essa conta nao fecha: seus gastos fixos ficaram maiores que o faturamento. Revise antes de salvar.'); return; }
-  c.fixoPct = c.faturamento > 0 ? c.fixos / c.faturamento : 0;
-  c.estimado = false;
+  const fixosDigitados = valorMilhar($('cfg-fixos'));
+  if(c.estimado && !fixosDigitados){
+    /* usuario respondeu "nao sei" no comeco e nao digitou nada: mantem a media do setor (28%), nao zera */
+  } else {
+    if(fixosDigitados > c.faturamento){ alert('Essa conta nao fecha: seus gastos fixos ficaram maiores que o faturamento. Revise antes de salvar.'); return; }
+    c.fixos = Math.max(0, fixosDigitados);
+    c.fixoPct = c.faturamento > 0 ? c.fixos / c.faturamento : 0;
+    c.estimado = false;
+  }
   c.impostos = Math.min(30, Math.max(0, parseFloat($('cfg-impostos').value)||0));
   c.cartao = Math.min(10, Math.max(0, parseFloat($('cfg-cartao').value)||0));
   c.entrega = Math.max(0, parseFloat($('cfg-entrega').value)||0);
@@ -1737,6 +1971,10 @@ function salvarAjustes(){
   c.deliveryPct = Math.min(100, Math.max(0, parseFloat($('cfg-deliverypct').value)||0))/100;
   c.appEntrega = $('cfg-appentrega').value;
   if(c.deliveryPct===0) c.appEntrega = 'nenhum';
+  c.ifoodPlano = $('cfg-ifoodplano').value;
+  c.ifoodTaxa = Math.min(40, Math.max(0, parseFloat($('cfg-ifoodtaxa').value)||0)) || (c.ifoodPlano==='basico'?TAXA_IFOOD.basico:TAXA_IFOOD.entrega);
+  c.precoUnico = $('cfg-precounico').value !== 'dif';
+  c.diasMes = Math.min(31, Math.max(1, parseInt($('cfg-diasmes').value)||26));
   c.margemAlvo = Math.min(40, Math.max(0, parseFloat($('cfg-margem').value)||0))/100;
   c.nomeRest = $('cfg-nome-rest').value.trim();
   salvar(); fecharVeu('veu-ajustes'); renderMarca(); renderTudo();
@@ -1753,7 +1991,11 @@ function exportarBackup(){
 function importarBackup(ev){
   const f = ev.target.files[0]; if(!f) return;
   const r = new FileReader();
-  r.onload = ()=>{ try{ S = JSON.parse(r.result); normalizar(); salvar(); fecharVeu('veu-ajustes'); renderMarca(); renderTudo(); alert('Pronto. Seus itens, custos e ajustes voltaram.'); }catch(e){ alert('Esse arquivo nao e uma copia valida do Cardápio no Verde.'); } };
+  r.onload = ()=>{ try{
+    const obj = JSON.parse(r.result);
+    if(!obj || typeof obj!=='object' || Array.isArray(obj) || (!obj.config && !Array.isArray(obj.pratos))) throw new Error('formato');
+    S = obj; normalizar(); salvar(); fecharVeu('veu-ajustes'); renderMarca(); renderTudo(); alert('Pronto. Seus itens, custos e ajustes voltaram.');
+  }catch(e){ alert('Esse arquivo nao e uma copia valida do Cardápio no Verde.'); } };
   r.readAsText(f);
 }
 /* =====================================================
@@ -1832,8 +2074,8 @@ function wizCalcular(){
   wizResultado.impostos = impostosAuto(wizResultado.faturamento);
   wizResultado.deliveryPct = wizDel;
   wizResultado.appEntrega = wizDel>0 ? wizApp : 'nenhum';
-  const cartaoPct = ((S.config && S.config.cartao!==undefined) ? S.config.cartao : 2)/100;
-  const taxaApp = wizResultado.appEntrega==='ifood' ? 0.265
+  const cartaoPct = ((S.config && S.config.cartao!==undefined) ? S.config.cartao : 3)/100;
+  const taxaApp = wizResultado.appEntrega==='ifood' ? TAXA_IFOOD.entrega/100
     : (wizResultado.appEntrega==='outro' ? (((S.config && S.config.outroapp)||20)/100) : 0);
   const fatiaApps = wizDel * taxaApp;
   const fatia = wizResultado.fixoPct + wizResultado.impostos/100 + cartaoPct + fatiaApps;
@@ -1884,7 +2126,7 @@ function wizCalcular(){
 }
 function fecharWizard(){
   S.config = Object.assign(
-    {impostos:6, cartao:2, entrega:6, outroapp:20, margemAlvo:0.15, nomeRest:'', logo:null, deliveryPct:0, appEntrega:'nenhum'},
+    {impostos:6, cartao:3, entrega:6, outroapp:20, margemAlvo:0.15, nomeRest:'', logo:null, deliveryPct:0, appEntrega:'nenhum', precoUnico:true, ifoodPlano:'entrega', ifoodTaxa:TAXA_IFOOD.entrega, diasMes:26},
     S.config||{},
     wizResultado,
     {nicho: wizNicho||'outro', nomeRest: $('wiz-nome-rest').value.trim()}
@@ -1898,18 +2140,23 @@ function fecharWizard(){
    Início
 ===================================================== */
 document.querySelectorAll('.veu').forEach(v=>v.addEventListener('click', e=>{ if(e.target===v) v.classList.remove('aberto'); }));
-['wiz-fat-custom','wiz-fixos-custom','cfg-faturamento','cfg-fixos'].forEach(id=>aplicarMascaraMilhar($(id)));
+['wiz-fat-custom','wiz-fixos-custom','cfg-faturamento','cfg-fixos','fech-vendas','fech-compras','fech-contas'].forEach(id=>aplicarMascaraMilhar($(id)));
 let appJaIniciado = false;
 async function iniciarApp(){
-  const liberado = await checarAcesso();
+  carregar();   // local primeiro; o sync com a nuvem compara os carimbos de data e o mais novo vence
+  let liberado = false;
+  try{ liberado = await checarAcesso(); }
+  catch(e){
+    if(licencaCacheValida()){ fecharGate(); liberado = true; }
+    else { telaOffline(); abrirGate(); }
+  }
   if(!liberado || appJaIniciado) return; // fica na tela de acesso; checarAcesso() ja cuidou da UI
   appJaIniciado = true;
-  carregar();
   renderMarca();
   if(!S.config){ abrirWizard(false); } else { renderTudo(); }
 }
 iniciarApp();
-sb.auth.onAuthStateChange((event)=>{ if(event==='SIGNED_IN') iniciarApp(); });
+if(sb) sb.auth.onAuthStateChange((event)=>{ if(event==='SIGNED_IN') iniciarApp(); });
 </script>
 </body>
 </html>
