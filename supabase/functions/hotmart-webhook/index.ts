@@ -8,14 +8,14 @@
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
+// Produto e pagamento unico, acesso vitalicio - nao existe atraso de boleto nem assinatura aqui.
+// So revoga quando o dinheiro realmente volta pro comprador (reembolso ou chargeback).
 const EVENTOS_LIBERA = new Set(["PURCHASE_APPROVED", "PURCHASE_COMPLETE"]);
 const EVENTOS_REVOGA = new Set([
   "PURCHASE_REFUNDED",
   "PURCHASE_CANCELED",
   "PURCHASE_CHARGEBACK",
   "PURCHASE_PROTEST",
-  "PURCHASE_DELAYED", // pagamento atrasado (boleto que nao caiu, por ex.)
-  "SUBSCRIPTION_CANCELLATION", // nao se aplica ao acesso vitalicio atual, mas cobre se um dia vender assinatura
 ]);
 
 function extrairHottok(payload: Record<string, unknown>, req: Request): string | null {

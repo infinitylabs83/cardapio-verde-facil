@@ -161,7 +161,7 @@ function AdminPage() {
           </div>
         </div>
 
-        <h2 className="font-bold mb-3">Alunos</h2>
+        <h2 className="font-bold mb-3">Usuários</h2>
         <div className="flex gap-2 mb-1">
           <input
             type="text"
@@ -182,7 +182,7 @@ function AdminPage() {
         <p className="text-xs opacity-60 mb-3">Digite um e-mail que ainda não está na lista pra liberar acesso manualmente.</p>
         <div className="bg-white rounded-2xl border border-black/10 overflow-hidden mb-8">
           {!dados || dados.licencas.length === 0 ? (
-            <div className="p-5 text-sm opacity-70">Nenhum aluno ainda.</div>
+            <div className="p-5 text-sm opacity-70">Nenhum usuário ainda.</div>
           ) : (
             dados.licencas
               .filter((l) => l.email.toLowerCase().includes(busca.trim().toLowerCase()))

@@ -1088,6 +1088,14 @@ function telaSemAcesso(email){
     <a class="btn secundario" style="margin-top:8px;text-decoration:none;display:flex" href="https://wa.me/${SUPORTE_WHATSAPP}?text=${encodeURIComponent('Oi! Comprei o Cardápio no Verde e não consigo acessar com o e-mail '+email)}" target="_blank" rel="noopener">💬 Falar com o suporte no WhatsApp</a>
   `;
 }
+function telaBloqueado(email){
+  $('gate-corpo').innerHTML = `
+    <h1>Seu acesso está bloqueado</h1>
+    <p>Entre em contato com o suporte pra entender o que houve com <b>${esc(email)}</b>.</p>
+    <a class="btn secundario" style="margin-top:8px;text-decoration:none;display:flex" href="https://wa.me/${SUPORTE_WHATSAPP}?text=${encodeURIComponent('Oi! Meu acesso ao Cardápio no Verde está bloqueado, e-mail '+email)}" target="_blank" rel="noopener">💬 Falar com o suporte no WhatsApp</a>
+    <button class="btn fantasma" style="color:#F3EFE0" onclick="telaPedirEmail()">Usar outro e-mail</button>
+  `;
+}
 async function pedirLinkAcesso(){
   if(!sb){ telaOffline(); return; }
   const email = $('gate-email').value.trim();
@@ -1116,7 +1124,8 @@ async function checarAcesso(){
     if(licencaCacheValida()){ fecharGate(); return true; }
     telaOffline(); abrirGate(); return false;
   }
-  if(!licenca || licenca.status !== 'ativo'){ cofre.set('pnv_lic',''); telaSemAcesso(sessaoEmail); abrirGate(); return false; }
+  if(!licenca){ cofre.set('pnv_lic',''); telaSemAcesso(sessaoEmail); abrirGate(); return false; }
+  if(licenca.status !== 'ativo'){ cofre.set('pnv_lic',''); telaBloqueado(sessaoEmail); abrirGate(); return false; }
   cofre.set('pnv_lic', JSON.stringify({ok:true, email:sessaoEmail, ts:Date.now()}));
   fecharGate();
   await sincronizarDoServidor();
