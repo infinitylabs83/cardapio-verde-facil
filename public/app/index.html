@@ -1650,7 +1650,7 @@ function renderPreco(){
       <div class="item-ing"><span class="n">Impostos e cartao</span><span class="c" id="bd-taxas">${fmt(a.preco*(S.config.impostos+S.config.cartao)/100)}</span></div>
       ${taxaEntregaPct()>0?`<div class="item-ing"><span class="n">Apps de entrega (sua fatia)</span><span class="c" id="bd-apps">${fmt(a.preco*taxaEntregaPct())}</span></div>`:''}
       ${a.extra>0?`<div class="item-ing"><span class="n">Entrega sua (média por item)</span><span class="c" id="bd-entrega">${fmt(a.extra)}</span></div>`:''}
-      <div class="item-ing"><span class="n"><b>Lucro real</b></span><span class="c" id="bd-lucro"><b>${fmt(a.lucro)}</b></span></div>
+      <div class="item-ing"><span class="n"><b>Lucro real</b></span><span class="c" id="bd-lucro"><b>${fmt(a.lucro)}</b> <small>· ${Math.round(a.margem*100)}% de margem</small></span></div>
     </div>`;
 }
 /* frase da projeção do mês, com o "quantos por dia" editável ali mesmo — é um "se", não uma cobrança */
@@ -1698,7 +1698,7 @@ function previewPreco(v){
   $('bd-fixos').textContent = fmt(preco*S.config.fixoPct);
   $('bd-taxas').textContent = fmt(preco*(S.config.impostos+S.config.cartao)/100);
   const bdApps = $('bd-apps'); if(bdApps) bdApps.textContent = fmt(preco*taxaEntregaPct());
-  $('bd-lucro').innerHTML = `<b class="txt-${cor}">${fmt(lucro)}</b>`;
+  $('bd-lucro').innerHTML = `<b class="txt-${cor}">${fmt(lucro)}</b> <small>· ${Math.round(margem*100)}% de margem</small>`;
 }
 function mudarPreco(v){
   const p = S.pratos.find(x=>x.id===pratoSel);
