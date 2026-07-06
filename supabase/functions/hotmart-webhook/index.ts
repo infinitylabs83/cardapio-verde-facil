@@ -9,7 +9,14 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const EVENTOS_LIBERA = new Set(["PURCHASE_APPROVED", "PURCHASE_COMPLETE"]);
-const EVENTOS_REVOGA = new Set(["PURCHASE_REFUNDED", "PURCHASE_CANCELED", "PURCHASE_CHARGEBACK", "PURCHASE_PROTEST"]);
+const EVENTOS_REVOGA = new Set([
+  "PURCHASE_REFUNDED",
+  "PURCHASE_CANCELED",
+  "PURCHASE_CHARGEBACK",
+  "PURCHASE_PROTEST",
+  "PURCHASE_DELAYED", // pagamento atrasado (boleto que nao caiu, por ex.)
+  "SUBSCRIPTION_CANCELLATION", // nao se aplica ao acesso vitalicio atual, mas cobre se um dia vender assinatura
+]);
 
 function extrairHottok(payload: Record<string, unknown>, req: Request): string | null {
   const doHeader = req.headers.get("x-hotmart-hottok");
@@ -84,8 +91,7 @@ Deno.serve(async (req) => {
   } else if (EVENTOS_REVOGA.has(evento)) {
     const { error } = await supabase
       .from("licencas")
-      .update({ status: "revogado", atualizado_em: new Date().toISOString() })
-      .eq("email", email);
+      .upsert({ email, status: "revogado", origem_transacao: transacao, atualizado_em: new Date().toISOString() });
     if (error) console.error("erro ao revogar licenca:", error);
     await logEvento(!error, error ? String(error.message) : "acesso revogado");
   } else {

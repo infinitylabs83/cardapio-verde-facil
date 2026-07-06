@@ -21,10 +21,19 @@ type Evento = {
   criado_em: string;
 };
 
+type Licenca = {
+  email: string;
+  status: string;
+  origem_transacao: string | null;
+  criado_em: string;
+  atualizado_em: string;
+};
+
 function AdminPage() {
   const [estado, setEstado] = useState<"carregando" | "login" | "aguardando" | "negado" | "ok">("carregando");
   const [email, setEmail] = useState("");
-  const [dados, setDados] = useState<{ ativas: number; revogadas: number; eventos: Evento[] } | null>(null);
+  const [busca, setBusca] = useState("");
+  const [dados, setDados] = useState<{ ativas: number; revogadas: number; eventos: Evento[]; licencas: Licenca[] } | null>(null);
 
   useEffect(() => {
     checar();
@@ -44,17 +53,40 @@ function AdminPage() {
       setEstado("negado");
       return;
     }
-    const [ativasRes, revogadasRes, eventosRes] = await Promise.all([
+    const [ativasRes, revogadasRes, eventosRes, licencasRes] = await Promise.all([
       sb.from("licencas").select("*", { count: "exact", head: true }).eq("status", "ativo"),
       sb.from("licencas").select("*", { count: "exact", head: true }).eq("status", "revogado"),
       sb.from("eventos_webhook").select("*").order("id", { ascending: false }).limit(30),
+      sb.from("licencas").select("*").order("atualizado_em", { ascending: false }),
     ]);
     setDados({
       ativas: ativasRes.count ?? 0,
       revogadas: revogadasRes.count ?? 0,
       eventos: (eventosRes.data as Evento[]) ?? [],
+      licencas: (licencasRes.data as Licenca[]) ?? [],
     });
     setEstado("ok");
+  }
+
+  async function alterarStatus(alvo: string, novoStatus: "ativo" | "revogado") {
+    const { error } = await sb
+      .from("licencas")
+      .upsert({ email: alvo, status: novoStatus, atualizado_em: new Date().toISOString() });
+    if (error) {
+      alert("Não consegui alterar: " + error.message);
+      return;
+    }
+    checar();
+  }
+
+  async function liberarNovoEmail(e: React.FormEvent) {
+    e.preventDefault();
+    const alvo = busca.trim().toLowerCase();
+    if (!alvo || !alvo.includes("@")) {
+      alert("Digita um e-mail válido no campo de busca acima primeiro.");
+      return;
+    }
+    await alterarStatus(alvo, "ativo");
   }
 
   async function pedirLink(e: React.FormEvent) {
@@ -127,6 +159,63 @@ function AdminPage() {
             <div className="text-3xl font-extrabold text-[#C7432F]">{dados?.revogadas}</div>
             <div className="text-sm opacity-70">licenças revogadas</div>
           </div>
+        </div>
+
+        <h2 className="font-bold mb-3">Alunos</h2>
+        <div className="flex gap-2 mb-1">
+          <input
+            type="text"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Buscar por e-mail, ou digitar um novo pra liberar..."
+            className="flex-1 p-3 rounded-xl border border-black/10"
+          />
+          {busca.includes("@") && !dados?.licencas.some((l) => l.email === busca.trim().toLowerCase()) && (
+            <button
+              onClick={liberarNovoEmail}
+              className="text-sm font-bold bg-[#1F6D42] text-white rounded-xl px-4 whitespace-nowrap"
+            >
+              Liberar esse e-mail
+            </button>
+          )}
+        </div>
+        <p className="text-xs opacity-60 mb-3">Digite um e-mail que ainda não está na lista pra liberar acesso manualmente.</p>
+        <div className="bg-white rounded-2xl border border-black/10 overflow-hidden mb-8">
+          {!dados || dados.licencas.length === 0 ? (
+            <div className="p-5 text-sm opacity-70">Nenhum aluno ainda.</div>
+          ) : (
+            dados.licencas
+              .filter((l) => l.email.toLowerCase().includes(busca.trim().toLowerCase()))
+              .map((l) => (
+                <div key={l.email} className="flex items-center justify-between gap-3 p-4 border-b border-black/5 last:border-0">
+                  <div>
+                    <div className="font-semibold text-sm">{l.email}</div>
+                    <div className="text-xs opacity-60">
+                      {l.status === "ativo" ? "🟢 ativo" : "🔴 bloqueado"} · atualizado em{" "}
+                      {new Date(l.atualizado_em).toLocaleString("pt-BR")}
+                    </div>
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0">
+                    {l.status !== "ativo" && (
+                      <button
+                        onClick={() => alterarStatus(l.email, "ativo")}
+                        className="text-xs font-bold bg-[#1F6D42] text-white rounded-lg px-3 py-2"
+                      >
+                        Liberar
+                      </button>
+                    )}
+                    {l.status === "ativo" && (
+                      <button
+                        onClick={() => alterarStatus(l.email, "revogado")}
+                        className="text-xs font-bold bg-[#C7432F] text-white rounded-lg px-3 py-2"
+                      >
+                        Bloquear
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+          )}
         </div>
 
         <h2 className="font-bold mb-3">Últimos eventos do webhook (Hotmart)</h2>
