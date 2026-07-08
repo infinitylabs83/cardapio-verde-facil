@@ -1,10 +1,6 @@
 // Recebe o webhook (postback) do Hotmart e libera/revoga o acesso na tabela `licencas`.
-//
-// ATENCAO — fase de testes: ainda nao validamos contra um payload real do Hotmart.
-// Por enquanto a funcao registra tudo em log e tenta reconhecer o formato mais comum
-// (evento em `event`, hottok em `hottok` no corpo OU no header X-HOTMART-HOTTOK, email em
-// `data.buyer.email`, id da transacao em `data.purchase.transaction`). Quando tivermos um
-// payload de teste real do Hotmart, ajustamos os caminhos exatos abaixo.
+// Validado com payload real do Hotmart (webhook v2.0.0): evento em `event`, hottok no
+// header X-HOTMART-HOTTOK, email em `data.buyer.email`, id da transacao em `data.purchase.transaction`.
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
