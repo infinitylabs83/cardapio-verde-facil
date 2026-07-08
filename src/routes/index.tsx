@@ -841,7 +841,7 @@ function OfertaFinal() {
                   Uma única vez · sem mensalidade
                 </div>
                 <a
-                  href="https://pay.hotmart.com/W106597805P"
+                  href="https://pay.hotmart.com/W106597805P?checkoutMode=10"
                   className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-leaf text-paper-2 py-4 px-4 font-display font-extrabold text-[15px] text-center hover:bg-leaf-2 transition-colors"
                 >
                   Quero descobrir qual prato está no vermelho
