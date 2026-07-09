@@ -823,7 +823,7 @@ function OfertaFinal() {
             <div className="rounded-3xl bg-[#fff8ea] border border-[color:var(--line)] overflow-hidden shadow-plate">
               <div className="bg-[#f0dfb8] px-5 py-3 flex items-center justify-between text-leaf font-extrabold">
                 <span>Cardápio no Verde</span>
-                <span className="text-[12px] uppercase tracking-widest">recibo</span>
+                <span className="text-[12px] uppercase tracking-widest">oferta</span>
               </div>
               <div className="p-6">
                 <div className="text-[13px] text-[color:var(--muted-brand)] font-bold">
