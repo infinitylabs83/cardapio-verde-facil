@@ -81,12 +81,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "App simples para dono de restaurante calcular CMV, preço e lucro de cada prato. Acesso vitalício por R$ 59 (de R$ 169). Sem mensalidade, sem planilha.",
+          "App simples para dono de restaurante calcular CMV, preço e lucro de cada prato. Acesso vitalício por R$ 67 (de R$ 169). Sem mensalidade, sem planilha.",
       },
       { property: "og:title", content: "Cardápio no Verde — Descubra qual prato do seu cardápio dá prejuízo" },
       {
         property: "og:description",
-        content: "Zere o prejuízo escondido no seu cardápio. Acesso vitalício por R$ 59.",
+        content: "Zere o prejuízo escondido no seu cardápio. Acesso vitalício por R$ 67.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

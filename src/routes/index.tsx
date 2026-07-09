@@ -700,7 +700,7 @@ function FAQ() {
       a: "Calcular um prato leva menos de dois minutos. Um cardápio de quinze itens fica pronto numa tarde de domingo, não numa semana perdida entre um cliente e outro.",
     },
     {
-      q: "R$ 59 é barato demais, deve ser fraco ou incompleto.",
+      q: "R$ 67 é barato demais, deve ser fraco ou incompleto.",
       a: "O cálculo de CMV segue uma fórmula estável no setor de alimentação. O valor não está no algoritmo, está em entregar esse cálculo rápido e sem erro manual, sem cobrar mensalidade de sistema completo que um restaurante pequeno não usa inteiro.",
     },
     {
@@ -834,7 +834,7 @@ function OfertaFinal() {
                     R$ 228
                   </span>
                   <span className="font-serif text-leaf text-[72px] leading-[0.8]">
-                    R$ 59
+                    R$ 67
                   </span>
                 </div>
                 <div className="text-[13px] text-[color:var(--muted-brand)] mt-2">
