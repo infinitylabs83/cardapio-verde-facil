@@ -243,22 +243,32 @@ function BulletsDemo() {
           </div>
         </ul>
 
-        {/* Placeholder de vídeo demo 30-60s */}
-        <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border-2 border-dashed border-[color:var(--leaf)]/40 bg-[color:var(--paper)] grid place-items-center text-center p-6">
-          <div>
-            <div className="w-16 h-16 rounded-full bg-leaf text-paper-2 grid place-items-center mx-auto shadow-plate">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                <path d="M8 5v14l11-7z" />
-              </svg>
+        {/* Vídeo demo com moldura de iPhone */}
+        <div className="flex flex-col items-center md:items-start">
+          <div
+            className="relative bg-[#0b0b0d] rounded-[2.6rem] p-[10px] shadow-plate w-[240px] sm:w-[260px] aspect-[9/19.5]"
+          >
+            <div
+              aria-hidden
+              className="absolute top-[10px] left-1/2 -translate-x-1/2 w-24 h-6 bg-[#0b0b0d] rounded-full z-10"
+            />
+            <div className="relative w-full h-full rounded-[2rem] overflow-hidden bg-black">
+              <video
+                src="/demo-cardapio-no-verde.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
             </div>
-            <div className="mt-4 text-[12px] font-extrabold uppercase tracking-widest text-leaf-2">
-              Vídeo demo · 30 a 60 segundos
-            </div>
-            <p className="mt-2 text-[14px] text-[color:var(--muted-brand)] leading-relaxed max-w-[320px] mx-auto">
-              Gravação de tela da ferramenta em uso: dono digita os ingredientes,
-              semáforo acende vermelho, ajusta o preço, fica verde.
-            </p>
           </div>
+          <div className="mt-4 text-[12px] font-extrabold uppercase tracking-widest text-leaf-2 text-center md:text-left">
+            Gravação real do app, sem cortes
+          </div>
+          <p className="mt-2 text-[14px] text-[color:var(--muted-brand)] leading-relaxed max-w-[280px] text-center md:text-left">
+            Dono arrasta o preço, semáforo sai do vermelho e vai pro verde, com o lucro do mês recalculado na hora.
+          </p>
         </div>
       </div>
     </section>
