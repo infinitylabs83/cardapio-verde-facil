@@ -187,7 +187,7 @@ function Hero() {
           {/* Subheadline */}
           <p className="mt-7 md:mt-9 font-display font-semibold text-[17px] md:text-[20px] leading-snug text-paper-2/95 max-w-[620px] [text-shadow:0_1px_12px_rgba(0,0,0,0.4)]">
             Um erro de R$ 3 no custo de um prato que sai 40 vezes por semana já
-            é R$ 480 evaporando todo mês, sem aparecer em nenhum relatório que
+            são R$ 480 evaporando todo mês, sem aparecer em nenhum relatório que
             você olha hoje.
           </p>
 
