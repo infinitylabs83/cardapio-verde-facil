@@ -1808,48 +1808,72 @@ function canais(){
   const txE = (c.appEntrega==='ifood' && c.ifoodPlano!=='basico') ? taxaIfood()*100 : TAXA_IFOOD.entrega;
   const pctTxt = v => v.toLocaleString('pt-BR',{maximumFractionDigits:1});
   /* se a embalagem ja esta dentro da ficha do item, nao soma de novo aqui (senao contaria duas vezes) */
-  const emb = p => embalagemNaFicha(p) ? 0 : p.emb;
+  const emb = p => embalagemNaFicha(p) ? 0 : (p.emb||0);
+  /* f = comissao do app (fracao do total que o cliente paga). abs = custos de repasse em reais (embalagem + motoboy).
+     motoboy so entra onde VOCE paga o entregador: iFood Basico e entrega propria/WhatsApp. */
   return [
-    {id:'salao', nome:'No salão / balcão', taxa:'sem taxa de app', pct:pctSalao(), extra:p=>0},
-    {id:'ib', nome:'iFood — Plano Básico', taxa:pctTxt(txB)+'% + sua entrega', pct:pctBase()+txB/100, extra:p=>emb(p) + c.entrega},
-    {id:'ie', nome:'iFood — Plano Entrega', taxa:pctTxt(txE)+'%', pct:pctBase()+txE/100, extra:p=>emb(p)},
-    {id:'oa', nome:'Outro app', taxa:c.outroapp.toLocaleString('pt-BR')+'% (mude nos Ajustes)', pct:pctBase()+c.outroapp/100, extra:p=>emb(p)},
-    {id:'wz', nome:'WhatsApp / entrega sua', taxa:'sem taxa de app', pct:pctSalao(), extra:p=>emb(p) + c.entrega},
+    {id:'salao', nome:'No salão / balcão', taxa:'sem taxa de app', f:0,        abs:p=>0},
+    {id:'ib', nome:'iFood — Plano Básico', taxa:pctTxt(txB)+'% + sua entrega', f:txB/100, abs:p=>emb(p) + (c.entrega||0)},
+    {id:'ie', nome:'iFood — Plano Entrega', taxa:pctTxt(txE)+'%', f:txE/100, abs:p=>emb(p)},
+    {id:'oa', nome:'Outro app', taxa:c.outroapp.toLocaleString('pt-BR')+'% (mude nos Ajustes)', f:c.outroapp/100, abs:p=>emb(p)},
+    {id:'wz', nome:'WhatsApp / entrega sua', taxa:'sem taxa de app', f:0, abs:p=>emb(p) + (c.entrega||0)},
   ];
+}
+/* lucro real ao cobrar X num canal de delivery.
+   O app fica com f×X. Voce repoe embalagem+motoboy (abs, repasse puro, sem markup).
+   Custo fixo + imposto sao cobrados sobre o PRODUTO (preco de balcao, em reais) — nao sobre o preco inflado
+   do delivery, nem em cima do repasse, nem do seu lucro. No app nao tem maquininha, entao o cartao nao entra. */
+function lucroNoCanal(X, custo, abs, f, precoBalcao){
+  return X*(1-f) - abs - custo - precoBalcao*pctBase();
+}
+/* preco a cobrar no canal pra manter a MESMA sobra L do balcao, repondo embalagem+motoboy.
+   A comissao do app incide sobre o total (por isso divide por 1-f), mas fixo/lucro NAO sao remarcados. */
+function precoNoCanal(L, custo, abs, f, precoBalcao){
+  const base = L + custo + abs + precoBalcao*pctBase();
+  return f < 0.95 ? base/(1-f) : base;
 }
 function renderDelivery(){
   if(!renderSelPrato('sel-prato-delivery')){ vazioPratos('delivery-conteudo'); return; }
   const p = S.pratos.find(x=>x.id===pratoSel);
   const a = analisar(p);
   const alvo = Math.max(a.lucro, 0.01);
+  const custo = a.custo;
+  const precoBalcao = a.preco;
   const linhas = canais().map(cn=>{
-    const extra = cn.extra(p);
-    const sugerido = precoPara(alvo, a.custo+extra, cn.pct);
+    /* salao e a referencia: mostra exatamente o numero da aba Preco, pra nao existir dois valores pro mesmo item */
+    if(cn.id==='salao'){
+      return `<div class="cartao canal">
+        <div class="cab"><span class="nome-canal">${cn.nome}</span><span class="taxa">${cn.taxa}</span></div>
+        <div class="grade">
+          <div class="celula"><div class="r">Você cobra</div><div class="v txt-verde">${fmt(precoBalcao)}</div></div>
+          <div class="celula"><div class="r">Sua sobra</div><div class="v txt-${a.cor}">${a.lucro>=0?'sobra ':'perde '}${fmt(Math.abs(a.lucro))}</div><div style="font-size:.72rem;color:var(--tinta-suave)">${Math.round(a.margem*100)}% de lucro</div></div>
+        </div>
+      </div>`;
+    }
+    const abs = cn.abs(p);
+    const sugerido = precoNoCanal(alvo, custo, abs, cn.f, precoBalcao);
     const margemCanal = sugerido>0 ? alvo/sugerido : 0;
-    const mesmoPreco = lucroCom(a.preco, a.custo+extra, cn.pct);
-    const cor = corMargem(a.preco>0 ? mesmoPreco/a.preco : 0);
+    const mesmoPreco = lucroNoCanal(precoBalcao, custo, abs, cn.f, precoBalcao);
+    const cor = corMargem(precoBalcao>0 ? mesmoPreco/precoBalcao : 0);
     const praticado = (p.precosCanal && p.precosCanal[cn.id] > 0) ? p.precosCanal[cn.id] : null;
-    let blocoPraticado = '';
-    if(cn.id!=='salao'){
-      let celulaReal = '';
-      if(praticado!=null){
-        const lucroReal = lucroCom(praticado, a.custo+extra, cn.pct);
-        const margemReal = praticado>0 ? lucroReal/praticado : 0;
-        const corReal = corMargem(margemReal);
-        celulaReal = `<div class="celula" style="margin-top:8px"><div class="r">Lucro real com ${fmt(praticado)}</div><div class="v txt-${corReal}">${lucroReal>=0?'sobra ':'perde '}${fmt(Math.abs(lucroReal))}</div><div style="font-size:.72rem;color:var(--tinta-suave)">${Math.round(margemReal*100)}% de lucro</div></div>`;
-      }
-      blocoPraticado = `
+    let celulaReal = '';
+    if(praticado!=null){
+      const lucroReal = lucroNoCanal(praticado, custo, abs, cn.f, precoBalcao);
+      const margemReal = praticado>0 ? lucroReal/praticado : 0;
+      const corReal = corMargem(margemReal);
+      celulaReal = `<div class="celula" style="margin-top:8px"><div class="r">Lucro real com ${fmt(praticado)}</div><div class="v txt-${corReal}">${lucroReal>=0?'sobra ':'perde '}${fmt(Math.abs(lucroReal))}</div><div style="font-size:.72rem;color:var(--tinta-suave)">${Math.round(margemReal*100)}% de lucro</div></div>`;
+    }
+    const blocoPraticado = `
       <div class="linha-config" style="margin-top:10px">
         <label style="font-size:.85rem">O que você cobra aqui hoje</label>
         <div class="prefixo" style="width:110px"><span>R$</span><input type="number" inputmode="decimal" min="0" step="0.1" value="${praticado!=null?praticado:''}" placeholder="Ex.: ${sugerido.toFixed(2).replace('.',',')}" style="width:110px;padding-left:38px" onchange="mudarPrecoCanal('${cn.id}',this.value)"></div>
       </div>
       ${celulaReal}`;
-    }
     return `<div class="cartao canal">
       <div class="cab"><span class="nome-canal">${cn.nome}</span><span class="taxa">${cn.taxa}</span></div>
       <div class="grade">
         <div class="celula"><div class="r">Cobre no app</div><div class="v txt-verde">${fmt(sugerido)}</div><div style="font-size:.72rem;color:var(--tinta-suave)">${Math.round(margemCanal*100)}% de lucro</div></div>
-        <div class="celula"><div class="r">Se cobrar ${fmt(a.preco)}</div><div class="v txt-${cor}">${mesmoPreco>=0?'sobra ':'perde '}${fmt(Math.abs(mesmoPreco))}</div></div>
+        <div class="celula"><div class="r">Se cobrar ${fmt(precoBalcao)}</div><div class="v txt-${cor}">${mesmoPreco>=0?'sobra ':'perde '}${fmt(Math.abs(mesmoPreco))}</div></div>
       </div>
       ${blocoPraticado}
     </div>`;
