@@ -1048,6 +1048,7 @@ function normalizar(){
   if(!Array.isArray(S.custom)) S.custom = [];
   if(!Array.isArray(S.pratos)) S.pratos = [];
   if(!Array.isArray(S.fechamentos)) S.fechamentos = [];
+  S.pratos.forEach(p=>{ if(!p.precosCanal || typeof p.precosCanal!=='object') p.precosCanal = {}; });
   if(S.config){
     if(S.config.margemAlvo === undefined) S.config.margemAlvo = 0.15;
     if(!S.config.nicho) S.config.nicho = 'outro';
@@ -1462,7 +1463,7 @@ function novoPrato(){
   abrirVeu('veu-novo');
 }
 function prepararEditor(dados, titulo){
-  editando = Object.assign({id:null, nome:'', vendasDia:10, itens:[], preco:null, emb:1.5, custoDireto:null, modo:'ficha'}, dados);
+  editando = Object.assign({id:null, nome:'', vendasDia:10, itens:[], preco:null, emb:1.5, custoDireto:null, modo:'ficha', precosCanal:{}}, dados);
   $('editor-titulo').textContent = titulo;
   $('inp-nome-prato').value = editando.nome;
   $('inp-custo-direto').value = editando.custoDireto || '';
@@ -1827,12 +1828,30 @@ function renderDelivery(){
     const margemCanal = sugerido>0 ? alvo/sugerido : 0;
     const mesmoPreco = lucroCom(a.preco, a.custo+extra, cn.pct);
     const cor = corMargem(a.preco>0 ? mesmoPreco/a.preco : 0);
+    const praticado = (p.precosCanal && p.precosCanal[cn.id] > 0) ? p.precosCanal[cn.id] : null;
+    let blocoPraticado = '';
+    if(cn.id!=='salao'){
+      let celulaReal = '';
+      if(praticado!=null){
+        const lucroReal = lucroCom(praticado, a.custo+extra, cn.pct);
+        const margemReal = praticado>0 ? lucroReal/praticado : 0;
+        const corReal = corMargem(margemReal);
+        celulaReal = `<div class="celula" style="margin-top:8px"><div class="r">Lucro real com ${fmt(praticado)}</div><div class="v txt-${corReal}">${lucroReal>=0?'sobra ':'perde '}${fmt(Math.abs(lucroReal))}</div><div style="font-size:.72rem;color:var(--tinta-suave)">${Math.round(margemReal*100)}% de lucro</div></div>`;
+      }
+      blocoPraticado = `
+      <div class="linha-config" style="margin-top:10px">
+        <label style="font-size:.85rem">O que você cobra aqui hoje</label>
+        <div class="prefixo" style="width:110px"><span>R$</span><input type="number" inputmode="decimal" min="0" step="0.1" value="${praticado!=null?praticado:''}" placeholder="Ex.: ${sugerido.toFixed(2).replace('.',',')}" style="width:110px;padding-left:38px" onchange="mudarPrecoCanal('${cn.id}',this.value)"></div>
+      </div>
+      ${celulaReal}`;
+    }
     return `<div class="cartao canal">
       <div class="cab"><span class="nome-canal">${cn.nome}</span><span class="taxa">${cn.taxa}</span></div>
       <div class="grade">
         <div class="celula"><div class="r">Cobre no app</div><div class="v txt-verde">${fmt(sugerido)}</div><div style="font-size:.72rem;color:var(--tinta-suave)">${Math.round(margemCanal*100)}% de lucro</div></div>
         <div class="celula"><div class="r">Se cobrar ${fmt(a.preco)}</div><div class="v txt-${cor}">${mesmoPreco>=0?'sobra ':'perde '}${fmt(Math.abs(mesmoPreco))}</div></div>
       </div>
+      ${blocoPraticado}
     </div>`;
   }).join('');
   $('delivery-conteudo').innerHTML = `
@@ -1848,6 +1867,13 @@ function renderDelivery(){
 function mudarEmb(v){
   const p = S.pratos.find(x=>x.id===pratoSel);
   p.emb = Math.max(0, parseFloat(String(v).replace(',','.'))||0);
+  salvar(); renderDelivery();
+}
+function mudarPrecoCanal(canalId, v){
+  const p = S.pratos.find(x=>x.id===pratoSel);
+  if(!p.precosCanal) p.precosCanal = {};
+  const val = parseFloat(String(v).replace(',','.'));
+  if(val>0) p.precosCanal[canalId] = val; else delete p.precosCanal[canalId];
   salvar(); renderDelivery();
 }
 
