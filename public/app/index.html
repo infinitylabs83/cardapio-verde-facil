@@ -1079,19 +1079,24 @@ async function sairDaConta(){
 function telaPedirEmail(msg){
   $('gate-corpo').innerHTML = `
     <h1>Seu acesso vitalício</h1>
-    <p>Digite o e-mail que você usou na compra. A gente manda um link pra entrar, sem senha.</p>
+    <p>Digite o e-mail que você usou na compra. A gente manda um código pra entrar, sem senha.</p>
     <input id="gate-email" type="email" placeholder="seuemail@exemplo.com" autocomplete="email">
-    <button class="btn" onclick="pedirLinkAcesso()">Receber meu acesso</button>
+    <button class="btn" id="btn-enviar-codigo" onclick="pedirLinkAcesso()">Receber meu código</button>
     ${msg?`<div class="gate-msg erro">${esc(msg)}</div>`:''}
   `;
+  const inp = $('gate-email'); if(inp){ inp.addEventListener('keydown', e=>{ if(e.key==='Enter') pedirLinkAcesso(); }); }
 }
-function telaAguardandoEmail(){
+function telaDigitarCodigo(email){
   $('gate-corpo').innerHTML = `
-    <h1>Prontinho!</h1>
-    <p>Manda um e-mail com seu link de acesso em instantes.</p>
-    <div class="gate-msg">Não achou? Confere o spam — às vezes leva um minutinho. O link vale por 1 hora.</div>
+    <h1>Digite seu código</h1>
+    <p>Mandamos um código de 6 números pra <b>${esc(email)}</b>. Confere a caixa de entrada (e o spam).</p>
+    <input id="gate-codigo" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" style="text-align:center;letter-spacing:.4em;font-size:1.5rem;font-weight:800">
+    <button class="btn" onclick="verificarCodigo()">Entrar</button>
+    <div id="gate-codigo-msg"></div>
     <button class="btn fantasma" style="color:#F3EFE0" onclick="telaPedirEmail()">Usar outro e-mail</button>
   `;
+  const inp = $('gate-codigo');
+  if(inp){ inp.focus(); inp.addEventListener('keydown', e=>{ if(e.key==='Enter') verificarCodigo(); }); }
 }
 const SUPORTE_WHATSAPP = '5500000000000'; // TROCAR pelo numero real, so digitos com DDI+DDD
 function telaSemAcesso(email){
@@ -1111,13 +1116,28 @@ function telaBloqueado(email){
     <button class="btn fantasma" style="color:#F3EFE0" onclick="telaPedirEmail()">Usar outro e-mail</button>
   `;
 }
+let emailPendente = '';
 async function pedirLinkAcesso(){
   if(!sb){ telaOffline(); return; }
-  const email = $('gate-email').value.trim();
-  if(!email){ telaPedirEmail('Digita um e-mail válido.'); return; }
-  const { error } = await sb.auth.signInWithOtp({ email, options:{ emailRedirectTo: window.location.href } });
+  const email = ($('gate-email').value||'').trim().toLowerCase();
+  if(!email || !email.includes('@')){ telaPedirEmail('Digita um e-mail válido.'); return; }
+  emailPendente = email;
+  const btn = $('btn-enviar-codigo'); if(btn){ btn.disabled = true; btn.textContent = 'Enviando…'; }
+  /* codigo de 6 digitos (nao link): imune a antivirus/webmail que "clicam" no link e gastam o acesso */
+  const { error } = await sb.auth.signInWithOtp({ email, options:{ shouldCreateUser:true } });
   if(error){ telaPedirEmail('Não consegui enviar agora. Tenta de novo em instantes.'); return; }
-  telaAguardandoEmail();
+  telaDigitarCodigo(email);
+}
+async function verificarCodigo(){
+  if(!sb){ telaOffline(); return; }
+  const token = ($('gate-codigo').value||'').trim();
+  const msg = $('gate-codigo-msg');
+  if(!/^\d{6}$/.test(token)){ if(msg) msg.innerHTML = '<div class="gate-msg erro">Digite os 6 números do código.</div>'; return; }
+  if(msg) msg.innerHTML = '<div class="gate-msg">Conferindo…</div>';
+  const { error } = await sb.auth.verifyOtp({ email: emailPendente, token, type:'email' });
+  if(error){ if(msg) msg.innerHTML = '<div class="gate-msg erro">Código inválido ou expirado. Peça um novo.</div>'; return; }
+  appJaIniciado = false;   // sessao nova criada: deixa o app reinicializar e liberar o acesso
+  await iniciarApp();
 }
 
 /* checa sessao ativa + licenca; retorna true se pode liberar o app */
