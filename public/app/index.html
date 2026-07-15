@@ -426,11 +426,11 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
     <p class="sub-tela">Cadastre do seu jeito: no capricho ou no olhômetro. Depois dá pra caprichar.</p>
     <button class="banner-magico" onclick="abrirMagico()">
       <span class="ic">🪄</span>
-      <span style="flex:1"><b>Seu Número Mágico</b><small>Descubra por quanto vender qualquer item</small></span>
+      <span style="flex:1"><b>Seu Número Mágico</b><small>Atalho: arraste e veja por quanto vender, sem montar a ficha</small></span>
       <span style="font-size:1.4rem;opacity:.8">›</span>
     </button>
     <div id="lista-pratos"></div>
-    <button class="btn" onclick="novoPrato()">+ Montar um item</button>
+    <button class="btn" id="btn-novo-item" onclick="novoPrato()">+ Montar um item</button>
   </div>
 
   <div id="prato-editor-view" style="display:none">
@@ -596,6 +596,19 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
   </div>
 </div>
 
+<!-- ============ MODAL: TOUR (mostrado 1x após o wizard) ============ -->
+<div class="veu" id="veu-tour">
+  <div class="folha">
+    <div class="folha-cabeca"><h2>Tudo pronto! Como o app funciona 👇</h2><button class="fechar" onclick="fecharVeu('veu-tour')" aria-label="Fechar">×</button></div>
+    <p class="sub-tela">São 4 abas aqui embaixo. Você vai usar mais ou menos nessa ordem:</p>
+    <div class="opcao-inicio"><span class="ic">🍽️</span><span><b>1. Itens</b><small>Monte cada item do seu cardápio: o que vai dentro e quanto de cada coisa. É por aqui que você começa.</small></span></div>
+    <div class="opcao-inicio"><span class="ic">🏷️</span><span><b>2. Preço</b><small>Veja o preço certo de cada item, com seu lucro já embutido. O semáforo avisa o que está no vermelho.</small></span></div>
+    <div class="opcao-inicio"><span class="ic">🛵</span><span><b>3. Delivery</b><small>Descubra por quanto vender no iFood e nos apps sem a taxa te deixar no prejuízo.</small></span></div>
+    <div class="opcao-inicio"><span class="ic">📋</span><span><b>4. Cardápio</b><small>Veja seu cardápio inteiro de uma vez, com todos os preços prontos pra usar.</small></span></div>
+    <button class="btn" onclick="fecharVeu('veu-tour')">Entendi — bora montar meu primeiro item</button>
+  </div>
+</div>
+
 <!-- ============ MODAL: NÚMERO MÁGICO ============ -->
 <div class="veu" id="veu-magico">
   <div class="folha">
@@ -724,7 +737,13 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
   <div class="wiz-conteudo">
     <div class="marca"><svg class="logo-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="16" y="9" width="40" height="54" rx="7" fill="#FFF8EA"/><rect x="25" y="23" width="22" height="4.5" rx="2.25" fill="#9CAF95"/><rect x="25" y="33" width="22" height="4.5" rx="2.25" fill="#9CAF95"/><rect x="25" y="43" width="14" height="4.5" rx="2.25" fill="#9CAF95"/><circle cx="55" cy="57" r="17" fill="#1F6D42" stroke="#123F2B" stroke-width="2.5"/><path d="M47 57.5l5.5 5.5 11-12" stroke="#FFF8EA" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>Cardápio<span class="verde-pill" style="margin-left:6px">no Verde</span></div>
 
-    <div class="wiz-passo ativa" id="wiz-0">
+    <div class="wiz-passo ativa" id="wiz-intro">
+      <div class="wiz-pergunta">Bem-vindo! Vamos deixar seu cardápio no verde.</div>
+      <div class="wiz-apoio">São 4 perguntas rápidas, menos de 1 minuto. Com elas eu descubro quanto de cada venda sua já está comprometido com contas, impostos e taxas — pra depois te mostrar o preço certo de cada item, sem você fazer conta nenhuma.</div>
+      <div class="wiz-rodape"><button class="btn" onclick="wizPasso(0)">Bora começar →</button></div>
+    </div>
+
+    <div class="wiz-passo" id="wiz-0">
       <div class="wiz-pergunta">Que tipo de negócio é o seu?</div>
       <div class="wiz-apoio">Assim eu já deixo separados os ingredientes e os itens da sua área.</div>
       <div class="chips" id="wiz-nicho-chips"></div>
@@ -969,12 +988,20 @@ const NICHOS = [
    {n:'Pastel de frango c/ requeijão', emb:0.3, itens:[['massapastel',90],['peito',60],['requeijao',25],['oleo',60],['sacola',1]]},
    {n:'Suco de polpa (copo 300ml)', emb:0.4, itens:[['polpa',100],['acucar',15],['poteplastico',1]]},
   ]},
- {id:'lanches', nome:'Lanches / Açaí', emoji:'🍧',
-  destaque:['acai','granola','leitecond','banana','polpa','leite','paofrances','presunto','mussarela','manteiga','poteplastico','refri'],
+ {id:'lanches', nome:'Lanches / Lanchonete', emoji:'🥪',
+  destaque:['paofrances','paohamburguer','presunto','mussarela','manteiga','ovo','bacon','moida','maionese','tomate','alface','refri','poteplastico','sacola'],
+  templates:[
+   {n:'Misto quente', emb:0.4, itens:[['paofrances',80],['presunto',30],['mussarela',30],['manteiga',10]]},
+   {n:'Pão na chapa', emb:0.2, itens:[['paofrances',80],['manteiga',12]]},
+   {n:'Bauru', emb:0.4, itens:[['paofrances',90],['presunto',40],['mussarela',40],['tomate',30]]},
+   {n:'X-salada', emb:1.2, itens:[['paohamburguer',1],['moida',120],['mussarela',25],['alface',0.1],['tomate',30],['maionese',20],['caixaburger',1]]},
+  ]},
+ {id:'acaiteria', nome:'Açaiteria', emoji:'🍧',
+  destaque:['acai','granola','leitecond','banana','polpa','leite','acucar','poteplastico'],
   templates:[
    {n:'Açaí 500ml', emb:0.5, itens:[['acai',330],['granola',30],['leitecond',40],['banana',80],['poteplastico',1]]},
    {n:'Açaí 300ml', emb:0.4, itens:[['acai',200],['granola',20],['leitecond',25],['banana',50],['poteplastico',1]]},
-   {n:'Misto quente', emb:0.4, itens:[['paofrances',80],['presunto',30],['mussarela',30],['manteiga',10]]},
+   {n:'Creme de açaí no copo (400ml)', emb:0.4, itens:[['acai',260],['leitecond',35],['granola',25],['banana',60],['poteplastico',1]]},
    {n:'Vitamina de banana', emb:0.4, itens:[['banana',100],['leite',200],['acucar',15],['poteplastico',1]]},
   ]},
  {id:'outro', nome:'Outro tipo de negócio', emoji:'🍴',
@@ -1403,10 +1430,16 @@ function renderListaPratos(){
   $('prato-editor-view').style.display = editando ? 'block' : 'none';
   if(editando){ renderEditor(); return; }
   const el = $('lista-pratos');
+  const btnFixo = $('btn-novo-item');
   if(!S.pratos.length){
-    el.innerHTML = `<div class="vazio"><div class="icone">🍽️</div><p>Nenhum item ainda. Monte o primeiro e descubra na hora quanto ele custa de verdade.</p></div>`;
+    // estado vazio com um unico CTA claro (esconde o botao fixo pra nao duplicar)
+    if(btnFixo) btnFixo.style.display = 'none';
+    el.innerHTML = `<div class="vazio"><div class="icone">🍽️</div>
+      <p>Seu cardápio começa aqui. Monte seu primeiro item — leva menos de 2 minutos — e o app já te diz por quanto vender pra ter lucro.</p>
+      <button class="btn" style="margin-top:10px" onclick="novoPrato()">+ Montar meu primeiro item</button></div>`;
     return;
   }
+  if(btnFixo) btnFixo.style.display = '';
   el.innerHTML = S.pratos.map(p=>{
     const a = analisar(p);
     return `<div class="etiqueta cor-${a.cor}" role="button" tabindex="0" onclick="editarPrato('${p.id}')" onkeydown="if(event.key==='Enter')editarPrato('${p.id}')">
@@ -2158,7 +2191,7 @@ function abrirWizard(refazendo){
     setValorMilhar($('wiz-fat-custom'), S.config.faturamento);
     setValorMilhar($('wiz-fixos-custom'), S.config.fixos);
   }
-  wizPasso(0); $('wizard').classList.add('aberto');
+  wizPasso(refazendo ? 0 : 'intro'); $('wizard').classList.add('aberto');
 }
 function wizDelSel(v,btn){
   wizDel = v;
@@ -2263,6 +2296,7 @@ function wizCalcular(){
   }, 350 + linhas.length*650 + 550);
 }
 function fecharWizard(){
+  const primeiraVez = !S.config;   // se ainda nao tinha config, e a primeira vez -> mostra o tour do app
   S.config = Object.assign(
     {impostos:6, cartao:3, entrega:6, outroapp:20, margemAlvo:0.15, nomeRest:'', logo:null, deliveryPct:0, appEntrega:'nenhum', precoUnico:true, ifoodPlano:'entrega', ifoodTaxa:TAXA_IFOOD.entrega, diasMes:26},
     S.config||{},
@@ -2272,6 +2306,7 @@ function fecharWizard(){
   salvar();
   $('wizard').classList.remove('aberto');
   renderMarca(); renderTudo();
+  if(primeiraVez) abrirVeu('veu-tour');   // orienta sobre as 4 abas logo no primeiro acesso
 }
 
 /* =====================================================
