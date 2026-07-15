@@ -1718,7 +1718,7 @@ function renderPreco(){
     <div class="cartao">
       <h3>Preco de venda: <span class="txt-verde" id="preco-atual">${fmt(a.preco)}</span></h3>
       <div class="faixa-preco">
-        <input type="range" min="${min}" max="${max}" step="0.5" value="${a.preco}" aria-label="Preco de venda"
+        <input type="range" min="${min}" max="${max}" step="0.1" value="${a.preco}" aria-label="Preco de venda"
           oninput="previewPreco(this.value)" onchange="mudarPreco(this.value)">
         <div class="marcas-preco"><span>${fmt(min)}</span><span>${fmt(max)}</span></div>
       </div>
