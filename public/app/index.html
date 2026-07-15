@@ -109,6 +109,9 @@ section.tela.ativa{display:block;animation:surge .25s ease}
 .prefixo{position:relative}
 .prefixo span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--tinta-suave);font-weight:600}
 .prefixo input{padding-left:44px}
+.sufixo{position:relative}
+.sufixo span{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--tinta-suave);font-weight:600}
+.sufixo input{padding-right:40px}
 
 /* ---------- etiqueta de preço (assinatura visual) ---------- */
 .etiqueta{
@@ -786,6 +789,10 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
       <div class="wiz-pergunta">Quanto das suas vendas sai por entrega?</div>
       <div class="wiz-apoio">Entrega tem taxa, e taxa entra na conta. Pode responder por cima, sem medo.</div>
       <div class="chips" id="wiz-del-chips"></div>
+      <div class="campo" style="margin-top:16px">
+        <label for="wiz-del-custom" style="color:#F3EFE0">Ou digite o percentual exato</label>
+        <div class="sufixo"><input id="wiz-del-custom" type="number" inputmode="numeric" min="0" max="100" placeholder="Ex.: 35" oninput="wizDelCustomDigitado()"><span>%</span></div>
+      </div>
       <div id="wiz-app-bloco" style="display:none;margin-top:20px">
         <div class="wiz-apoio" style="margin-bottom:10px">E por onde você mais entrega?</div>
         <div class="chips" id="wiz-app-chips"></div>
@@ -2187,6 +2194,7 @@ function abrirWizard(refazendo){
     wizNicho = S.config.nicho;
     wizDel = S.config.deliveryPct; wizApp = S.config.appEntrega==='nenhum' ? null : S.config.appEntrega;
     $('wiz-app-bloco').style.display = wizDel>0 ? 'block' : 'none';
+    $('wiz-del-custom').value = DEL_OPCOES.some(([v])=>v===wizDel) ? '' : Math.round(wizDel*100);
     $('wiz-nome-rest').value = S.config.nomeRest || '';
     setValorMilhar($('wiz-fat-custom'), S.config.faturamento);
     setValorMilhar($('wiz-fixos-custom'), S.config.fixos);
@@ -2195,9 +2203,17 @@ function abrirWizard(refazendo){
 }
 function wizDelSel(v,btn){
   wizDel = v;
+  $('wiz-del-custom').value = '';
   document.querySelectorAll('#wiz-del-chips .chip').forEach(c=>c.classList.remove('marcado'));
   btn.classList.add('marcado');
   $('wiz-app-bloco').style.display = v>0 ? 'block' : 'none';
+}
+function wizDelCustomDigitado(){
+  const v = Number($('wiz-del-custom').value);
+  document.querySelectorAll('#wiz-del-chips .chip').forEach(c=>c.classList.remove('marcado'));
+  if($('wiz-del-custom').value===''){ return; }
+  wizDel = Math.max(0, Math.min(100, v)) / 100;
+  $('wiz-app-bloco').style.display = wizDel>0 ? 'block' : 'none';
 }
 function wizAppSel(id,btn){
   wizApp = id;
