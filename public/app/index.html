@@ -703,6 +703,11 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
       <input type="file" id="inp-importar" accept=".pnv,.json,application/json" style="display:none" onchange="importarBackup(event)">
       <button class="btn fantasma" onclick="document.getElementById('inp-importar').click()">Restaurar minha copia</button>
     </div>
+    <div class="cartao" style="margin-top:8px">
+      <h3>Sua conta</h3>
+      <p style="font-size:.88rem;color:var(--tinta-suave);margin-bottom:12px">Só saia se for usar outro e-mail ou se este for um aparelho compartilhado. Seus dados ficam guardados na sua conta e voltam quando você entrar de novo.</p>
+      <button class="btn fantasma" onclick="sairDaConta()">Sair desta conta</button>
+    </div>
   </div>
 </div>
 
@@ -1060,6 +1065,15 @@ function telaOffline(){
 
 function abrirGate(){ $('gate').classList.add('aberto'); }
 function fecharGate(){ $('gate').classList.remove('aberto'); }
+
+/* sai da conta: encerra a sessao no Supabase, limpa o cache de licenca e volta pra tela de e-mail */
+async function sairDaConta(){
+  if(!confirm('Quer mesmo sair desta conta neste aparelho?')) return;
+  try{ if(sb) await sb.auth.signOut(); }catch(e){}
+  cofre.set('pnv_lic','');
+  sessaoEmail = null;
+  location.reload();
+}
 
 function telaPedirEmail(msg){
   $('gate-corpo').innerHTML = `
