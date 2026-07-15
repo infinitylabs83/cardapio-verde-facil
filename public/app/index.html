@@ -1071,6 +1071,7 @@ async function sairDaConta(){
   if(!confirm('Quer mesmo sair desta conta neste aparelho?')) return;
   try{ if(sb) await sb.auth.signOut(); }catch(e){}
   cofre.set('pnv_lic','');
+  cofre.set('pnv','');           // limpa os dados do cardapio pra nao vazar pro proximo login neste aparelho
   sessaoEmail = null;
   location.reload();
 }
@@ -1141,6 +1142,12 @@ async function checarAcesso(){
   if(!licenca){ cofre.set('pnv_lic',''); telaSemAcesso(sessaoEmail); abrirGate(); return false; }
   if(licenca.status !== 'ativo'){ cofre.set('pnv_lic',''); telaBloqueado(sessaoEmail); abrirGate(); return false; }
   cofre.set('pnv_lic', JSON.stringify({ok:true, email:sessaoEmail, ts:Date.now()}));
+  /* isolamento entre contas no mesmo aparelho: dados locais de outro e-mail (ou sem dono definido)
+     nao podem aparecer aqui. Zera antes de sincronizar; a nuvem devolve os dados certos desta conta. */
+  if(S.donoEmail !== sessaoEmail){
+    S = { config:null, pratos:[], precos:{}, custom:[], conquistas:{}, donoEmail:sessaoEmail };
+    cofre.set('pnv', JSON.stringify(S));
+  }
   fecharGate();
   await sincronizarDoServidor();
   return true;
@@ -1154,6 +1161,7 @@ async function sincronizarDoServidor(){
       const tsLocal = Date.parse(S.atualizadoEm || '') || 0;
       if(!S.config || tsNuvem > tsLocal){
         S = Object.assign(S, data.estado_json); normalizar();
+        S.donoEmail = sessaoEmail;   // reafirma o dono depois de mesclar com a nuvem
         cofre.set('pnv', JSON.stringify(S));
       } else if(tsLocal > tsNuvem){
         sincronizarParaServidor();   // este aparelho tem a versao mais nova: sobe pra nuvem
