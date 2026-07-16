@@ -32,6 +32,8 @@ type Licenca = {
 function AdminPage() {
   const [estado, setEstado] = useState<"carregando" | "login" | "aguardando" | "negado" | "ok">("carregando");
   const [email, setEmail] = useState("");
+  const [codigo, setCodigo] = useState("");
+  const [erroCodigo, setErroCodigo] = useState("");
   const [busca, setBusca] = useState("");
   const [dados, setDados] = useState<{ ativas: number; revogadas: number; eventos: Evento[]; licencas: Licenca[] } | null>(null);
 
@@ -89,10 +91,28 @@ function AdminPage() {
     await alterarStatus(alvo, "ativo");
   }
 
-  async function pedirLink(e: React.FormEvent) {
+  async function pedirCodigo(e: React.FormEvent) {
     e.preventDefault();
-    await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    // codigo de 6 digitos (nao link): mesmo fluxo do app, imune a antivirus/webmail que gastam o link
+    await sb.auth.signInWithOtp({ email: email.trim().toLowerCase(), options: { shouldCreateUser: false } });
+    setCodigo("");
+    setErroCodigo("");
     setEstado("aguardando");
+  }
+
+  async function verificarCodigo(e: React.FormEvent) {
+    e.preventDefault();
+    const token = codigo.trim();
+    if (!/^\d{6}$/.test(token)) {
+      setErroCodigo("Digite os 6 números do código.");
+      return;
+    }
+    const { error } = await sb.auth.verifyOtp({ email: email.trim().toLowerCase(), token, type: "email" });
+    if (error) {
+      setErroCodigo("Código inválido ou expirado. Peça um novo.");
+      return;
+    }
+    checar();
   }
 
   const wrap = "min-h-screen bg-[#123F2B] text-[#F3EFE0] flex items-center justify-center p-6";
@@ -103,7 +123,7 @@ function AdminPage() {
   if (estado === "login") {
     return (
       <div className={wrap}>
-        <form onSubmit={pedirLink} className={card}>
+        <form onSubmit={pedirCodigo} className={card}>
           <h1 className="text-2xl font-bold mb-2">Painel do Cardápio no Verde</h1>
           <p className="opacity-80 mb-5 text-sm">Acesso restrito. Digite o e-mail administrador.</p>
           <input
@@ -115,7 +135,7 @@ function AdminPage() {
             className="w-full p-3 rounded-xl text-[#1F2B21] mb-3"
           />
           <button type="submit" className="w-full p-3 rounded-xl bg-[#1F6D42] font-bold">
-            Receber link de acesso
+            Receber meu código
           </button>
         </form>
       </div>
@@ -125,10 +145,34 @@ function AdminPage() {
   if (estado === "aguardando") {
     return (
       <div className={wrap}>
-        <div className={card}>
-          <h1 className="text-2xl font-bold mb-2">Prontinho!</h1>
-          <p className="opacity-80 text-sm">Confere seu e-mail (e o spam) e clica no link pra entrar.</p>
-        </div>
+        <form onSubmit={verificarCodigo} className={card}>
+          <h1 className="text-2xl font-bold mb-2">Digite seu código</h1>
+          <p className="opacity-80 mb-5 text-sm">
+            Mandamos um código de 6 números pra <b>{email}</b>. Confere a caixa de entrada (e o spam).
+          </p>
+          <input
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            autoFocus
+            value={codigo}
+            onChange={(e) => setCodigo(e.target.value)}
+            placeholder="000000"
+            className="w-full p-3 rounded-xl text-[#1F2B21] mb-3 text-center text-2xl font-extrabold tracking-[0.4em]"
+          />
+          <button type="submit" className="w-full p-3 rounded-xl bg-[#1F6D42] font-bold">
+            Entrar
+          </button>
+          {erroCodigo && <p className="mt-3 text-sm text-[#F0B37E]">{erroCodigo}</p>}
+          <button
+            type="button"
+            onClick={() => setEstado("login")}
+            className="mt-4 text-sm underline opacity-80"
+          >
+            Usar outro e-mail
+          </button>
+        </form>
       </div>
     );
   }
