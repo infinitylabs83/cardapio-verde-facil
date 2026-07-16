@@ -309,12 +309,14 @@ function ProvaCurta() {
     {
       nome: "Marcio",
       negocio: "Hamburgueria",
+      print: "/depoimento-marcio.jpg",
       texto:
         "Pensei que estava vendendo no preço correto, mas estava perdendo dinheiro. Estava com preço errado e só fui saber quando comecei a usar. Só este mês já economizei, em apenas um item do meu cardápio, mais de 640 reais.",
     },
     {
       nome: "Duarte",
       negocio: "Lanchonete",
+      print: "/depoimento-duarte.jpg",
       texto:
         "Finalizei o cadastro e já vi que estava perdendo muito dinheiro em alguns principais itens do meu cardápio. Só em um deles estava perdendo R$ 2,67 por cada venda. Já se pagou faz tempo, só pela economia que eu fiz reajustando o que estava errado.",
     },
@@ -330,14 +332,14 @@ function ProvaCurta() {
         </h2>
         <div className="mt-10 grid md:grid-cols-2 gap-5 max-w-4xl">
           {stories.map((s) => (
-            <div key={s.nome} className="paper-card rounded-3xl p-6 flex flex-col">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--receipt)" aria-hidden>
-                <path d="M7 7h4v4H7c0 3 1 4 4 4v3c-5 0-8-2-8-7V7Zm10 0h4v4h-4c0 3 1 4 4 4v3c-5 0-8-2-8-7V7Z" />
-              </svg>
-              <p className="mt-4 text-[15px] leading-relaxed text-ink flex-1">
-                {s.texto}
-              </p>
-              <div className="mt-5 pt-4 border-t border-[color:var(--line)]">
+            <div key={s.nome} className="paper-card rounded-3xl p-4 md:p-5 flex flex-col">
+              <img
+                src={s.print}
+                alt={`Print de conversa no WhatsApp com ${s.nome}, ${s.negocio}: ${s.texto}`}
+                loading="lazy"
+                className="w-full rounded-2xl border border-[color:var(--line)] shadow-plate"
+              />
+              <div className="mt-4 pt-3 border-t border-[color:var(--line)]">
                 <div className="font-extrabold text-leaf">
                   {s.nome} <span className="font-normal text-[color:var(--muted-brand)]">— {s.negocio}</span>
                 </div>
