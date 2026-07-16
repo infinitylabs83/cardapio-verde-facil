@@ -307,22 +307,16 @@ function DorSection() {
 function ProvaCurta() {
   const stories = [
     {
-      nome: "Roberto Alencar",
-      negocio: "Sabor Caseiro Marmitaria",
+      nome: "Marcio",
+      negocio: "Hamburgueria",
       texto:
-        "Vendia meu prato campeão há dois anos sem nunca revisar o preço. Descobri que perdia R$ 4,50 em cada um. Ajustei numa tarde e recuperei R$ 1.200 já no mês seguinte.",
+        "Pensei que estava vendendo no preço correto, mas estava perdendo dinheiro. Estava com preço errado e só fui saber quando comecei a usar. Só este mês já economizei, em apenas um item do meu cardápio, mais de 640 reais.",
     },
     {
-      nome: "Fernanda Costa",
-      negocio: "Point do Açaí",
+      nome: "Duarte",
+      negocio: "Lanchonete",
       texto:
-        "Achava que o problema era falta de movimento. Revisei meus 5 mais vendidos e vi que dois saíam no prejuízo. Corrigi o preço, não perdi cliente nenhum, e fechei o mês com R$ 2.100 a mais.",
-    },
-    {
-      nome: "Luís Paulo",
-      negocio: "Zen Burgers",
-      texto:
-        "Usava planilha há um ano e confiava nela. Testei no meu item mais vendido e vi que o insumo tinha subido três vezes sem eu perceber. Ajustei o cardápio inteiro numa hora.",
+        "Finalizei o cadastro e já vi que estava perdendo muito dinheiro em alguns principais itens do meu cardápio. Só em um deles estava perdendo R$ 2,67 por cada venda. Já se pagou faz tempo, só pela economia que eu fiz reajustando o que estava errado.",
     },
   ];
   return (
@@ -334,7 +328,7 @@ function ProvaCurta() {
         <h2 className="font-serif text-[32px] md:text-[42px] leading-[1] mt-3 max-w-3xl">
           O que mudou pra quem colocou os números na mesa.
         </h2>
-        <div className="mt-10 grid md:grid-cols-3 gap-5">
+        <div className="mt-10 grid md:grid-cols-2 gap-5 max-w-4xl">
           {stories.map((s) => (
             <div key={s.nome} className="paper-card rounded-3xl p-6 flex flex-col">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--receipt)" aria-hidden>
@@ -585,28 +579,22 @@ function Entregaveis() {
 function DepoimentosCompletos() {
   const items = [
     {
+      quem: "Marcio · Hamburgueria",
       antes:
-        "Tocava um restaurante de bairro havia três anos, usava planilha própria e achava que estava tudo sob controle, até o mês fechar com um resultado bem abaixo do esperado apesar do salão cheio.",
+        "Achava que estava vendendo no preço correto, mas estava perdendo dinheiro. Estava com o preço errado e só foi saber quando começou a usar.",
       virada:
-        "Revisou o cardápio inteiro com o Semáforo de Margem numa tarde de segunda-feira, prato por prato.",
+        "Montou os itens do cardápio no app e viu o custo real de cada um aparecer na tela.",
       resultado:
-        "Descobriu que o prato principal, o mais pedido da casa, estava no vermelho havia quatro meses. Ajustou o preço e recuperou R$ 1.200 de margem já no mês seguinte.",
+        "Só no primeiro mês, economizou mais de R$ 640 em um único item do cardápio.",
     },
     {
+      quem: "Duarte · Lanchonete",
       antes:
-        "Dividia a gestão do restaurante com o sócio, sem padrão definido de precificação, e vivia discussão sobre se o negócio realmente dava lucro.",
+        "Não sabia que estava perdendo dinheiro em alguns dos principais itens do próprio cardápio.",
       virada:
-        "Os dois sentaram juntos e rodaram o cardápio inteiro pelo simulador, olhando o mesmo número na tela.",
+        "Finalizou o cadastro do cardápio e conferiu item por item.",
       resultado:
-        "Encontraram dois pratos no amarelo e um no vermelho. Reajustaram os três em uma hora e pela primeira vez em oito meses fecharam o mês concordando sobre o resultado.",
-    },
-    {
-      antes:
-        "Administrava duas unidades pequenas e desconfiava que uma delas vendia prato no prejuízo, mas não tinha como provar isso sem abrir planilha separada pra cada loja.",
-      virada:
-        "Usou o simulador pra recalcular o cardápio das duas unidades no mesmo padrão, ainda no fim de semana.",
-      resultado:
-        "A unidade suspeita tinha três pratos vendidos abaixo do custo, um deles havia cinco meses. Corrigiu os preços nas duas lojas no mesmo dia.",
+        "Em um dos itens, estava perdendo R$ 2,67 a cada venda. Nas palavras dele: “já se pagou faz tempo, só pela economia que eu fiz reajustando o que estava errado”.",
     },
   ];
   return (
@@ -620,7 +608,9 @@ function DepoimentosCompletos() {
         </h2>
         <div className="mt-10 space-y-6">
           {items.map((it, i) => (
-            <div key={i} className="paper-card rounded-3xl p-6 md:p-8 grid md:grid-cols-3 gap-6">
+            <div key={i} className="paper-card rounded-3xl p-6 md:p-8">
+              <div className="font-extrabold text-leaf mb-5">{it.quem}</div>
+              <div className="grid md:grid-cols-3 gap-6">
               <div>
                 <div className="text-[11px] font-extrabold uppercase tracking-widest text-[color:var(--muted-brand)]">
                   Antes
@@ -640,6 +630,7 @@ function DepoimentosCompletos() {
                 <p className="mt-2 text-[14px] leading-relaxed text-ink font-semibold">
                   {it.resultado}
                 </p>
+              </div>
               </div>
             </div>
           ))}
