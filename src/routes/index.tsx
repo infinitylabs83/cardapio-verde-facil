@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import heroOwner from "@/assets/hero-reference.png.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -310,41 +311,142 @@ function ProvaCurta() {
       nome: "Marcio",
       negocio: "Hamburgueria",
       print: "/depoimento-marcio.jpg",
+      destaque: "R$ 640",
+      legenda: "economizados em 1 item só, no primeiro mês",
       texto:
         "Pensei que estava vendendo no preço correto, mas estava perdendo dinheiro. Estava com preço errado e só fui saber quando comecei a usar. Só este mês já economizei, em apenas um item do meu cardápio, mais de 640 reais.",
+      giro: "-2.5deg",
+      giroFita: "-8deg",
     },
     {
       nome: "Duarte",
       negocio: "Lanchonete",
       print: "/depoimento-duarte.jpg",
+      destaque: "R$ 2,67",
+      legenda: "perdidos por venda, corrigido no mesmo dia",
       texto:
         "Finalizei o cadastro e já vi que estava perdendo muito dinheiro em alguns principais itens do meu cardápio. Só em um deles estava perdendo R$ 2,67 por cada venda. Já se pagou faz tempo, só pela economia que eu fiz reajustando o que estava errado.",
+      giro: "1.5deg",
+      giroFita: "5deg",
     },
   ];
+  const trilhaRef = useRef<HTMLDivElement>(null);
+  const [ativo, setAtivo] = useState(0);
+
+  function rolarPara(i: number) {
+    const el = trilhaRef.current;
+    if (!el) return;
+    const card = el.children[i] as HTMLElement | undefined;
+    if (!card) return;
+    el.scrollTo({ left: card.offsetLeft - (el.clientWidth - card.clientWidth) / 2, behavior: "smooth" });
+  }
+  function aoRolar() {
+    const el = trilhaRef.current;
+    if (!el) return;
+    const centro = el.scrollLeft + el.clientWidth / 2;
+    let melhor = 0;
+    let menorDist = Infinity;
+    [...el.children].forEach((c, i) => {
+      const el2 = c as HTMLElement;
+      const centroCard = el2.offsetLeft + el2.clientWidth / 2;
+      const d = Math.abs(centroCard - centro);
+      if (d < menorDist) {
+        menorDist = d;
+        melhor = i;
+      }
+    });
+    setAtivo(melhor);
+  }
+
   return (
-    <section className="bg-[color:var(--paper-2)] border-b border-[color:var(--line)]">
+    <section className="bg-[color:var(--paper-2)] border-b border-[color:var(--line)] overflow-hidden">
       <div className="max-w-6xl mx-auto px-5 py-16 md:py-20">
-        <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
-          Quem já usou
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
+              Quem já usou
+            </div>
+            <h2 className="font-serif text-[32px] md:text-[42px] leading-[1] mt-3 max-w-xl">
+              O que mudou pra quem colocou os números na mesa.
+            </h2>
+          </div>
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Depoimento anterior"
+              onClick={() => rolarPara(Math.max(0, ativo - 1))}
+              disabled={ativo === 0}
+              className="w-11 h-11 rounded-full bg-leaf text-paper-2 grid place-items-center shadow-plate disabled:opacity-30 hover:bg-leaf-2 transition-colors"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              type="button"
+              aria-label="Próximo depoimento"
+              onClick={() => rolarPara(Math.min(stories.length - 1, ativo + 1))}
+              disabled={ativo === stories.length - 1}
+              className="w-11 h-11 rounded-full bg-leaf text-paper-2 grid place-items-center shadow-plate disabled:opacity-30 hover:bg-leaf-2 transition-colors"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
         </div>
-        <h2 className="font-serif text-[32px] md:text-[42px] leading-[1] mt-3 max-w-3xl">
-          O que mudou pra quem colocou os números na mesa.
-        </h2>
-        <div className="mt-10 grid md:grid-cols-2 gap-5 max-w-4xl">
-          {stories.map((s) => (
-            <div key={s.nome} className="paper-card rounded-3xl p-4 md:p-5 flex flex-col">
-              <img
-                src={s.print}
-                alt={`Print de conversa no WhatsApp com ${s.nome}, ${s.negocio}: ${s.texto}`}
-                loading="lazy"
-                className="w-full rounded-2xl border border-[color:var(--line)] shadow-plate"
-              />
-              <div className="mt-4 pt-3 border-t border-[color:var(--line)]">
-                <div className="font-extrabold text-leaf">
-                  {s.nome} <span className="font-normal text-[color:var(--muted-brand)]">— {s.negocio}</span>
+
+        <div className="mt-2 flex items-center gap-2 text-[13px] font-bold text-[color:var(--muted-brand)] md:hidden">
+          <span>Arraste pro lado pra ver o outro print</span>
+          <span aria-hidden className="hint-seta">→</span>
+        </div>
+
+        <div className="relative mt-6">
+          <div aria-hidden className="pointer-events-none absolute left-0 top-0 bottom-0 w-10 md:w-20 bg-gradient-to-r from-[color:var(--paper-2)] to-transparent z-10" />
+          <div aria-hidden className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 md:w-20 bg-gradient-to-l from-[color:var(--paper-2)] to-transparent z-10" />
+          <div
+            ref={trilhaRef}
+            onScroll={aoRolar}
+            className="flex gap-8 overflow-x-auto snap-x snap-mandatory scrollbar-hide py-6 px-[calc(50%-140px)] sm:px-[calc(50%-155px)] md:px-[8%]"
+          >
+            {stories.map((s) => (
+              <div
+                key={s.nome}
+                className="snap-center shrink-0 w-[280px] sm:w-[310px]"
+                style={{ transform: `rotate(${s.giro})` }}
+              >
+                <div className="relative bg-[color:var(--paper-2)] border border-[color:var(--line)] rounded-[6px] p-3 pb-6 shadow-plate">
+                  <div
+                    aria-hidden
+                    className="absolute -top-4 left-1/2 -translate-x-1/2 w-20 h-7 bg-[color:var(--receipt)]/70 border border-[color:var(--receipt)]/40"
+                    style={{ transform: `translateX(-50%) rotate(${s.giroFita})` }}
+                  />
+                  <img
+                    src={s.print}
+                    alt={`Print de conversa no WhatsApp com ${s.nome}, ${s.negocio}: ${s.texto}`}
+                    loading="lazy"
+                    className="w-full rounded-[3px] border border-[color:var(--line)]"
+                  />
+                  <div className="mt-4 px-1">
+                    <div className="font-serif text-[34px] leading-none text-[color:var(--receipt)]">
+                      {s.destaque}
+                    </div>
+                    <div className="mt-1.5 text-[13px] leading-snug text-ink">{s.legenda}</div>
+                    <div className="mt-3 pt-3 border-t border-dashed border-[color:var(--line)] font-extrabold text-leaf text-[14px]">
+                      {s.nome} <span className="font-normal text-[color:var(--muted-brand)]">— {s.negocio}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-2 flex items-center justify-center gap-2">
+          {stories.map((s, i) => (
+            <button
+              key={s.nome}
+              type="button"
+              aria-label={`Ver depoimento de ${s.nome}`}
+              onClick={() => rolarPara(i)}
+              className={`h-2 rounded-full transition-all ${i === ativo ? "w-6 bg-leaf-2" : "w-2 bg-[color:var(--line)]"}`}
+            />
           ))}
         </div>
       </div>

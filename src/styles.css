@@ -127,3 +127,21 @@
 @utility receipt-dashed {
   border-top: 1px dashed #d6c49e;
 }
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility hint-seta {
+  display: inline-block;
+  animation: hint-desliza 1.3s ease-in-out infinite;
+}
+
+@keyframes hint-desliza {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
