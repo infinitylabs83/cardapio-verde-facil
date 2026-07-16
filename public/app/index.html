@@ -1133,12 +1133,13 @@ function telaDigitarCodigo(email){
   const inp = $('gate-codigo');
   if(inp){ inp.focus(); inp.addEventListener('keydown', e=>{ if(e.key==='Enter') verificarCodigo(); }); }
 }
-const SUPORTE_WHATSAPP = '5500000000000'; // TROCAR pelo numero real, so digitos com DDI+DDD
+const SUPORTE_WHATSAPP = '5598991289090'; // digitos com DDI+DDD
 function telaSemAcesso(email){
   $('gate-corpo').innerHTML = `
     <h1>Não encontramos sua compra</h1>
     <p>Não achamos uma compra ativa pra <b>${esc(email)}</b>.</p>
-    <div class="gate-msg erro">Confere se foi o mesmo e-mail usado na hora da compra.</div>
+    <div class="gate-msg erro">Use o <b>mesmo e-mail</b> que você digitou na hora da compra — é nele que o acesso fica liberado.</div>
+    <div class="gate-msg">Comprou com esse e-mail mas ele não recebe mais mensagens? Fala com a gente no WhatsApp que a gente libera pra você.</div>
     <button class="btn" onclick="telaPedirEmail()">Tentar outro e-mail</button>
     <a class="btn secundario" style="margin-top:8px;text-decoration:none;display:flex" href="https://wa.me/${SUPORTE_WHATSAPP}?text=${encodeURIComponent('Oi! Comprei o Cardápio no Verde e não consigo acessar com o e-mail '+email)}" target="_blank" rel="noopener">💬 Falar com o suporte no WhatsApp</a>
   `;
