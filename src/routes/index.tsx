@@ -329,6 +329,17 @@ function ProvaCurta() {
       giro: "1.5deg",
       giroFita: "5deg",
     },
+    {
+      nome: "Keila",
+      negocio: "Açaíteria",
+      print: "/depoimento-keila.jpg",
+      destaque: "R$ 3,46",
+      legenda: "de lucro por item, no produto que mais vende",
+      texto:
+        "Descobri que meu açaí de 300ml, o produto que mais vendo, estava vendendo no 0x0, sem lucro nenhum. Reajustei dentro da minha meta de lucro no número mágico do app, e agora estou colocando R$ 3,46 de lucro no bolso por cada item. Vendo mais de 20 por dia — em 1 dia já se pagou o custo do app.",
+      giro: "-1.8deg",
+      giroFita: "6deg",
+    },
   ];
   const trilhaRef = useRef<HTMLDivElement>(null);
   const [ativo, setAtivo] = useState(0);
