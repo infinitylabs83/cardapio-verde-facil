@@ -531,6 +531,31 @@ function Metodo() {
           Não é opinião, é o cálculo puro em cima do que você mesmo informou.
         </p>
       </div>
+
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {[
+          { cor: "Vermelho", src: "/semaforo-vermelho.png", valor: "-R$ 0,75", classe: "text-tomato" },
+          { cor: "Amarelo", src: "/semaforo-amarelo.png", valor: "R$ 0,84", classe: "text-[#c99b1a]" },
+          { cor: "Verde", src: "/semaforo-verde.png", valor: "R$ 9,92", classe: "text-leaf-2" },
+        ].map((f) => (
+          <div key={f.cor} className="paper-card rounded-2xl p-2.5 flex flex-col gap-2">
+            <img src={f.src} alt={`Semáforo ${f.cor.toLowerCase()}`} className="w-full rounded-lg" />
+            <div className="flex items-end justify-between px-1">
+              <span className={`text-[12px] font-extrabold uppercase tracking-wide ${f.classe}`}>
+                {f.cor}
+              </span>
+              <span className="text-right">
+                <span className={`font-serif text-[20px] leading-none block ${f.classe}`}>
+                  {f.valor}
+                </span>
+                <span className="text-[10.5px] font-bold uppercase text-[color:var(--muted-brand)] block mt-0.5">
+                  lucro por item
+                </span>
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
       <div className="mt-10 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
         {steps.map((s) => (
           <div key={s.n} className="paper-card rounded-3xl p-6 flex flex-col gap-3">
