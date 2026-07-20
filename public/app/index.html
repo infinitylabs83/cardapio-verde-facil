@@ -370,6 +370,7 @@ main{padding-top:22px}.titulo-tela{font-size:1.72rem;line-height:1.02}.sub-tela{
 .wiz-conteudo .chip{border-radius:16px;background:rgba(255,248,234,.08);border-color:rgba(255,248,234,.24);color:#FFF8EA}.wiz-conteudo .chip.marcado{background:#FFF8EA;border-color:#FFF8EA;color:var(--verde-esc)}.wiz-conteudo input{background:#FFF8EA;border:2px solid rgba(229,182,74,.55)}.wiz-rodape .btn{background:#FFF8EA;color:var(--verde-esc);box-shadow:0 12px 28px rgba(0,0,0,.12)}.wiz-resumo{background:rgba(255,248,234,.12);border:1px solid rgba(255,248,234,.12);border-radius:24px}.wiz-resumo .g{font-size:3rem}.wiz-detalhe{background:rgba(255,248,234,.12);border-radius:18px}
 .folha{background:var(--papel);border:1px solid rgba(82,66,35,.18)}.banner-magico{background:linear-gradient(135deg,#123F2B,#1F6D42);border:1px solid rgba(255,248,234,.12);border-radius:22px}.magico-caixa{background:#E4EEDC;border-color:#CADBBE;border-radius:22px}.magico-num{font-size:3.35rem}.placar .p{border-radius:18px}.progresso{height:16px}
 @media(max-width:420px){.wiz-pergunta{font-size:1.75rem}.titulo-tela{font-size:1.55rem}.sobrao .numero{font-size:2.45rem}}
+@media(max-width:639px){.wiz-apoio{font-size:1.05rem;opacity:.94}.wiz-conteudo .campo label{font-size:1rem}}
 @media(min-width:640px){
   header.topo{max-width:560px;margin:0 auto;box-shadow:0 8px 24px rgba(18,63,43,.18)}
   nav.abas{left:50%;right:auto;transform:translateX(-50%);width:100%;max-width:560px;box-shadow:0 -10px 26px rgba(25,33,21,.14)}
@@ -773,14 +774,15 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
 
     <div class="wiz-passo" id="wiz-2">
       <div class="wiz-pergunta">Somando aluguel, contas e salários, quanto sai por mês?</div>
-      <div class="wiz-apoio">Aluguel + luz + água + gás + internet + salários + o que você tira pra viver. Pode chutar pra cima.</div>
+      <div class="wiz-apoio">Aluguel + luz + água + gás + internet + salários + o que você tira pra viver. Não sabe de cabeça agora? Tudo bem, é normal — pode chutar pra cima ou deixar que eu estimo pra você.</div>
       <div class="campo">
         <label for="wiz-fixos-custom" style="color:#F3EFE0">Valor por mês</label>
         <div class="prefixo"><span>R$</span><input id="wiz-fixos-custom" type="number" inputmode="numeric" min="0" placeholder="Ex.: 8000"></div>
       </div>
+      <div id="wiz-naosei-msg"></div>
       <div class="wiz-rodape">
         <button class="btn" onclick="wizIr(3)">Continuar</button>
-        <button class="btn fantasma" onclick="wizNaoSei()">Não sei — usar a média dos restaurantes</button>
+        <button class="btn fantasma" id="btn-wiz-naosei" onclick="wizNaoSei()">Não sei — usar a média dos restaurantes</button>
         <button class="btn fantasma" onclick="wizPasso(1)">Voltar</button>
       </div>
     </div>
@@ -2305,7 +2307,11 @@ function wizIr(n){
 }
 function wizNaoSei(){
   wizResultado.fixos = 0; wizResultado.fixoPct = 0.28; wizResultado.estimado = true; wizResultado.fixosAltos = false;
-  wizPasso(3);
+  /* mostra rapidamente o que foi assumido antes de seguir, pra nao parecer que o botao nao fez nada */
+  const btn = $('btn-wiz-naosei');
+  if(btn) btn.disabled = true;
+  $('wiz-naosei-msg').innerHTML = '<div class="gate-msg" style="margin-top:10px">Beleza! Vou usar <b>28% do seu faturamento</b> como estimativa de mercado — dá pra ajustar isso depois nos ⚙️ Ajustes.</div>';
+  setTimeout(()=>{ wizPasso(3); }, 1100);
 }
 /* a cena da "matemática chata": calcula tudo sozinho e mostra com calma */
 function wizCalcular(){
@@ -2381,6 +2387,10 @@ function fecharWizard(){
 ===================================================== */
 document.querySelectorAll('.veu').forEach(v=>v.addEventListener('click', e=>{ if(e.target===v) v.classList.remove('aberto'); }));
 ['wiz-fat-custom','wiz-fixos-custom','cfg-faturamento','cfg-fixos','fech-vendas','fech-compras','fech-contas'].forEach(id=>aplicarMascaraMilhar($(id)));
+/* digitar um valor customizado de faturamento desmarca o botao de faixa, pra nao mostrar dois valores conflitantes */
+$('wiz-fat-custom').addEventListener('input', ()=>{
+  if($('wiz-fat-custom').value){ document.querySelectorAll('#wiz-fat-chips .chip').forEach(c=>c.classList.remove('marcado')); wizFat = null; }
+});
 let appJaIniciado = false;
 async function iniciarApp(){
   carregar();   // local primeiro; o sync com a nuvem compara os carimbos de data e o mais novo vence
