@@ -1659,6 +1659,17 @@ function confirmarQtd(){
   const custom = parseFloat($('inp-qtd-custom').value.replace(',','.'));
   const q = custom>0 ? custom : qtdEscolhida;
   if(!q){ alert('Escolha ou digite a quantidade.'); return; }
+  /* quantidade digitada (nao chip) menor que 1 g/ml quase sempre e confusao de quilo com grama —
+     ex.: digitou "0,06" pensando em 0,06 KG (=60g), mas o campo pede grama pura */
+  if(custom>0 && custom<1){
+    const {suf} = chipsParaModo(modoQtdAtual);
+    const unidade = suf.trim();
+    if(unidade==='g' || unidade==='ml'){
+      const talvezQuis = parseFloat((custom*1000).toFixed(2));
+      const seguir = confirm(`${custom} ${unidade} é bem pouco — quase nada. Pensou em quilo? ${custom} kg equivale a ${talvezQuis} ${unidade}. Se foi isso, cancele e digite ${talvezQuis}. Quer continuar mesmo com ${custom} ${unidade}?`);
+      if(!seguir) return;
+    }
+  }
   const novoPreco = parseFloat(String($('inp-qtd-preco').value).replace(',','.'));
   if(novoPreco>=0 && novoPreco !== precoIng(ingEscolhido)){ mudarPrecoIng(ingEscolhido.id, novoPreco); }
   const item = {ing:ingEscolhido.id, qtd:q};
