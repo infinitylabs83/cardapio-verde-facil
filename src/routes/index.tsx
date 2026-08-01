@@ -917,7 +917,7 @@ function OfertaFinal() {
                   Uma única vez · sem mensalidade
                 </div>
                 <div className="mt-4 text-[13px] font-semibold text-leaf leading-snug">
-                  O prejuízo não espera você decidir. Um erro de R$ 3 num prato só já são R$ 480 por mês saindo do seu bolso — todo mês que passa sem corrigir é mais um R$ 480 que ninguém vai te mostrar.
+                  O prejuízo não espera: um erro de só R$ 3 num prato já são R$ 480 por mês saindo do seu bolso, todo mês, até você corrigir.
                 </div>
                 <a
                   href="https://pay.hotmart.com/W106597805P?checkoutMode=10&utm_source=meta_ads&utm_medium=cpc&utm_campaign=perpetuo_cardapio_no_verde"
