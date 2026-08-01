@@ -715,71 +715,6 @@ function Entregaveis() {
   );
 }
 
-/* -------------------- Bloco 10: Depoimentos completos -------------------- */
-function DepoimentosCompletos() {
-  const items = [
-    {
-      quem: "Marcio · Hamburgueria",
-      antes:
-        "Achava que estava vendendo no preço correto, mas estava perdendo dinheiro. Estava com o preço errado e só foi saber quando começou a usar.",
-      virada:
-        "Montou os itens do cardápio no app e viu o custo real de cada um aparecer na tela.",
-      resultado:
-        "Só no primeiro mês, economizou mais de R$ 640 em um único item do cardápio.",
-    },
-    {
-      quem: "Duarte · Lanchonete",
-      antes:
-        "Não sabia que estava perdendo dinheiro em alguns dos principais itens do próprio cardápio.",
-      virada:
-        "Finalizou o cadastro do cardápio e conferiu item por item.",
-      resultado:
-        "Em um dos itens, estava perdendo R$ 2,67 a cada venda. Nas palavras dele: “já se pagou faz tempo, só pela economia que eu fiz reajustando o que estava errado”.",
-    },
-  ];
-  return (
-    <section className="bg-[color:var(--paper-2)] border-y border-[color:var(--line)]">
-      <div className="max-w-5xl mx-auto px-5 py-16 md:py-24">
-        <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
-          Antes · Virada · Resultado
-        </div>
-        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4 max-w-3xl">
-          Não é sobre a ferramenta. É sobre o número certo aparecendo na tela.
-        </h2>
-        <div className="mt-10 space-y-6">
-          {items.map((it, i) => (
-            <div key={i} className="paper-card rounded-3xl p-6 md:p-8">
-              <div className="font-extrabold text-leaf mb-5">{it.quem}</div>
-              <div className="grid md:grid-cols-3 gap-6">
-              <div>
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-[color:var(--muted-brand)]">
-                  Antes
-                </div>
-                <p className="mt-2 text-[14px] leading-relaxed text-ink">{it.antes}</p>
-              </div>
-              <div>
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-[color:var(--receipt)]">
-                  Virada
-                </div>
-                <p className="mt-2 text-[14px] leading-relaxed text-ink">{it.virada}</p>
-              </div>
-              <div>
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-leaf-2">
-                  Resultado
-                </div>
-                <p className="mt-2 text-[14px] leading-relaxed text-ink font-semibold">
-                  {it.resultado}
-                </p>
-              </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* -------------------- Bloco 13: Autoridade -------------------- */
 function Autoridade() {
   return (
@@ -1070,7 +1005,6 @@ function LandingPage() {
         <Metodo />
         <ParaQuemE />
         <Entregaveis />
-        <DepoimentosCompletos />
         <Autoridade />
         <FAQ />
         <OfertaFinal />
