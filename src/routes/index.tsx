@@ -192,6 +192,13 @@ function Hero() {
             você olha hoje.
           </p>
 
+          {/* Frase-mecanismo: o que a ferramenta faz, na prática */}
+          <p className="mt-4 font-display font-semibold text-[17px] md:text-[20px] leading-snug text-paper-2/95 max-w-[620px] [text-shadow:0_1px_12px_rgba(0,0,0,0.4)]">
+            Digite o custo de qualquer item do seu cardápio e veja, na hora,
+            se ele te dá <span className="text-receipt">lucro</span> ou{" "}
+            <span className="text-[#ff8266]">prejuízo</span>.
+          </p>
+
           {/* CTA único, sem preço */}
           <div className="mt-8">
             <a
