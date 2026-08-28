@@ -212,43 +212,21 @@ function Hero() {
   );
 }
 
-/* -------------------- Bullets + Vídeo demo -------------------- */
-function BulletsDemo() {
-  const bullets = [
-    "O fornecedor reajustou o insumo há meses e ninguém foi conferir se o preço do prato ainda faz sentido. Você atualiza o preço do insumo uma vez, e em segundos vê quais itens já caíram no vermelho.",
-    "Aquela promoção que enche o salão pode estar pagando para o cliente comer. Com o custo real na tela, você decide o desconto sabendo exatamente quanto sobra por prato vendido.",
-    "Reajustar no achismo assusta o cliente, e reajustar de menos come sua margem em silêncio. Com o número certo na mão, você define o preço com segurança e ainda sabe justificar o valor.",
-  ];
+/* -------------------- Demo do app (seção própria, logo após o Hero) -------------------- */
+function DemoSection() {
   return (
-    <section className="bg-[color:var(--paper-2)] border-y border-[color:var(--line)]">
-      <div className="max-w-6xl mx-auto px-5 py-16 md:py-20 grid md:grid-cols-2 gap-10 items-center">
-        <ul className="space-y-6">
-          {bullets.map((b, i) => (
-            <li key={i} className="flex gap-4">
-              <span className="mt-1 w-8 h-8 rounded-full bg-leaf text-paper-2 grid place-items-center flex-shrink-0 font-display font-extrabold text-[14px]">
-                {i + 1}
-              </span>
-              <p className="text-[16px] md:text-[17px] leading-relaxed text-ink">
-                {b}
-              </p>
-            </li>
-          ))}
-          <div className="pt-2">
-            <a
-              href={CTA_ANCHOR}
-              className="inline-flex items-center gap-3 rounded-2xl bg-leaf text-paper-2 px-6 py-4 font-display font-extrabold text-[16px] hover:bg-leaf-2 transition-colors"
-            >
-              Quero ver o custo real do meu cardápio
-              <span aria-hidden>→</span>
-            </a>
-          </div>
-        </ul>
-
-        {/* Vídeo demo com moldura de iPhone */}
-        <div className="flex flex-col items-center md:items-start">
-          <div
-            className="relative bg-[#0b0b0d] rounded-[2.6rem] p-[10px] shadow-plate w-[240px] sm:w-[260px] aspect-[9/19.5]"
-          >
+    <section className="bg-gradient-to-b from-[#0e3223] to-leaf-2">
+      <div className="max-w-6xl mx-auto px-5 py-11 md:py-12 text-center">
+        <div className="text-[12px] font-extrabold tracking-widest text-receipt uppercase">
+          Veja funcionando
+        </div>
+        <h2 className="font-serif text-[26px] md:text-[32px] leading-[1.1] mt-2 text-paper-2">
+          Você diz quanto custa o prato.
+          <br />
+          O app te diz se sobra dinheiro.
+        </h2>
+        <div className="mt-6 flex flex-col items-center">
+          <div className="relative bg-[#0b0b0d] rounded-[2.6rem] p-[10px] shadow-plate w-[300px] sm:w-[330px] aspect-[9/19.5]">
             <div
               aria-hidden
               className="absolute top-[10px] left-1/2 -translate-x-1/2 w-24 h-6 bg-[#0b0b0d] rounded-full z-10"
@@ -264,11 +242,8 @@ function BulletsDemo() {
               />
             </div>
           </div>
-          <div className="mt-4 text-[12px] font-extrabold uppercase tracking-widest text-leaf-2 text-center md:text-left">
-            Gravação real do app, sem cortes
-          </div>
-          <p className="mt-2 text-[14px] text-[color:var(--muted-brand)] leading-relaxed max-w-[280px] text-center md:text-left">
-            Dono arrasta o preço, semáforo sai do vermelho e vai pro verde, com o lucro do mês recalculado na hora.
+          <p className="mt-4 text-[14px] text-paper-2/85 leading-relaxed max-w-[280px] text-center">
+            Verde é lucro, vermelho é prejuízo. Simples assim — e o preço certo aparece na hora.
           </p>
         </div>
       </div>
@@ -276,28 +251,36 @@ function BulletsDemo() {
   );
 }
 
-/* -------------------- Bloco 02: Dor (história longa) -------------------- */
-function DorSection() {
-  const paragrafos = [
-    "São 23h de terça-feira. O salão já fechou, a cozinha limpou o último balcão, e você senta com o celular pra somar as vendas do dia no aplicativo do banco. O número parece bom. Mas você não sabe dizer, prato por prato, quanto daquele total virou lucro de verdade.",
-    "Faz três meses que o fornecedor de carne reajustou o quilo do contrafilé. Você lembra vagamente de ter visto o boleto mais alto naquele mês, resmungou, pagou e seguiu em frente. O preço do prato no cardápio continua o mesmo desde então. Ninguém avisou, porque ninguém ia avisar. Fornecedor não liga pra te contar que seu prato ficou mais caro de fazer.",
-    "No fim de semana, o prato mais pedido do cardápio esgota antes das 21h. Você fica feliz com o movimento, tira foto pra postar no Instagram da loja. O que você não vê é que, se aquele prato específico está no vermelho por causa do reajuste que passou despercebido, quanto mais ele vende, mais dinheiro sai do seu bolso, não entra.",
-    "Você já tentou resolver isso com planilha. Abriu uma no Google Sheets, colocou fórmula, preencheu com capricho na primeira semana. Na segunda, o movimento do salão engoliu o tempo. Na terceira, você nem lembrava mais que a planilha existia. Ela não avisa quando o preço do óleo sobe, e só descobrir isso já significa conferir boleto por boleto.",
-    "O motivo disso não é falta de organização sua. É que ninguém te ensinou a calcular ficha técnica com o preço do insumo mudando toda semana, e refazer essa conta na mão toda vez que algo muda é trabalho demais pra fazer sozinho. O problema não é você, é que o custo do seu prato é um alvo em movimento e você está mirando parado.",
+/* -------------------- Bullets -------------------- */
+function Bullets() {
+  const bullets = [
+    "O fornecedor reajustou o insumo há meses e ninguém foi conferir se o preço do prato ainda faz sentido. Você atualiza o preço do insumo uma vez, e em segundos vê quais itens já caíram no vermelho.",
+    "Aquela promoção que enche o salão pode estar pagando para o cliente comer. Com o custo real na tela, você decide o desconto sabendo exatamente quanto sobra por prato vendido.",
+    "Reajustar no achismo assusta o cliente, e reajustar de menos come sua margem em silêncio. Com o número certo na mão, você define o preço com segurança e ainda sabe justificar o valor.",
   ];
   return (
-    <section className="bg-[color:var(--paper)] border-b border-[color:var(--line)]">
-      <div className="max-w-3xl mx-auto px-5 py-16 md:py-24">
-        <div className="text-[12px] font-extrabold tracking-widest text-leaf-2 uppercase">
-          Se você é dono de restaurante, isso já aconteceu
-        </div>
-        <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4">
-          O mês fecha, o caixa some, e ninguém sabe explicar pra onde foi o dinheiro.
-        </h2>
-        <div className="mt-8 space-y-6 text-[17px] leading-relaxed text-ink">
-          {paragrafos.map((p, i) => (
-            <p key={i}>{p}</p>
+    <section className="bg-[color:var(--paper-2)] border-y border-[color:var(--line)]">
+      <div className="max-w-3xl mx-auto px-5 py-16 md:py-20">
+        <ul className="space-y-6">
+          {bullets.map((b, i) => (
+            <li key={i} className="flex gap-4">
+              <span className="mt-1 w-8 h-8 rounded-full bg-leaf text-paper-2 grid place-items-center flex-shrink-0 font-display font-extrabold text-[14px]">
+                {i + 1}
+              </span>
+              <p className="text-[16px] md:text-[17px] leading-relaxed text-ink">
+                {b}
+              </p>
+            </li>
           ))}
+        </ul>
+        <div className="pt-2 mt-2">
+          <a
+            href={CTA_ANCHOR}
+            className="inline-flex items-center gap-3 rounded-2xl bg-leaf text-paper-2 px-6 py-4 font-display font-extrabold text-[16px] hover:bg-leaf-2 transition-colors"
+          >
+            Quero ver o custo real do meu cardápio
+            <span aria-hidden>→</span>
+          </a>
         </div>
       </div>
     </section>
@@ -431,7 +414,6 @@ function ProvaCurta() {
                   <img
                     src={s.print}
                     alt={`Print de conversa no WhatsApp com ${s.nome}, ${s.negocio}: ${s.texto}`}
-                    loading="lazy"
                     className="w-full rounded-[3px] border border-[color:var(--line)]"
                   />
                   <div className="mt-4 px-1">
@@ -658,11 +640,6 @@ function Entregaveis() {
       d: "Sem limite de pratos, sem limite de vezes que você recalcula. Toda vez que o fornecedor reajustar um insumo, você volta e refaz o cálculo.",
       v: "R$ 47",
     },
-    {
-      t: "Acesso único, sem mensalidade",
-      d: "Você paga uma vez e usa o simulador quantas vezes quiser, para sempre.",
-      v: "R$ 37",
-    },
   ];
   return (
     <section className="max-w-6xl mx-auto px-5 py-16 md:py-24">
@@ -671,7 +648,7 @@ function Entregaveis() {
           O que você leva
         </div>
         <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4">
-          Quatro componentes. Um pagamento único.
+          Três componentes. Um pagamento único.
         </h2>
       </div>
       <div className="mt-10 grid md:grid-cols-2 gap-5">
@@ -707,10 +684,13 @@ function Entregaveis() {
           ))}
           <div className="flex justify-between pt-4 mt-2 border-t-2 border-leaf font-display font-extrabold text-[17px]">
             <span className="text-ink">Valor total dos componentes</span>
-            <span className="text-leaf">R$ 228</span>
+            <span className="text-leaf">R$ 191</span>
           </div>
         </div>
       </div>
+      <p className="mt-4 text-center text-[13.5px] font-semibold text-[color:var(--muted-brand)]">
+        Pagamento único. Sem mensalidade. Você usa pra sempre.
+      </p>
     </section>
   );
 }
@@ -855,7 +835,6 @@ function OfertaFinal() {
     "Acesso ao Semáforo de Margem, ferramenta web de página única",
     "Cálculo de preço sugerido para todo prato no vermelho ou amarelo",
     "Revisão ilimitada de cardápio, sem limite de pratos ou de vezes que você recalcula",
-    "Acesso único, sem mensalidade, para sempre",
   ];
   return (
     <section id="oferta" className="bg-[color:var(--paper-2)] border-t border-[color:var(--line)]">
@@ -890,8 +869,8 @@ function OfertaFinal() {
                 ))}
               </ul>
               <p className="mt-6 text-[15px] text-[color:var(--muted-brand)] leading-relaxed">
-                Valor total dos componentes: <strong>R$ 228</strong>. Corrigindo um único prato,
-                isso se paga na primeira semana.
+                Valor total dos componentes: <strong>R$ 191</strong>. Corrigindo um único prato,
+                isso se paga na primeira semana. Pagamento único — sem mensalidade, para sempre.
               </p>
             </div>
 
@@ -907,7 +886,7 @@ function OfertaFinal() {
                 </div>
                 <div className="flex items-end gap-3 mt-1">
                   <span className="text-[color:var(--muted-brand)] line-through text-[20px] font-bold">
-                    R$ 228
+                    R$ 191
                   </span>
                   <span className="font-serif text-leaf text-[72px] leading-[0.8]">
                     R$ 67
@@ -1001,8 +980,8 @@ function LandingPage() {
       <Header />
       <main>
         <Hero />
-        <BulletsDemo />
-        <DorSection />
+        <DemoSection />
+        <Bullets />
         <ProvaCurta />
         <CTAIntermediario />
         <Metodo />
