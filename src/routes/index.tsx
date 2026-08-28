@@ -460,9 +460,8 @@ function CTAIntermediario() {
     <section className="bg-leaf text-paper-2">
       <div className="max-w-4xl mx-auto px-5 py-16 md:py-20 text-center">
         <h2 className="font-serif text-[32px] md:text-[44px] leading-[1.05] text-paper-2">
-          Se você chegou até aqui achando que pode ser o seu caso, dá pra
-          descobrir em menos tempo do que leva pra fritar a primeira batata do
-          turno.
+          Se você chegou até aqui achando que pode ser o seu caso, descobrir
+          leva menos de 2 minutos.
         </h2>
         <div className="mt-8">
           <a
