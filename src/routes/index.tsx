@@ -211,7 +211,7 @@ function Hero() {
           </div>
 
           <div className="mt-5 text-[13px] text-paper-2/80 font-semibold">
-            Sem planilha · sem contador · sem mensalidade
+            Sem planilha · sem chute · sem mensalidade
           </div>
         </div>
       </div>
@@ -253,6 +253,31 @@ function DemoSection() {
             Verde é lucro, vermelho é prejuízo. Simples assim — e o preço certo aparece na hora.
           </p>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------- Storytelling curto (logo após a demo) -------------------- */
+function StorytellingCurto() {
+  return (
+    <section className="bg-[color:var(--paper-2)] border-y border-[color:var(--line)]">
+      <div className="max-w-2xl mx-auto px-5 py-14 md:py-16 space-y-4 text-[15px] md:text-[16px] leading-relaxed text-[color:var(--muted-brand)]">
+        <p>
+          Você fecha o caixa, o número parece bom, mas não sabe dizer, item por
+          item do seu cardápio, quanto daquilo virou lucro de verdade.
+        </p>
+        <p>
+          Pode ser um insumo que subiu de preço, uma promoção que atrai
+          cliente mas não sobra nada no fim, ou um preço que você só chutou lá
+          atrás e nunca mais conferiu. O motivo muda, o resultado é o mesmo:
+          tem item no vermelho, e ninguém vai te avisar.
+        </p>
+        <p>
+          Não é falta de organização sua. É que ninguém te ensinou a enxergar
+          isso rápido — e descobrir item por item, na mão, é trabalho demais
+          pra fazer sozinho.
+        </p>
       </div>
     </section>
   );
@@ -522,9 +547,9 @@ function Metodo() {
 
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { cor: "Vermelho", src: "/semaforo-vermelho.png", valor: "-R$ 0,75", classe: "text-tomato" },
-          { cor: "Amarelo", src: "/semaforo-amarelo.png", valor: "R$ 0,84", classe: "text-[#c99b1a]" },
-          { cor: "Verde", src: "/semaforo-verde.png", valor: "R$ 9,92", classe: "text-leaf-2" },
+          { cor: "Vermelho", src: "/semaforo-vermelho.png", valor: "R$ 0,75", rotulo: "prejuízo por item", classe: "text-tomato" },
+          { cor: "Amarelo", src: "/semaforo-amarelo.png", valor: "R$ 0,84", rotulo: "lucro por item", classe: "text-[#c99b1a]" },
+          { cor: "Verde", src: "/semaforo-verde.png", valor: "R$ 9,92", rotulo: "lucro por item", classe: "text-leaf-2" },
         ].map((f) => (
           <div key={f.cor} className="paper-card rounded-2xl p-2.5 flex flex-col gap-2">
             <img src={f.src} alt={`Semáforo ${f.cor.toLowerCase()}`} className="w-full rounded-lg" />
@@ -537,7 +562,7 @@ function Metodo() {
                   {f.valor}
                 </span>
                 <span className="text-[10.5px] font-bold uppercase text-[color:var(--muted-brand)] block mt-0.5">
-                  lucro por item
+                  {f.rotulo}
                 </span>
               </span>
             </div>
@@ -759,7 +784,7 @@ function FAQ() {
   const items = [
     {
       q: "Não tenho tempo pra mexer em mais uma ferramenta. Vale a pena?",
-      a: "Calcular um prato leva menos de dois minutos. Um cardápio de quinze itens fica pronto numa tarde de domingo, não numa semana perdida entre um cliente e outro.",
+      a: "Calcular um item do seu cardápio leva menos de dois minutos. Um cardápio de quinze itens fica pronto em menos de uma hora — não numa semana perdida entre um cliente e outro.",
     },
     {
       q: "R$ 67 é barato demais, deve ser fraco ou incompleto.",
@@ -987,6 +1012,7 @@ function LandingPage() {
       <main>
         <Hero />
         <DemoSection />
+        <StorytellingCurto />
         <Bullets />
         <ProvaCurta />
         <CTAIntermediario />
