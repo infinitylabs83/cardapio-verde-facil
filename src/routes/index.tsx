@@ -262,22 +262,29 @@ function DemoSection() {
 function StorytellingCurto() {
   return (
     <section className="bg-[color:var(--paper-2)] border-y border-[color:var(--line)]">
-      <div className="max-w-2xl mx-auto px-5 py-14 md:py-16 space-y-4 text-[15px] md:text-[16px] leading-relaxed text-[color:var(--muted-brand)]">
-        <p>
-          Você fecha o caixa, o número parece bom, mas não sabe dizer, item por
-          item do seu cardápio, quanto daquilo virou lucro de verdade.
-        </p>
-        <p>
-          Pode ser um insumo que subiu de preço, uma promoção que atrai
-          cliente mas não sobra nada no fim, ou um preço que você só chutou lá
-          atrás e nunca mais conferiu. O motivo muda, o resultado é o mesmo:
-          tem item no vermelho, e ninguém vai te avisar.
-        </p>
-        <p>
-          Não é falta de organização sua. É que ninguém te ensinou a enxergar
-          isso rápido — e descobrir item por item, na mão, é trabalho demais
-          pra fazer sozinho.
-        </p>
+      <div className="max-w-2xl mx-auto px-5 py-14 md:py-16">
+        <div className="text-[12px] font-extrabold tracking-widest text-tomato uppercase">
+          Isso pode estar acontecendo com você?
+        </div>
+        <div className="mt-4 space-y-3 text-[16px] md:text-[18px] leading-snug text-ink">
+          <p>O caixa fechou. O número parece bom.</p>
+          <p>
+            Só que <strong className="text-tomato">ninguém sabe dizer, item por item, quanto
+            daquilo virou lucro de verdade</strong>.
+          </p>
+          <p>
+            Pode ser o insumo que subiu. A promoção que não sobra nada. O
+            preço que você só chutou lá atrás.
+          </p>
+          <p>
+            O motivo muda. <strong className="text-tomato">O resultado é sempre o mesmo: tem
+            item no vermelho.</strong>
+          </p>
+          <p>
+            E achar isso é bem mais simples do que parece —{" "}
+            <strong className="text-leaf-2">você acabou de ver como, aí em cima.</strong> ↑
+          </p>
+        </div>
       </div>
     </section>
   );
