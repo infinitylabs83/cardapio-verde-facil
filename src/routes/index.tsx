@@ -949,7 +949,7 @@ function OfertaFinal() {
                   <span aria-hidden>→</span>
                 </a>
                 <div className="mt-3 text-center text-[11px] text-[color:var(--muted-brand)] leading-relaxed">
-                  Garantia incondicional de 7 dias — não gostou, devolvemos 100% do valor.
+                  Garantia incondicional de 7 dias.
                   <br />
                   Ao continuar, você concorda com os termos de uso e a política
                   de privacidade.
