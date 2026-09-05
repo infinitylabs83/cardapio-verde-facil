@@ -293,7 +293,7 @@ function StorytellingCurto() {
 /* -------------------- Bullets -------------------- */
 function Bullets() {
   const bullets = [
-    "O fornecedor reajustou o insumo há meses e ninguém foi conferir se o preço do prato ainda faz sentido. Você atualiza o preço do insumo uma vez, e em segundos vê quais itens já caíram no vermelho.",
+    "O fornecedor reajustou o insumo há meses e ninguém foi conferir se o preço do prato ainda faz sentido. Você atualiza o preço do insumo uma vez, e em segundos sabe exatamente quanto vai ganhar em cada item.",
     "Aquela promoção que enche o salão pode estar pagando para o cliente comer. Com o custo real na tela, você decide o desconto sabendo exatamente quanto sobra por prato vendido.",
     "Reajustar no achismo assusta o cliente, e reajustar de menos come sua margem em silêncio. Com o número certo na mão, você define o preço com segurança e ainda sabe justificar o valor.",
   ];
@@ -934,7 +934,7 @@ function OfertaFinal() {
                   Uma única vez · sem mensalidade
                 </div>
                 <div className="mt-4 text-[13px] font-semibold text-leaf leading-snug">
-                  O prejuízo não espera: um erro de só R$ 3 num prato já são R$ 480 por mês saindo do seu bolso, todo mês, até você corrigir.
+                  Corrigir um erro de R$ 3 num prato que sai 40 vezes por semana coloca R$ 480 de volta no seu caixa todo mês — a partir de hoje.
                 </div>
                 <a
                   href="https://pay.hotmart.com/W106597805P?checkoutMode=10&utm_source=meta_ads&utm_medium=cpc&utm_campaign=perpetuo_cardapio_no_verde"
