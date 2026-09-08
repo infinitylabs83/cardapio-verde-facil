@@ -666,11 +666,16 @@ function Entregaveis() {
     {
       t: "Acesso ao Semáforo de Margem",
       d: "Ferramenta web de página única. Calcula o CMV de qualquer prato e mostra o resultado em vermelho, amarelo ou verde na hora.",
-      v: "R$ 97",
+      v: "R$ 127",
     },
     {
       t: "Cálculo de preço sugerido por prato",
       d: "Pra todo item que cair no vermelho ou amarelo, a ferramenta mostra o preço que colocaria o prato na faixa verde, considerando a margem que você define.",
+      v: "R$ 47",
+    },
+    {
+      t: "Preço certo por canal de entrega",
+      d: "Não cobre o mesmo preço do balcão no iFood ou WhatsApp e saia perdendo. A ferramenta calcula quanto cobrar em cada canal pra manter a mesma margem de sempre.",
       v: "R$ 47",
     },
     {
@@ -686,7 +691,7 @@ function Entregaveis() {
           O que você leva
         </div>
         <h2 className="font-serif text-[36px] md:text-[48px] leading-[1] mt-4">
-          Três componentes. Um pagamento único.
+          Quatro componentes. Um pagamento único.
         </h2>
       </div>
       <div className="mt-10 grid md:grid-cols-2 gap-5">
@@ -722,7 +727,7 @@ function Entregaveis() {
           ))}
           <div className="flex justify-between pt-4 mt-2 border-t-2 border-leaf font-display font-extrabold text-[17px]">
             <span className="text-ink">Valor total dos componentes</span>
-            <span className="text-leaf">R$ 191</span>
+            <span className="text-leaf">R$ 268</span>
           </div>
         </div>
       </div>
@@ -794,8 +799,8 @@ function FAQ() {
       a: "Calcular um item do seu cardápio leva menos de dois minutos. Um cardápio de quinze itens fica pronto em menos de uma hora — não numa semana perdida entre um cliente e outro.",
     },
     {
-      q: "R$ 67 é barato demais, deve ser fraco ou incompleto.",
-      a: "O cálculo de CMV segue uma fórmula estável no setor de alimentação. O valor não está no algoritmo, está em entregar esse cálculo rápido e sem erro manual, sem cobrar mensalidade de sistema completo que um restaurante pequeno não usa inteiro.",
+      q: "É só pra calcular uma vez, ou fica salvo pro cardápio inteiro?",
+      a: "Fica salvo. Você cadastra os itens do seu cardápio, com os ingredientes e o preço de cada um, e tudo continua ali — toda vez que você entrar, seu cardápio já está com o preço certo, do jeito que você ajustou. Não precisa recomeçar do zero.",
     },
     {
       q: "Já uso planilha, não preciso de outra coisa.",
@@ -872,6 +877,7 @@ function OfertaFinal() {
   const inclui = [
     "Acesso ao Semáforo de Margem, ferramenta web de página única",
     "Cálculo de preço sugerido para todo prato no vermelho ou amarelo",
+    "Preço certo por canal de entrega, pra não perder margem no iFood ou WhatsApp",
     "Revisão ilimitada de cardápio, sem limite de pratos ou de vezes que você recalcula",
   ];
   return (
@@ -907,7 +913,7 @@ function OfertaFinal() {
                 ))}
               </ul>
               <p className="mt-6 text-[15px] text-[color:var(--muted-brand)] leading-relaxed">
-                Valor total dos componentes: <strong>R$ 191</strong>. Corrigindo um único prato,
+                Valor total dos componentes: <strong>R$ 268</strong>. Corrigindo um único prato,
                 isso se paga na primeira semana. Pagamento único — sem mensalidade, para sempre.
               </p>
             </div>
@@ -924,17 +930,17 @@ function OfertaFinal() {
                 </div>
                 <div className="flex items-end gap-3 mt-1">
                   <span className="text-[color:var(--muted-brand)] line-through text-[20px] font-bold">
-                    R$ 191
+                    R$ 268
                   </span>
                   <span className="font-serif text-leaf text-[72px] leading-[0.8]">
-                    R$ 67
+                    R$ 97
                   </span>
                 </div>
                 <div className="text-[13px] text-[color:var(--muted-brand)] mt-2">
                   Uma única vez · sem mensalidade
                 </div>
                 <div className="mt-4 text-[13px] font-semibold text-leaf leading-snug">
-                  Corrigir um erro de R$ 3 num prato que sai 40 vezes por semana coloca R$ 480 de volta no seu caixa todo mês — a partir de hoje.
+                  Tem item no seu cardápio dando prejuízo, e você nem sabe qual. Você diz a margem que quer, e vê na hora quem está te custando dinheiro. Cadastra o cardápio inteiro uma vez, e fica tudo guardado, sempre pronto pra ajustar.
                 </div>
                 <a
                   href="https://pay.hotmart.com/W106597805P?checkoutMode=10&utm_source=meta_ads&utm_medium=cpc&utm_campaign=perpetuo_cardapio_no_verde"
