@@ -926,7 +926,7 @@ function OfertaFinal() {
               </div>
               <div className="p-6">
                 <div className="text-[13px] text-[color:var(--muted-brand)] font-bold">
-                  Preço hoje · pagamento único
+                  Preço hoje
                 </div>
                 <div className="flex items-end gap-3 mt-1">
                   <span className="text-[color:var(--muted-brand)] line-through text-[20px] font-bold">
