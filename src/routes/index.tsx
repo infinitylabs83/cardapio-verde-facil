@@ -250,7 +250,7 @@ function DemoSection() {
             </div>
           </div>
           <p className="mt-4 text-[14px] text-paper-2/85 leading-relaxed max-w-[280px] text-center">
-            Verde é lucro, vermelho é prejuízo. Simples assim — e o preço certo aparece na hora.
+            Você arrasta até o preço que quer: verde é lucro, vermelho é prejuízo. Simples assim — e o preço certo aparece na hora.
           </p>
         </div>
       </div>
