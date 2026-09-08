@@ -940,7 +940,7 @@ function OfertaFinal() {
                   Uma única vez · sem mensalidade
                 </div>
                 <div className="mt-4 text-[13px] font-semibold text-leaf leading-snug">
-                  Tem item no seu cardápio dando prejuízo, e você nem sabe qual. Você diz a margem que quer, e vê na hora quem está te custando dinheiro. Cadastra o cardápio inteiro uma vez, e fica tudo guardado, sempre pronto pra ajustar.
+                  Todo dia que passa, tem item no seu cardápio tirando dinheiro do seu bolso — sem você saber.
                 </div>
                 <a
                   href="https://pay.hotmart.com/W106597805P?checkoutMode=10&utm_source=meta_ads&utm_medium=cpc&utm_campaign=perpetuo_cardapio_no_verde"
