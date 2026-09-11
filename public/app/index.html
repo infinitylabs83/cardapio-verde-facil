@@ -1559,6 +1559,14 @@ function excluirPrato(){
   if(pratoSel===editando.id) pratoSel=null;
   editando=null; salvar(); renderListaPratos();
 }
+/* apagar direto da aba Preco, sem precisar entrar no editor primeiro */
+function excluirPratoDireto(){
+  const p = S.pratos.find(x=>x.id===pratoSel); if(!p) return;
+  if(!confirm(`Apagar "${p.nome}" do cardápio?`)) return;
+  S.pratos = S.pratos.filter(x=>x.id!==p.id);
+  if(pratoSel===p.id) pratoSel=null;
+  salvar(); renderTudo();
+}
 
 /* ---------- picker de ingredientes ---------- */
 function abrirPicker(){ $('inp-busca-ing').value=''; renderPicker(); abrirVeu('veu-picker'); }
@@ -1716,7 +1724,12 @@ function renderPreco(){
   const notaCanal = (!precoUnico() && S.config.deliveryPct>0)
     ? `<div class="aviso verde">🏪 Este preço vale pro balcão/salão. Pro app de entrega você cobra diferente — confira na aba <b>Delivery</b>.</div>` : '';
   const lembreteCusto = `<div class="aviso verde">Você informou que <b>${esc(p.nome)}</b> custa <b>${fmt(a.custo)}</b> pra ser produzido${ehOlhometro(p)?' <span class="selo-olho">👀 no olhômetro</span>':''}.</div>`;
+  const acoesItem = `<div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="btn fantasma" style="padding:8px 14px;font-size:.85rem;flex:none" onclick="irPara('pratos');editarPrato('${p.id}')">✎ Editar item</button>
+      <button class="btn perigo" style="padding:8px 14px;font-size:.85rem;flex:none" onclick="excluirPratoDireto()">🗑 Apagar item</button>
+    </div>`;
   $('preco-conteudo').innerHTML = `
+    ${acoesItem}
     ${lembreteCusto}
     ${notaCanal}
     <div id="preco-alerta">${diagnosticoPratoHtml(p,a)}</div>
