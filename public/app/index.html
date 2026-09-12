@@ -67,6 +67,7 @@ nav.abas{
 nav.abas button{
   display:flex;flex-direction:column;align-items:center;gap:3px;
   padding:7px 2px;color:var(--tinta-suave);font-size:.72rem;font-weight:600;border-radius:12px;
+  min-width:0; /* deixa a coluna da grade encolher em telas estreitas, sem vazar pro lado */
 }
 nav.abas button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 nav.abas button.ativa{color:var(--verde-esc);background:var(--verde-fundo)}
