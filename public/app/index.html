@@ -1268,6 +1268,19 @@ function aplicarMascaraMilhar(input){
 }
 function valorMilhar(input){ return Number(String(input.value).replace(/\D/g,'')) || 0; }
 function setValorMilhar(input, v){ if(input) input.value = v ? Number(v).toLocaleString('pt-BR') : ''; }
+/* mascara de dinheiro com centavos, tipo calculadora: digita "1" -> 0,01; digita "1224" -> 12,24 */
+function aplicarMascaraCentavos(input, aoDigitar, aoSair){
+  if(!input) return;
+  input.setAttribute('inputmode','numeric');
+  const atualizar = () => {
+    const digitos = input.value.replace(/\D/g,'');
+    const num = (parseInt(digitos||'0',10))/100;
+    input.value = num.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return num;
+  };
+  input.addEventListener('input', ()=>{ const num = atualizar(); if(aoDigitar) aoDigitar(num); });
+  input.addEventListener('change', ()=>{ const num = atualizar(); if(aoSair) aoSair(num); });
+}
 function todosIngredientes(){ return BASE.concat(S.custom); }
 function acharIng(id){ return todosIngredientes().find(i=>i.id===id); }
 function precoIng(ing){ return S.precos[ing.id] !== undefined ? S.precos[ing.id] : ing.p; }
@@ -1752,7 +1765,7 @@ function renderPreco(){
       </div>
       <div class="linha-config" style="margin-top:6px;border-bottom:none;padding-bottom:0">
         <label style="font-size:.85rem">Ou digite o preço exato</label>
-        <div class="prefixo" style="width:110px"><span>R$</span><input type="text" inputmode="decimal" value="${a.preco.toFixed(2).replace('.',',')}" style="width:110px;padding-left:38px" onchange="mudarPreco(this.value.replace(',','.'))"></div>
+        <div class="prefixo" style="width:110px"><span>R$</span><input id="inp-preco-manual" type="text" inputmode="numeric" value="${a.preco.toFixed(2).replace('.',',')}" style="width:110px;padding-left:38px"></div>
       </div>
     </div>
     <div class="tres-precos">
@@ -1775,6 +1788,7 @@ function renderPreco(){
       ${a.extra>0?`<div class="item-ing"><span class="n">Entrega sua (média por item)</span><span class="c" id="bd-entrega">${fmt(a.extra)}</span></div>`:''}
       <div class="item-ing"><span class="n"><b>Lucro real</b></span><span class="c" id="bd-lucro"><b>${fmt(a.lucro)}</b> <small>· ${Math.round(a.margem*100)}% de margem</small></span></div>
     </div>`;
+  aplicarMascaraCentavos($('inp-preco-manual'), previewPreco, mudarPreco);
 }
 /* frase da projeção do mês, com o "quantos por dia" editável ali mesmo — é um "se", não uma cobrança */
 function frasePreco(lucro, vendasDia){
