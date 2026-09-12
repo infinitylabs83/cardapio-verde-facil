@@ -1739,8 +1739,8 @@ function renderPreco(){
     ? `<div class="aviso verde">🏪 Este preço vale pro balcão/salão. Pro app de entrega você cobra diferente — confira na aba <b>Delivery</b>.</div>` : '';
   const lembreteCusto = `<div class="aviso verde">Você informou que <b>${esc(p.nome)}</b> custa <b>${fmt(a.custo)}</b> pra ser produzido${ehOlhometro(p)?' <span class="selo-olho">👀 no olhômetro</span>':''}.</div>`;
   const acoesItem = `<div style="display:flex;gap:8px;margin-bottom:12px">
-      <button class="btn fantasma" style="padding:8px 14px;font-size:.85rem;flex:none" onclick="irPara('pratos');editarPrato('${p.id}')">✎ Editar item</button>
-      <button class="btn perigo" style="padding:8px 14px;font-size:.85rem;flex:none" onclick="excluirPratoDireto()">🗑 Apagar item</button>
+      <button class="btn fantasma" style="width:auto;flex:none;padding:8px 14px;font-size:.85rem" onclick="irPara('pratos');editarPrato('${p.id}')">✎ Editar item</button>
+      <button class="btn perigo" style="width:auto;flex:none;padding:8px 14px;font-size:.85rem" onclick="excluirPratoDireto()">🗑 Apagar item</button>
     </div>`;
   $('preco-conteudo').innerHTML = `
     ${acoesItem}
