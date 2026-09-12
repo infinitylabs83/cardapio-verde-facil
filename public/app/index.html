@@ -1781,7 +1781,7 @@ function renderPreco(){
     </div>
     <div class="cartao">
       <h3>Pra onde vai cada real desse item</h3>
-      <div class="item-ing"><span class="n">Ingredientes${ehOlhometro(p)?' <span class="selo-olho">olhometro</span>':''}</span><span class="c">${fmt(a.custo)}</span></div>
+      <div class="item-ing"><span class="n">Ingredientes${ehOlhometro(p)?' <span class="selo-olho">olhometro</span>':''}</span><span class="c" id="bd-ingredientes">${fmt(a.custo)} <small>(${a.preco>0?Math.round(a.custo/a.preco*100):0}% do preço)</small></span></div>
       <div class="item-ing"><span class="n">Contas do mes (fatia do item)</span><span class="c" id="bd-fixos">${fmt(a.preco*S.config.fixoPct)}</span></div>
       <div class="item-ing"><span class="n">Impostos e cartao</span><span class="c" id="bd-taxas">${fmt(a.preco*(S.config.impostos+S.config.cartao)/100)}</span></div>
       ${taxaEntregaPct()>0?`<div class="item-ing"><span class="n">Apps de entrega (sua fatia)</span><span class="c" id="bd-apps">${fmt(a.preco*taxaEntregaPct())}</span></div>`:''}
@@ -1832,6 +1832,7 @@ function previewPreco(v){
   const custoEl = $('bd-custo-ing'); if(custoEl) custoEl.textContent = fmt(custo);
   const folgaLabel = $('bd-folga-label'); if(folgaLabel) folgaLabel.textContent = excessoIng>0.01 ? 'Estourou o teto' : 'Folga para ingredientes';
   const folgaEl = $('bd-folga-ing'); if(folgaEl) folgaEl.innerHTML = `<b>${excessoIng>0.01?fmt(excessoIng):fmt(Math.max(0,tetoIng-custo))}</b>`;
+  const bdIng = $('bd-ingredientes'); if(bdIng) bdIng.innerHTML = `${fmt(custo)} <small>(${preco>0?Math.round(custo/preco*100):0}% do preço)</small>`;
   $('bd-fixos').textContent = fmt(preco*S.config.fixoPct);
   $('bd-taxas').textContent = fmt(preco*(S.config.impostos+S.config.cartao)/100);
   const bdApps = $('bd-apps'); if(bdApps) bdApps.textContent = fmt(preco*taxaEntregaPct());
