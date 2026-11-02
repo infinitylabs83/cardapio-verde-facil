@@ -783,7 +783,7 @@ src="https://www.facebook.com/tr?id=2218630522294619&ev=PageView&noscript=1"
       <div id="wiz-naosei-msg"></div>
       <div class="wiz-rodape">
         <button class="btn" onclick="wizIr(3)">Continuar</button>
-        <button class="btn fantasma" id="btn-wiz-naosei" onclick="wizNaoSei()">Não sei — usar a média dos restaurantes</button>
+        <button class="btn fantasma" id="btn-wiz-naosei" onclick="wizNaoSei()">Não sei — usar uma estimativa por enquanto</button>
         <button class="btn fantasma" onclick="wizPasso(1)">Voltar</button>
       </div>
     </div>
@@ -1308,6 +1308,8 @@ function custoItem(item){
 function custoPrato(p){ return p.itens.length ? p.itens.reduce((t,i)=>t+custoItem(i),0) : (p.custoDireto||0); }
 function ehOlhometro(p){ return !p.itens.length; }   // custo chutado pelo dono, sem ficha
 function embalagemNaFicha(p){ return (p.itens||[]).some(it=>{ const ing=acharIng(it.ing); return ing && ing.cat==='Embalagens'; }); }
+/* chute de contas fixas (% do faturamento) quando o dono marca "nao sei": e estimativa, nao dado do setor */
+const FIXO_PCT_ESTIMADO = 0.35;
 function diasMes(){ return (S.config && S.config.diasMes>0) ? S.config.diasMes : 26; }
 function pctBase(){ return S.config.fixoPct + S.config.impostos/100; }        // fixos + impostos
 function pctSalao(){ return pctBase() + S.config.cartao/100; }                // + cartao
@@ -1343,6 +1345,15 @@ function entregaMedia(){
   const propria = c.appEntrega==='whats' || (c.appEntrega==='ifood' && c.ifoodPlano==='basico');
   return propria ? c.deliveryPct * (c.entrega||0) : 0;
 }
+/* embalagem media por item quando o preco e unico: so a parte das vendas que sai por delivery leva embalagem
+   (se a embalagem ja esta na ficha do item, ela ja esta no custo e nao entra de novo) */
+function embalagemMedia(p){
+  const c = S.config;
+  if(!c || !p || !c.deliveryPct || !precoUnico()) return 0;
+  return embalagemNaFicha(p) ? 0 : c.deliveryPct * (p.emb||0);
+}
+/* custo medio de repasse por item que nao vem da ficha: motoboy proprio + embalagem */
+function repasseMedio(p){ return entregaMedia() + embalagemMedia(p); }
 /* fatia total da venda que ja tem dono, sem esconder operacao inviavel */
 function pctGeral(){ return pctSalao() + taxaEntregaPct(); }
 function lucroCom(preco, custoReais, pct){ return preco*(1-pct) - custoReais; }
@@ -1354,8 +1365,8 @@ function margemAlvo(){ return (S.config && S.config.margemAlvo !== undefined) ? 
 function margemDisponivelParaIngredientes(lucroPct=margemAlvo()){
   return 1 - pctGeral() - lucroPct;
 }
-function tetoIngredientes(preco, lucroPct=margemAlvo()){
-  return Math.max(0, preco * margemDisponivelParaIngredientes(lucroPct) - entregaMedia());
+function tetoIngredientes(preco, lucroPct=margemAlvo(), extra=entregaMedia()){
+  return Math.max(0, preco * margemDisponivelParaIngredientes(lucroPct) - extra);
 }
 function precoSeguro(custo, lucroPct){
   const denom = 1 - pctGeral() - lucroPct;
@@ -1379,12 +1390,12 @@ function corMargem(m){
 }
 function analisar(p){
   const custo = custoPrato(p);
-  const extra = entregaMedia();                 // motoboy proprio, media por item (se preco unico)
+  const extra = repasseMedio(p);                // motoboy proprio + embalagem, media por item (se preco unico)
   const sug = precosSugeridos(custo + extra);
   const preco = p.preco || sug.ideal || sug.min || custo;
   const lucro = lucroCom(preco, custo + extra, pctGeral());
   const margem = preco>0 ? lucro/preco : 0;
-  const tetoIng = tetoIngredientes(preco);
+  const tetoIng = tetoIngredientes(preco, margemAlvo(), extra);
   const excessoIng = Math.max(0, custo - tetoIng);
   const cor = corMargem(margem);
   return {custo, extra, sug, preco, lucro, margem, cor, tetoIng, excessoIng};
@@ -1395,6 +1406,7 @@ function avisosOperacaoHtml(){
   const avisos = [];
   const base = pctGeral();
   const livre = margemDisponivelParaIngredientes();
+  if(S.config.estimado) avisos.push(avisoHtml('amarelo', `📌 Suas contas fixas ainda são uma <b>estimativa</b> (${Math.round(S.config.fixoPct*100)}% do faturamento), não o seu número. Coloque o valor real nos ⚙️ Ajustes e o preço fica certo pra sua loja.`));
   if(S.config.fixoPct > 0.60) avisos.push(avisoHtml('vermelho', 'Suas contas fixas passam de 60% do faturamento. Antes de mexer nos itens, essa operacao precisa de revisao.'));
   else if(S.config.fixoPct > 0.45) avisos.push(avisoHtml('amarelo', 'Suas contas fixas estao pesadas: mais de 45% do faturamento. A margem dos itens vai ficar apertada.'));
   if(base >= 0.75) avisos.push(avisoHtml('vermelho', 'Mais de 75% da venda ja vai embora antes dos ingredientes. O app ainda calcula, mas a operacao esta no limite.'));
@@ -1557,7 +1569,7 @@ function salvarPrato(){
   }
   editando.nome = nome;
   editando.vendasDia = Math.max(1, parseInt(editando.vendasDia)||10);
-  if(!editando.preco){ const ps = precosSugeridos(custoPrato(editando)+entregaMedia()); editando.preco = Math.ceil(((ps.ideal || ps.min || custoPrato(editando)*3 || 10))*2)/2; }
+  if(!editando.preco){ const ps = precosSugeridos(custoPrato(editando)+repasseMedio(editando)); editando.preco = Math.ceil(((ps.ideal || ps.min || custoPrato(editando)*3 || 10))*2)/2; }
   if(editando.id){
     const ix = S.pratos.findIndex(p=>p.id===editando.id); S.pratos[ix]=editando;
   } else {
@@ -1786,7 +1798,7 @@ function renderPreco(){
       <div class="item-ing"><span class="n">Contas do mes (fatia do item)</span><span class="c" id="bd-fixos">${fmt(a.preco*S.config.fixoPct)}</span></div>
       <div class="item-ing"><span class="n">Impostos e cartao</span><span class="c" id="bd-taxas">${fmt(a.preco*(S.config.impostos+S.config.cartao)/100)}</span></div>
       ${taxaEntregaPct()>0?`<div class="item-ing"><span class="n">Apps de entrega (sua fatia)</span><span class="c" id="bd-apps">${fmt(a.preco*taxaEntregaPct())}</span></div>`:''}
-      ${a.extra>0?`<div class="item-ing"><span class="n">Entrega sua (média por item)</span><span class="c" id="bd-entrega">${fmt(a.extra)}</span></div>`:''}
+      ${a.extra>0?`<div class="item-ing"><span class="n">${entregaMedia()>0 && embalagemMedia(p)>0 ? 'Entrega e embalagem' : (entregaMedia()>0 ? 'Entrega sua' : 'Embalagem do delivery')} (média por item)</span><span class="c" id="bd-entrega">${fmt(a.extra)}</span></div>`:''}
       <div class="item-ing"><span class="n"><b>Lucro real</b></span><span class="c" id="bd-lucro"><b>${fmt(a.lucro)}</b> <small>· ${Math.round(a.margem*100)}% de margem</small></span></div>
     </div>`;
   aplicarMascaraCentavos($('inp-preco-manual'), previewPreco, mudarPreco);
@@ -1812,11 +1824,11 @@ function previewPreco(v){
   const p = S.pratos.find(x=>x.id===pratoSel);
   const preco = parseFloat(v);
   const custo = custoPrato(p);
-  const extra = entregaMedia();
+  const extra = repasseMedio(p);
   const sug = precosSugeridos(custo + extra);
   const lucro = lucroCom(preco, custo + extra, pctGeral());
   const margem = preco>0 ? lucro/preco : 0;
-  const tetoIng = tetoIngredientes(preco);
+  const tetoIng = tetoIngredientes(preco, margemAlvo(), extra);
   const excessoIng = Math.max(0, custo - tetoIng);
   const cor = corMargem(margem);
   acenderSemaforo(cor);
@@ -2212,7 +2224,7 @@ function aplicarFechamento(){
 function abrirAjustes(){
   const c = S.config;
   setValorMilhar($('cfg-faturamento'), c.faturamento); setValorMilhar($('cfg-fixos'), c.fixos);
-  $('cfg-fixos').placeholder = c.estimado ? 'média do setor: 28%' : '';
+  $('cfg-fixos').placeholder = c.estimado ? 'estimativa: '+Math.round(c.fixoPct*100)+'%' : '';
   $('cfg-impostos').value=c.impostos; $('cfg-cartao').value=c.cartao;
   $('cfg-entrega').value=c.entrega; $('cfg-outroapp').value=c.outroapp;
   $('cfg-deliverypct').value = Math.round((c.deliveryPct||0)*100);
@@ -2232,7 +2244,7 @@ function salvarAjustes(){
   c.faturamento = Math.max(1000, valorMilhar($('cfg-faturamento'))||c.faturamento);
   const fixosDigitados = valorMilhar($('cfg-fixos'));
   if(c.estimado && !fixosDigitados){
-    /* usuario respondeu "nao sei" no comeco e nao digitou nada: mantem a media do setor (28%), nao zera */
+    /* usuario respondeu "nao sei" no comeco e nao digitou nada: mantem a estimativa, nao zera */
   } else {
     if(fixosDigitados > c.faturamento){ alert('Essa conta nao fecha: seus gastos fixos ficaram maiores que o faturamento. Revise antes de salvar.'); return; }
     c.fixos = Math.max(0, fixosDigitados);
@@ -2350,11 +2362,11 @@ function wizIr(n){
   wizPasso(n);
 }
 function wizNaoSei(){
-  wizResultado.fixos = 0; wizResultado.fixoPct = 0.28; wizResultado.estimado = true; wizResultado.fixosAltos = false;
+  wizResultado.fixos = 0; wizResultado.fixoPct = FIXO_PCT_ESTIMADO; wizResultado.estimado = true; wizResultado.fixosAltos = false;
   /* mostra rapidamente o que foi assumido antes de seguir, pra nao parecer que o botao nao fez nada */
   const btn = $('btn-wiz-naosei');
   if(btn) btn.disabled = true;
-  $('wiz-naosei-msg').innerHTML = '<div class="gate-msg" style="margin-top:10px">Beleza! Vou usar <b>28% do seu faturamento</b> como estimativa de mercado — dá pra ajustar isso depois nos ⚙️ Ajustes.</div>';
+  $('wiz-naosei-msg').innerHTML = '<div class="gate-msg" style="margin-top:10px">Beleza! Vou usar <b>' + Math.round(FIXO_PCT_ESTIMADO*100) + '% do seu faturamento</b> como estimativa. É um chute, não o seu número: quando souber o valor real, coloque nos ⚙️ Ajustes pra o preço ficar certo.</div>';
   setTimeout(()=>{ wizPasso(3); }, 1100);
 }
 /* a cena da "matemática chata": calcula tudo sozinho e mostra com calma */
@@ -2387,9 +2399,9 @@ function wizCalcular(){
   setTimeout(()=>{
     $('wiz-calculando').style.display = 'none';
     $('wiz-resultado-wrap').style.display = 'block';
-    $('wiz-resultado').innerHTML = Math.round(fatia*100)+'%' + (wizResultado.estimado ? ' <span class="selo-estimado">com a média do setor</span>' : '');
+    $('wiz-resultado').innerHTML = Math.round(fatia*100)+'%' + (wizResultado.estimado ? ' <span class="selo-estimado">com uma estimativa</span>' : '');
     const det = [
-      ['🏠 Contas do mês'+(wizResultado.estimado?' (média do setor)':''), wizResultado.fixoPct],
+      ['🏠 Contas do mês'+(wizResultado.estimado?' (estimativa)':''), wizResultado.fixoPct],
       ['🧾 Impostos', wizResultado.impostos/100],
       ['💳 Maquininha do cartão', cartaoPct],
     ];
