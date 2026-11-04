@@ -28,6 +28,34 @@ export const Route = createFileRoute("/")({
 
 const CTA_ANCHOR = "#oferta";
 
+const CHECKOUT_URL = "https://pay.hotmart.com/W106597805P?checkoutMode=10";
+const CHECKOUT_DEFAULT_UTMS: Record<string, string> = {
+  utm_source: "meta_ads",
+  utm_medium: "cpc",
+  utm_campaign: "perpetuo_cardapio_no_verde",
+};
+// Parametros que o anuncio traz na URL e que a Hotmart precisa receber
+// (src/sck alimentam a coluna "Origem" do relatorio de vendas).
+const CHECKOUT_FORWARD_PARAMS = [
+  "src",
+  "sck",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_content",
+  "utm_term",
+];
+
+function buildCheckoutUrl(search: string): string {
+  const incoming = new URLSearchParams(search);
+  const out = new URLSearchParams(CHECKOUT_DEFAULT_UTMS);
+  for (const key of CHECKOUT_FORWARD_PARAMS) {
+    const value = incoming.get(key);
+    if (value) out.set(key, value);
+  }
+  return `${CHECKOUT_URL}&${out.toString().replace(/\+/g, "%20")}`;
+}
+
 /* -------------------- Marca -------------------- */
 function LogoMark({ className = "w-10 h-10" }: { className?: string }) {
   // Miniatura de cardápio (menu) com um check verde — símbolo de "cardápio aprovado / no verde"
@@ -943,12 +971,13 @@ function OfertaFinal() {
                   Todo dia que passa, tem item no seu cardápio tirando dinheiro do seu bolso — sem você saber.
                 </div>
                 <a
-                  href="https://pay.hotmart.com/W106597805P?checkoutMode=10&utm_source=meta_ads&utm_medium=cpc&utm_campaign=perpetuo_cardapio_no_verde"
+                  href={buildCheckoutUrl("")}
                   onClick={(e) => {
-                    if (typeof window !== "undefined" && (window as any).fbq) {
+                    const destino = buildCheckoutUrl(window.location.search);
+                    e.currentTarget.href = destino;
+                    if ((window as any).fbq) {
                       e.preventDefault();
                       (window as any).fbq("track", "InitiateCheckout", { value: 97, currency: "BRL" });
-                      const destino = e.currentTarget.href;
                       setTimeout(() => {
                         window.location.href = destino;
                       }, 250);
